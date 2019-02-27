@@ -1,2 +1,6 @@
-
-\.idea/
+*.iml
+.idea
+.vscode
+NtmPods
+tmp/*
+resource/*

@@ -2,8 +2,8 @@ package BmHandler
 
 import (
 	"fmt"
-	"github.com/alfredyang1986/BmPods/BmPanic"
 	"net/http"
+	"github.com/PharbersDeveloper/NtmPods/BmPanic"
 )
 
 type CommonPanicHandle struct {

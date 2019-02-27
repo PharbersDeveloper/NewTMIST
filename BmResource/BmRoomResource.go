@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/alfredyang1986/BmPods/BmDataStorage"
-	"github.com/alfredyang1986/BmPods/BmModel"
+	"github.com/PharbersDeveloper/NtmPods/BmDataStorage"
+	"github.com/PharbersDeveloper/NtmPods/BmModel"
 	"github.com/manyminds/api2go"
 )
 

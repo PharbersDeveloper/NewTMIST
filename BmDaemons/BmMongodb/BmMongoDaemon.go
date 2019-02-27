@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/alfredyang1986/BmPods/BmModel"
+	"github.com/PharbersDeveloper/NtmPods/BmModel"
 	"github.com/alfredyang1986/blackmirror/bmmate"
 	"github.com/manyminds/api2go"
 	mgo "gopkg.in/mgo.v2"
