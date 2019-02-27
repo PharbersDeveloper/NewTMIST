@@ -19,11 +19,11 @@ func main() {
 
 	fac := BmFactory.BmTable{}
 	var pod = BmPodsDefine.Pod{ Name: "alfred test", Factory:fac }
-	bmHome := os.Getenv("BM_HOME")
+	bmHome := os.Getenv("PHARBERS_HOME")
 	pod.RegisterSerFromYAML(bmHome + "/resource/service-def.yaml")
 
 	var bmRouter BmConfig.BmRouterConfig
-	bmRouter.GenerateConfig()
+	bmRouter.GenerateConfig("PHARBERS_HOME")
 
 	addr := bmRouter.Host + ":" + bmRouter.Port
 	fmt.Println("Listening on ", addr)
