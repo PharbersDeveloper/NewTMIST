@@ -75,7 +75,7 @@ func (h UploadToOssHandler) UploadToOss(w http.ResponseWriter, r *http.Request, 
 		defer file.Close()
 
 		var bmRouter BmConfig.BmRouterConfig
-		bmRouter.GenerateConfig()
+		bmRouter.GenerateConfig("NTM_HOME")
 
 		fn, err := uuid.GenerateUUID()
 		lsttmp := strings.Split(handler.Filename, ".")
