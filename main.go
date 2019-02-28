@@ -11,20 +11,21 @@ import (
 	"github.com/manyminds/api2go"
 	"github.com/julienschmidt/httprouter"
 
-	"github.com/PharbersDeveloper/NtmPods/BmFactory"
+	"./NtmFactory"
 )
 
 func main() {
 	version := "v0"
+	prodEnv := "NTM_HOME"
 	fmt.Println("NTM pods archi begins, version =", version)
 
-	fac := BmFactory.BmTable{}
-	var pod = BmPodsDefine.Pod{ Name: "new TMIST", Factory:fac }
-	ntmHome := os.Getenv("NTM_HOME")
+	fac := NtmFactory.NtmTable{}
+	var pod = BmPodsDefine.Pod{Name: "new TMIST", Factory: fac}
+	ntmHome := os.Getenv(prodEnv)
 	pod.RegisterSerFromYAML(ntmHome + "/resource/service-def.yaml")
 
 	var bmRouter BmConfig.BmRouterConfig
-	bmRouter.GenerateConfig("NTM_HOME")
+	bmRouter.GenerateConfig(prodEnv)
 
 	addr := bmRouter.Host + ":" + bmRouter.Port
 	fmt.Println("Listening on ", addr)
