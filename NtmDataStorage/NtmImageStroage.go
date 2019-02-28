@@ -26,10 +26,10 @@ func (s NtmImageStorage) NewImageStorage(args []BmDaemons.BmDaemon) *NtmImageSto
 }
 
 // GetAll of the modelleaf
-func (s NtmImageStorage) GetAll(r api2go.Request) []NtmModel.Image {
+func (s NtmImageStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.Image {
 	in := NtmModel.Image{}
 	out := []NtmModel.Image{}
-	err := s.db.FindMulti(r, &in, &out, -1, -1)
+	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
 			s.db.ResetIdWithId_(&iter)

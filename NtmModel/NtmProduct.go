@@ -6,31 +6,28 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type Hospital struct {
+type Product struct {
+	ID              string        `json:"-"`
+	Id_             bson.ObjectId `json:"-" bson:"_id"`
+	Name            string        `json:"name" bson:"name"`
+	GeneralName     string        `json:"general-name" bson:"general-name"`
+	Describe        string        `json:"describe" bson:"describe"`
+	ProductCategory string        `json:"product-category" bson:"product-category"`
 
-	ID					string	`json:"-"`
-	Id_					bson.ObjectId `json:"-" bson:"_id"`
-	Name 				string	`json:"name" bson:"name"`
-	Describe 			string	`json:"describe" bson:"describe"`
-	Code 				string	`json:"code" bson:"code"`
-	HospitalCategory	string	`json:"hospital-category" bson:"hospital-category"`
-	HospitalLevel		string	`json:"hospital-level" bson:"hospital-level"`
-	Position			string	`json:"position" bson:"position"`
-
-	ImagesIDs			[]string	`json:"-" bson:"image-ids"`
-	Imgs				[]*Image	`json:"-"`
+	ImagesIDs []string `json:"-" bson:"image-ids"`
+	Imgs      []*Image `json:"-"`
 }
 
-func (c Hospital) GetID() string {
+func (c Product) GetID() string {
 	return c.ID
 }
 
-func (c Hospital) SetID(id string) error {
+func (c Product) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (c Hospital) GetReferences() []jsonapi.Reference {
+func (c Product) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "images",
@@ -39,12 +36,12 @@ func (c Hospital) GetReferences() []jsonapi.Reference {
 	}
 }
 
-func (c Hospital) GetReferencedIDs() []jsonapi.ReferenceID {
+func (c Product) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 
 	for _, kID := range c.ImagesIDs {
 		result = append(result, jsonapi.ReferenceID{
-			ID: kID,
+			ID:   kID,
 			Type: "images",
 			Name: "images",
 		})
@@ -52,7 +49,7 @@ func (c Hospital) GetReferencedIDs() []jsonapi.ReferenceID {
 	return result
 }
 
-func (c Hospital) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (c Product) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	for key := range c.Imgs {
@@ -61,11 +58,11 @@ func (c Hospital) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	return result
 }
 
-func (c *Hospital) SetToOneReferenceID(name, ID string) error {
+func (c *Product) SetToOneReferenceID(name, ID string) error {
 	return nil
 }
 
-func (c *Hospital) SetToManyReferenceIDs(name string, IDs []string) error {
+func (c *Product) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "images" {
 		c.ImagesIDs = IDs
 		return nil
@@ -73,7 +70,7 @@ func (c *Hospital) SetToManyReferenceIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *Hospital) AddToManyIDs(name string, IDs []string) error {
+func (c *Product) AddToManyIDs(name string, IDs []string) error {
 	if name == "images" {
 		c.ImagesIDs = append(c.ImagesIDs, IDs...)
 		return nil
@@ -82,7 +79,7 @@ func (c *Hospital) AddToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *Hospital) DeleteToManyIDs(name string, IDs []string) error {
+func (c *Product) DeleteToManyIDs(name string, IDs []string) error {
 	if name == "images" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.ImagesIDs {
@@ -95,6 +92,6 @@ func (c *Hospital) DeleteToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *Hospital) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (c *Product) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	return bson.M{}
 }

@@ -16,18 +16,21 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmImage": NtmModel.Image{},
 	"NtmPolicy": NtmModel.Policy{},
 	"NtmHospital": NtmModel.Hospital{},
+	"NtmProduct": NtmModel.Product{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmImageStorage": NtmDataStorage.NtmImageStorage{},
 	"NtmPolicyStorage": NtmDataStorage.NtmPolicyStorage{},
 	"NtmHospitalStorage": NtmDataStorage.NtmHospitalStorage{},
+	"NtmProductStorage": NtmDataStorage.NtmProductStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmImageResource": NtmResource.NtmImageResource{},
 	"NtmPolicyResource": NtmResource.NtmPolicyResource{},
 	"NtmHospitalResource": NtmResource.NtmHospitalResource{},
+	"NtmProductResource": NtmResource.NtmProductResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{

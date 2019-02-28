@@ -43,7 +43,7 @@ func (s NtmHospitalStorage) GetOne(id string) (NtmModel.Hospital, error) {
 	if err == nil {
 		return out, nil
 	}
-	errMessage := fmt.Sprintf("Brand for id %s not found", id)
+	errMessage := fmt.Sprintf("Hospital for id %s not found", id)
 	return NtmModel.Hospital{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
 }
 
@@ -61,7 +61,7 @@ func (s *NtmHospitalStorage) Delete(id string) error {
 	in := NtmModel.Hospital{ID: id}
 	err := s.db.Delete(&in)
 	if err != nil {
-		return fmt.Errorf("Brand with id %s does not exist", id)
+		return fmt.Errorf("Hospital with id %s does not exist", id)
 	}
 
 	return nil
@@ -71,7 +71,7 @@ func (s *NtmHospitalStorage) Delete(id string) error {
 func (s *NtmHospitalStorage) Update(c NtmModel.Hospital) error {
 	err := s.db.Update(&c)
 	if err != nil {
-		return fmt.Errorf("Brand with id does not exist")
+		return fmt.Errorf("Hospital with id does not exist")
 	}
 
 	return nil

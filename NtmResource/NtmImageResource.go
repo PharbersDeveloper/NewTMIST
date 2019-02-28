@@ -81,7 +81,7 @@ func (c NtmImageResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	//
 	//	return &Response{Res: result}, nil
 	//}
-	////result = c.BmImageStorage.GetAll(r)
+	result = c.NtmImageStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
 
