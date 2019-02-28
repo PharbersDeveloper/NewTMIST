@@ -2,8 +2,8 @@ package NtmHandler
 
 import (
 	"fmt"
+	"github.com/PharbersDeveloper/NtmPods/NtmPanic"
 	"net/http"
-	"../NtmPanic"
 )
 
 type CommonPanicHandle struct {

@@ -3,13 +3,12 @@ package NtmDataStorage
 import (
 	"fmt"
 	"errors"
+	"github.com/PharbersDeveloper/NtmPods/NtmModel"
 	"net/http"
 
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/manyminds/api2go"
-
-	"../NtmModel"
 )
 
 // NtmImageStorage stores all of the tasty modelleaf, needs to be injected into

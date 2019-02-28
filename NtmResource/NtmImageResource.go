@@ -2,14 +2,13 @@ package NtmResource
 
 import (
 	"errors"
+	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
+	"github.com/PharbersDeveloper/NtmPods/NtmModel"
 	"reflect"
 	"net/http"
 
 	"github.com/alfredyang1986/BmServiceDef/BmDataStorage"
 	"github.com/manyminds/api2go"
-
-	"../NtmModel"
-	"../NtmDataStorage"
 )
 
 type NtmImageResource struct {

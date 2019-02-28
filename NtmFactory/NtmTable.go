@@ -1,27 +1,30 @@
 package NtmFactory
 
 import (
+	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
+	"github.com/PharbersDeveloper/NtmPods/NtmHandler"
+	"github.com/PharbersDeveloper/NtmPods/NtmModel"
+	"github.com/PharbersDeveloper/NtmPods/NtmResource"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 
-	"../NtmModel"
-	"../NtmDataStorage"
-	"../NtmResource"
-	"../NtmHandler"
 )
 
 type NtmTable struct{}
 
 var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmImage": NtmModel.Image{},
+	"NtmPolicy": NtmModel.Policy{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmImageStorage": NtmDataStorage.NtmImageStorage{},
+	"NtmPolicyStorage": NtmDataStorage.NtmPolicyStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmImageResource": NtmResource.NtmImageResource{},
+	"NtmPolicyResource": NtmResource.NtmPolicyResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
