@@ -15,16 +15,19 @@ type NtmTable struct{}
 var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmImage": NtmModel.Image{},
 	"NtmPolicy": NtmModel.Policy{},
+	"NtmHospital": NtmModel.Hospital{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmImageStorage": NtmDataStorage.NtmImageStorage{},
 	"NtmPolicyStorage": NtmDataStorage.NtmPolicyStorage{},
+	"NtmHospitalStorage": NtmDataStorage.NtmHospitalStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmImageResource": NtmResource.NtmImageResource{},
 	"NtmPolicyResource": NtmResource.NtmPolicyResource{},
+	"NtmHospitalResource": NtmResource.NtmHospitalResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
