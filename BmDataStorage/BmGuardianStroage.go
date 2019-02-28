@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
-	"github.com/alfredyang1986/BmPods/BmDaemons/BmMongodb"
-	"github.com/alfredyang1986/BmPods/BmModel"
+	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
+	"github.com/PharbersDeveloper/NtmPods/BmModel"
 	"github.com/manyminds/api2go"
 	"net/http"
 )
