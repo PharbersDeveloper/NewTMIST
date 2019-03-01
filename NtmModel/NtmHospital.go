@@ -61,9 +61,6 @@ func (c Hospital) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	return result
 }
 
-func (c *Hospital) SetToOneReferenceID(name, ID string) error {
-	return nil
-}
 
 func (c *Hospital) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "images" {
