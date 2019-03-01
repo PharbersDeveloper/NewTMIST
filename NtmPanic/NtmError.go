@@ -1,12 +1,13 @@
 package NtmPanic
 
 import (
-	"sync"
-	"errors"
-	"net/http"
 	"encoding/json"
+	"errors"
 	"github.com/hashicorp/go-uuid"
 	"github.com/manyminds/api2go"
+	"net/http"
+	"strconv"
+	"sync"
 )
 
 var NTM_TEST_ERROR = errors.New("new TMIST test error")
@@ -81,15 +82,19 @@ func resetlHTTPErrorID(input api2go.HTTPError) {
 	}
 }
 
-func (e *tNTMrror) ErrorReval(ec string, w http.ResponseWriter) {
+func (e *tNTMrror) ErrorReval(err interface{}, w http.ResponseWriter) {
+	es := err.(string)
 	var hr api2go.HTTPError
-	if e.IsErrorDefined(ec) {
-		hr = e.m[ec]
+	if e.IsErrorDefined(es) {
+		hr = e.m[es]
 	} else {
 		hr = e.m["no defind error!"]
+		hr.Errors[0].Detail = es
 	}
 	resetlHTTPErrorID(hr)
 	enc := json.NewEncoder(w)
 	w.Header().Add("Content-Type", "application/json")
+	statusCode,  _ := strconv.Atoi(hr.Errors[0].Status)
+	w.WriteHeader(statusCode)
 	enc.Encode(hr)
 }
