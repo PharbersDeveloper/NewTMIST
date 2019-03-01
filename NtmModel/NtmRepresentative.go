@@ -6,28 +6,26 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type Product struct {
-	ID              string        `json:"-"`
-	Id_             bson.ObjectId `json:"-" bson:"_id"`
-	Name            string        `json:"name" bson:"name"`
-	GeneralName     string        `json:"general-name" bson:"general-name"`
-	Describe        string        `json:"describe" bson:"describe"`
-	ProductCategory string        `json:"product-category" bson:"product-category"`
+type Representative struct {
+	ID     string        `json:"-"`
+	Id_    bson.ObjectId `json:"-" bson:"_id"`
+	Name   string        `json:"name" bson:"name"`
+	Gender float64       `json:"gender" bson:"gender"`
 
 	ImagesIDs []string `json:"-" bson:"image-ids"`
 	Imgs      []*Image `json:"-"`
 }
 
-func (c Product) GetID() string {
+func (c Representative) GetID() string {
 	return c.ID
 }
 
-func (c Product) SetID(id string) error {
+func (c Representative) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (c Product) GetReferences() []jsonapi.Reference {
+func (c Representative) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "images",
@@ -36,7 +34,7 @@ func (c Product) GetReferences() []jsonapi.Reference {
 	}
 }
 
-func (c Product) GetReferencedIDs() []jsonapi.ReferenceID {
+func (c Representative) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 
 	for _, kID := range c.ImagesIDs {
@@ -49,7 +47,7 @@ func (c Product) GetReferencedIDs() []jsonapi.ReferenceID {
 	return result
 }
 
-func (c Product) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (c Representative) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	for key := range c.Imgs {
@@ -58,7 +56,7 @@ func (c Product) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	return result
 }
 
-func (c *Product) SetToManyReferenceIDs(name string, IDs []string) error {
+func (c *Representative) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "images" {
 		c.ImagesIDs = IDs
 		return nil
@@ -66,7 +64,7 @@ func (c *Product) SetToManyReferenceIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *Product) AddToManyIDs(name string, IDs []string) error {
+func (c *Representative) AddToManyIDs(name string, IDs []string) error {
 	if name == "images" {
 		c.ImagesIDs = append(c.ImagesIDs, IDs...)
 		return nil
@@ -75,7 +73,7 @@ func (c *Product) AddToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *Product) DeleteToManyIDs(name string, IDs []string) error {
+func (c *Representative) DeleteToManyIDs(name string, IDs []string) error {
 	if name == "images" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.ImagesIDs {
@@ -88,6 +86,6 @@ func (c *Product) DeleteToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *Product) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (c *Representative) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	return bson.M{}
 }
