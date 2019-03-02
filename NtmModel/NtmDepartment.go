@@ -2,7 +2,7 @@ package NtmModel
 
 import "gopkg.in/mgo.v2/bson"
 
-type Deparment struct {
+type Department struct {
 	ID			string        `json:"-"`
 	Id_			bson.ObjectId `json:"-" bson:"_id"`
 	Name		string        `json:"name" bson:"name"`
@@ -10,16 +10,16 @@ type Deparment struct {
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c Deparment) GetID() string {
+func (c Department) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *Deparment) SetID(id string) error {
+func (c *Department) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (u *Deparment) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *Department) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	return bson.M{}
 }
