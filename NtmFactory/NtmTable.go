@@ -16,30 +16,45 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmImage": NtmModel.Image{},
 	"NtmPolicy": NtmModel.Policy{},
 	"NtmHospital": NtmModel.Hospital{},
+	"NtmDepartment": NtmModel.Department{},
+	"NtmRegion": NtmModel.Region{},
 	"NtmProduct": NtmModel.Product{},
+	"NtmProductConfig": NtmModel.ProductConfig{},
 	"NtmRepresentative": NtmModel.Representative{},
 	"NtmManagerConfig": NtmModel.ManagerConfig{},
 	"NtmRepresentativeConfig": NtmModel.RepresentativeConfig{},
+	"NtmRegionConfig": NtmModel.RegionConfig{},
+	"NtmHospitalConfig": NtmModel.HospitalConfig{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmImageStorage": NtmDataStorage.NtmImageStorage{},
 	"NtmPolicyStorage": NtmDataStorage.NtmPolicyStorage{},
 	"NtmHospitalStorage": NtmDataStorage.NtmHospitalStorage{},
+	"NtmDepartmentStorage": NtmDataStorage.NtmDepartmentStorage{},
+	"NtmRegionStorage": NtmDataStorage.NtmRegionStorage{},
 	"NtmProductStorage": NtmDataStorage.NtmProductStorage{},
+	"NtmProductConfigStorage": NtmDataStorage.NtmProductConfigStorage{},
 	"NtmRepresentativeStorage": NtmDataStorage.NtmRepresentativeStorage{},
 	"NtmManagerConfigStorage": NtmDataStorage.NtmManagerConfigStorage{},
 	"NtmRepresentativeConfigStorage": NtmDataStorage.NtmRepresentativeConfigStorage{},
+	"NtmRegionConfigStorage": NtmDataStorage.NtmRegionConfigStorage{},
+	"NtmHospitalConfigStorage": NtmDataStorage.NtmHospitalConfigStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmImageResource": NtmResource.NtmImageResource{},
 	"NtmPolicyResource": NtmResource.NtmPolicyResource{},
 	"NtmHospitalResource": NtmResource.NtmHospitalResource{},
+	"NtmDepartmentResource": NtmResource.NtmDepartmentResource{},
+	"NtmRegionResource": NtmResource.NtmRegionResource{},
 	"NtmProductResource": NtmResource.NtmProductResource{},
+	"NtmProductConfigResource": NtmResource.NtmProductConfigResource{},
 	"NtmRepresentativeResource": NtmResource.NtmRepresentativeResource{},
 	"NtmManagerConfigResource": NtmResource.NtmManagerConfigResource{},
 	"NtmRepresentativeConfigResource": NtmResource.NtmRepresentativeConfigResource{},
+	"NtmRegionConfigResource": NtmResource.NtmRegionConfigResource{},
+	"NtmHospitalConfigResource": NtmResource.NtmHospitalConfigResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
