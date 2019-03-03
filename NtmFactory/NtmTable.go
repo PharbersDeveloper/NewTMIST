@@ -25,6 +25,7 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmRepresentativeConfig": NtmModel.RepresentativeConfig{},
 	"NtmRegionConfig": NtmModel.RegionConfig{},
 	"NtmHospitalConfig": NtmModel.HospitalConfig{},
+	"NtmResourceConfig": NtmModel.ResourceConfig{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -40,6 +41,7 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmRepresentativeConfigStorage": NtmDataStorage.NtmRepresentativeConfigStorage{},
 	"NtmRegionConfigStorage": NtmDataStorage.NtmRegionConfigStorage{},
 	"NtmHospitalConfigStorage": NtmDataStorage.NtmHospitalConfigStorage{},
+	"NtmResourceConfigStorage": NtmDataStorage.NtmResourceConfigStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -55,6 +57,7 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmRepresentativeConfigResource": NtmResource.NtmRepresentativeConfigResource{},
 	"NtmRegionConfigResource": NtmResource.NtmRegionConfigResource{},
 	"NtmHospitalConfigResource": NtmResource.NtmHospitalConfigResource{},
+	"NtmResourceConfigResource": NtmResource.NtmResourceConfigResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
