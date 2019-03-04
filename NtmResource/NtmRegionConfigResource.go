@@ -12,22 +12,23 @@ import (
 )
 
 type NtmRegionConfigResource struct {
-	NtmRegionConfigStorage *NtmDataStorage.NtmRegionConfigStorage
-	NtmRegionStorage          *NtmDataStorage.NtmRegionStorage
+	NtmRegionConfigStorage		*NtmDataStorage.NtmRegionConfigStorage
+	NtmRegionResource			*NtmRegionResource
 }
 
-func (s NtmRegionConfigResource) NewRegionConfigResource(args []BmDataStorage.BmStorage) NtmRegionConfigResource {
-	var is *NtmDataStorage.NtmRegionStorage
-	var hs *NtmDataStorage.NtmRegionConfigStorage
+func (s NtmRegionConfigResource) NewRegionConfigResource(args []BmDataStorage.BmStorage) *NtmRegionConfigResource {
+	var rcs *NtmDataStorage.NtmRegionConfigStorage
+	var rr *NtmRegionResource
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmRegionStorage" {
-			is = arg.(*NtmDataStorage.NtmRegionStorage)
-		} else if tp.Name() == "NtmRegionConfigStorage" {
-			hs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
+		if tp.Name() == "NtmRegionConfigStorage" {
+			rcs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
+		} else if tp.Name() == "NtmRegionResource" {
+			rr = arg.(interface{}).(*NtmRegionResource)
 		}
 	}
-	return NtmRegionConfigResource{NtmRegionStorage: is, NtmRegionConfigStorage: hs}
+	return &NtmRegionConfigResource{NtmRegionResource: rr, NtmRegionConfigStorage: rcs}
 }
 
 func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
@@ -36,11 +37,12 @@ func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, er
 
 	for _, model := range models {
 		if model.RegionID != "" {
-			r, err := s.NtmRegionStorage.GetOne(model.RegionID)
+			response, err := s.NtmRegionResource.FindOne(model.RegionID, api2go.Request{})
+			item := response.Result()
 			if err != nil {
 				return &Response{}, err
 			}
-			model.Region = r
+			model.Region = item.(NtmModel.Region)
 		}
 
 		result = append(result, *model)
@@ -120,11 +122,12 @@ func (s NtmRegionConfigResource) FindOne(ID string, r api2go.Request) (api2go.Re
 	}
 
 	if model.RegionID != "" {
-		r, err := s.NtmRegionStorage.GetOne(model.RegionID)
+		response, err := s.NtmRegionResource.FindOne(model.RegionID, api2go.Request{})
+		item := response.Result()
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Region = r
+		model.Region = item.(NtmModel.Region)
 	}
 
 	return &Response{Res: model}, nil

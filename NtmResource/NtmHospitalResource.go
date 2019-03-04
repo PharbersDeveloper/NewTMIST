@@ -16,7 +16,7 @@ type NtmHospitalResource struct {
 	NtmImageStorage		*NtmDataStorage.NtmImageStorage
 }
 
-func (s NtmHospitalResource) NewHospitalResource (args []BmDataStorage.BmStorage) NtmHospitalResource {
+func (s NtmHospitalResource) NewHospitalResource (args []BmDataStorage.BmStorage) *NtmHospitalResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var hs *NtmDataStorage.NtmHospitalStorage
 	for _, arg := range args {
@@ -27,7 +27,7 @@ func (s NtmHospitalResource) NewHospitalResource (args []BmDataStorage.BmStorage
 			hs = arg.(*NtmDataStorage.NtmHospitalStorage)
 		}
 	}
-	return NtmHospitalResource{NtmImageStorage: is, NtmHospitalStorage: hs}
+	return &NtmHospitalResource{NtmImageStorage: is, NtmHospitalStorage: hs}
 }
 
 func (s NtmHospitalResource) FindAll(r api2go.Request) (api2go.Responder, error) {

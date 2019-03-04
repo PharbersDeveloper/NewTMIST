@@ -16,7 +16,7 @@ type NtmRegionResource struct {
 	NtmImageStorage		*NtmDataStorage.NtmImageStorage
 }
 
-func (s NtmRegionResource) NewRegionResource (args []BmDataStorage.BmStorage) NtmRegionResource {
+func (s NtmRegionResource) NewRegionResource (args []BmDataStorage.BmStorage) *NtmRegionResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var hs *NtmDataStorage.NtmRegionStorage
 	for _, arg := range args {
@@ -27,7 +27,7 @@ func (s NtmRegionResource) NewRegionResource (args []BmDataStorage.BmStorage) Nt
 			hs = arg.(*NtmDataStorage.NtmRegionStorage)
 		}
 	}
-	return NtmRegionResource{NtmImageStorage: is, NtmRegionStorage: hs}
+	return &NtmRegionResource{NtmImageStorage: is, NtmRegionStorage: hs}
 }
 
 func (s NtmRegionResource) FindAll(r api2go.Request) (api2go.Responder, error) {
