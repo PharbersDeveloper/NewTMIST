@@ -15,7 +15,7 @@ type NtmPolicyResource struct {
 	NtmPolicyStorage *NtmDataStorage.NtmPolicyStorage
 }
 
-func (c NtmPolicyResource) NewPolicyResource(args []BmDataStorage.BmStorage) NtmPolicyResource {
+func (c NtmPolicyResource) NewPolicyResource(args []BmDataStorage.BmStorage) *NtmPolicyResource {
 	var cs *NtmDataStorage.NtmPolicyStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -23,7 +23,7 @@ func (c NtmPolicyResource) NewPolicyResource(args []BmDataStorage.BmStorage) Ntm
 			cs = arg.(*NtmDataStorage.NtmPolicyStorage)
 		}
 	}
-	return NtmPolicyResource{NtmPolicyStorage: cs}
+	return &NtmPolicyResource{NtmPolicyStorage: cs}
 }
 
 // FindAll Policys

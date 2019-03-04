@@ -15,7 +15,7 @@ type NtmDepartmentResource struct {
 	NtmDepartmentStorage *NtmDataStorage.NtmDepartmentStorage
 }
 
-func (c NtmDepartmentResource) NewDepartmentResource(args []BmDataStorage.BmStorage) NtmDepartmentResource {
+func (c NtmDepartmentResource) NewDepartmentResource(args []BmDataStorage.BmStorage) *NtmDepartmentResource {
 	var cs *NtmDataStorage.NtmDepartmentStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -23,7 +23,7 @@ func (c NtmDepartmentResource) NewDepartmentResource(args []BmDataStorage.BmStor
 			cs = arg.(*NtmDataStorage.NtmDepartmentStorage)
 		}
 	}
-	return NtmDepartmentResource{NtmDepartmentStorage: cs}
+	return &NtmDepartmentResource{NtmDepartmentStorage: cs}
 }
 
 // FindAll Departments
