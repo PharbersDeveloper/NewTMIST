@@ -12,29 +12,29 @@ import (
 )
 
 type NtmResourceConfigResource struct {
-	NtmResourceConfigStorage       *NtmDataStorage.NtmResourceConfigStorage
-	NtmManagerConfigStorage        *NtmDataStorage.NtmManagerConfigStorage
-	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
+	NtmResourceConfigStorage        *NtmDataStorage.NtmResourceConfigStorage
+	NtmManagerConfigResource        *NtmManagerConfigResource
+	NtmRepresentativeConfigResource *NtmRepresentativeConfigResource
 }
 
 func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) NtmResourceConfigResource {
 	var rcs *NtmDataStorage.NtmResourceConfigStorage
-	var mcs *NtmDataStorage.NtmManagerConfigStorage
-	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
+	var mcr *NtmManagerConfigResource
+	var repcr *NtmRepresentativeConfigResource
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmResourceConfigStorage" {
 			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
-		} else if tp.Name() == "NtmManagerConfigStorage" {
-			mcs = arg.(*NtmDataStorage.NtmManagerConfigStorage)
-		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
-			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
+		} else if tp.Name() == "NtmManagerConfigResource" {
+			mcr = arg.(interface{}).(*NtmManagerConfigResource)
+		} else if tp.Name() == "NtmRepresentativeConfigResource" {
+			repcr = arg.(interface{}).(*NtmRepresentativeConfigResource)
 		}
 	}
 	return NtmResourceConfigResource{
-		NtmResourceConfigStorage: rcs,
-		NtmManagerConfigStorage: mcs,
-		NtmRepresentativeConfigStorage: repcs,
+		NtmResourceConfigStorage:        rcs,
+		NtmManagerConfigResource:        mcr,
+		NtmRepresentativeConfigResource: repcr,
 	}
 }
 
@@ -43,18 +43,14 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 	models := s.NtmResourceConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		if model.ResourceType == 0 {
-			r, err := s.NtmManagerConfigStorage.GetOne(model.ResourceID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.ManagerConfig = r
-		} else if model.ResourceType == 1 {
-			r, err := s.NtmRepresentativeConfigStorage.GetOne(model.ResourceID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.RepresentativeConfig = r
+		mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
+		if err == nil {
+			model.ManagerConfig = mcr.Result().(NtmModel.ManagerConfig)
+		}
+
+		rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
+		if err == nil {
+			model.RepresentativeConfig = rcr.Result().(NtmModel.RepresentativeConfig)
 		}
 
 		result = append(result, *model)
@@ -133,18 +129,14 @@ func (s NtmResourceConfigResource) FindOne(ID string, r api2go.Request) (api2go.
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	if model.ResourceType == 0 {
-		r, err := s.NtmManagerConfigStorage.GetOne(model.ResourceID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.ManagerConfig = r
-	} else if model.ResourceType == 1 {
-		r, err := s.NtmRepresentativeConfigStorage.GetOne(model.ResourceID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.RepresentativeConfig = r
+	mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
+	if err == nil {
+		model.ManagerConfig = mcr.Result().(NtmModel.ManagerConfig)
+	}
+
+	rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
+	if err == nil {
+		model.RepresentativeConfig = rcr.Result().(NtmModel.RepresentativeConfig)
 	}
 
 	return &Response{Res: model}, nil

@@ -15,7 +15,7 @@ type NtmManagerConfigResource struct {
 	NtmManagerConfigStorage *NtmDataStorage.NtmManagerConfigStorage
 }
 
-func (c NtmManagerConfigResource) NewManagerConfigResource(args []BmDataStorage.BmStorage) NtmManagerConfigResource {
+func (c NtmManagerConfigResource) NewManagerConfigResource(args []BmDataStorage.BmStorage) *NtmManagerConfigResource {
 	var cs *NtmDataStorage.NtmManagerConfigStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -23,7 +23,7 @@ func (c NtmManagerConfigResource) NewManagerConfigResource(args []BmDataStorage.
 			cs = arg.(*NtmDataStorage.NtmManagerConfigStorage)
 		}
 	}
-	return NtmManagerConfigResource{NtmManagerConfigStorage: cs}
+	return &NtmManagerConfigResource{NtmManagerConfigStorage: cs}
 }
 
 // FindAll images

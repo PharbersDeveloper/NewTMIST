@@ -45,16 +45,6 @@ func (s NtmRepresentativeConfigStorage) GetOne(id string) (NtmModel.Representati
 	out := NtmModel.RepresentativeConfig{ID: id}
 	err := s.db.FindOne(&in, &out)
 	if err == nil {
-
-		//双重绑定
-		if out.RepresentativeID != "" {
-			item, err := NtmRepresentativeStorage{db: s.db}.GetOne(out.RepresentativeID)
-			if err != nil {
-				return NtmModel.RepresentativeConfig{}, err
-			}
-			out.Representative = item
-		}
-
 		return out, nil
 	}
 	errMessage := fmt.Sprintf("RepresentativeConfig for id %s not found", id)

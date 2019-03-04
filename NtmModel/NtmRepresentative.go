@@ -11,6 +11,7 @@ type Representative struct {
 	Id_    bson.ObjectId `json:"-" bson:"_id"`
 	Name   string        `json:"name" bson:"name"`
 	Gender float64       `json:"gender" bson:"gender"`
+	// 0 => 女 ; 1 => 男
 
 	ImagesIDs []string `json:"-" bson:"image-ids"`
 	Imgs      []*Image `json:"-"`

@@ -13,21 +13,24 @@ import (
 
 type NtmRepresentativeConfigResource struct {
 	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
-	NtmRepresentativeStorage          *NtmDataStorage.NtmRepresentativeStorage
+	NtmRepresentativeResource      *NtmRepresentativeResource
 }
 
-func (s NtmRepresentativeConfigResource) NewRepresentativeConfigResource(args []BmDataStorage.BmStorage) NtmRepresentativeConfigResource {
-	var is *NtmDataStorage.NtmRepresentativeStorage
+func (s NtmRepresentativeConfigResource) NewRepresentativeConfigResource(args []BmDataStorage.BmStorage) *NtmRepresentativeConfigResource {
 	var hs *NtmDataStorage.NtmRepresentativeConfigStorage
+	var rr *NtmRepresentativeResource
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmRepresentativeStorage" {
-			is = arg.(*NtmDataStorage.NtmRepresentativeStorage)
-		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
+		if tp.Name() == "NtmRepresentativeConfigStorage" {
 			hs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
+		} else if tp.Name() == "NtmRepresentativeResource" {
+			rr = arg.(interface{}).(*NtmRepresentativeResource)
 		}
 	}
-	return NtmRepresentativeConfigResource{NtmRepresentativeStorage: is, NtmRepresentativeConfigStorage: hs}
+	return &NtmRepresentativeConfigResource{
+		NtmRepresentativeConfigStorage: hs,
+		NtmRepresentativeResource:      rr,
+	}
 }
 
 func (s NtmRepresentativeConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
@@ -36,11 +39,12 @@ func (s NtmRepresentativeConfigResource) FindAll(r api2go.Request) (api2go.Respo
 
 	for _, model := range models {
 		if model.RepresentativeID != "" {
-			r, err := s.NtmRepresentativeStorage.GetOne(model.RepresentativeID)
+			response, err := s.NtmRepresentativeResource.FindOne(model.RepresentativeID, api2go.Request{})
+			item := response.Result()
 			if err != nil {
 				return &Response{}, err
 			}
-			model.Representative = r
+			model.Representative = item.(NtmModel.Representative)
 		}
 
 		result = append(result, *model)
@@ -120,11 +124,12 @@ func (s NtmRepresentativeConfigResource) FindOne(ID string, r api2go.Request) (a
 	}
 
 	if model.RepresentativeID != "" {
-		r, err := s.NtmRepresentativeStorage.GetOne(model.RepresentativeID)
+		response, err := s.NtmRepresentativeResource.FindOne(model.RepresentativeID, api2go.Request{})
+		item := response.Result()
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Representative = r
+		model.Representative = item.(NtmModel.Representative)
 	}
 
 	return &Response{Res: model}, nil

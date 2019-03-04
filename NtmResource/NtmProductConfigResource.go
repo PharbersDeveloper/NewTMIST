@@ -13,21 +13,24 @@ import (
 
 type NtmProductConfigResource struct {
 	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
-	NtmProductStorage          *NtmDataStorage.NtmProductStorage
+	NtmProductResource      *NtmProductResource
 }
 
-func (s NtmProductConfigResource) NewProductConfigResource(args []BmDataStorage.BmStorage) NtmProductConfigResource {
-	var is *NtmDataStorage.NtmProductStorage
+func (s NtmProductConfigResource) NewProductConfigResource(args []BmDataStorage.BmStorage) *NtmProductConfigResource {
 	var hs *NtmDataStorage.NtmProductConfigStorage
+	var pr *NtmProductResource
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmProductStorage" {
-			is = arg.(*NtmDataStorage.NtmProductStorage)
-		} else if tp.Name() == "NtmProductConfigStorage" {
+		if tp.Name() == "NtmProductConfigStorage" {
 			hs = arg.(*NtmDataStorage.NtmProductConfigStorage)
+		} else if tp.Name() == "NtmProductResource" {
+			pr = arg.(interface{}).(*NtmProductResource)
 		}
 	}
-	return NtmProductConfigResource{NtmProductStorage: is, NtmProductConfigStorage: hs}
+	return &NtmProductConfigResource{
+		NtmProductConfigStorage: hs,
+		NtmProductResource:      pr,
+	}
 }
 
 func (s NtmProductConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
@@ -36,11 +39,12 @@ func (s NtmProductConfigResource) FindAll(r api2go.Request) (api2go.Responder, e
 
 	for _, model := range models {
 		if model.ProductID != "" {
-			r, err := s.NtmProductStorage.GetOne(model.ProductID)
+			response, err := s.NtmProductResource.FindOne(model.ProductID, api2go.Request{})
+			item := response.Result()
 			if err != nil {
 				return &Response{}, err
 			}
-			model.Product = r
+			model.Product = item.(NtmModel.Product)
 		}
 
 		result = append(result, *model)
@@ -120,11 +124,12 @@ func (s NtmProductConfigResource) FindOne(ID string, r api2go.Request) (api2go.R
 	}
 
 	if model.ProductID != "" {
-		r, err := s.NtmProductStorage.GetOne(model.ProductID)
+		response, err := s.NtmProductResource.FindOne(model.ProductID, api2go.Request{})
+		item := response.Result()
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Product = r
+		model.Product = item.(NtmModel.Product)
 	}
 
 	return &Response{Res: model}, nil

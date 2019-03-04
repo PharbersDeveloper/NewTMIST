@@ -16,7 +16,7 @@ type NtmRepresentativeResource struct {
 	NtmImageStorage          *NtmDataStorage.NtmImageStorage
 }
 
-func (s NtmRepresentativeResource) NewRepresentativeResource(args []BmDataStorage.BmStorage) NtmRepresentativeResource {
+func (s NtmRepresentativeResource) NewRepresentativeResource(args []BmDataStorage.BmStorage) *NtmRepresentativeResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var hs *NtmDataStorage.NtmRepresentativeStorage
 	for _, arg := range args {
@@ -27,7 +27,7 @@ func (s NtmRepresentativeResource) NewRepresentativeResource(args []BmDataStorag
 			hs = arg.(*NtmDataStorage.NtmRepresentativeStorage)
 		}
 	}
-	return NtmRepresentativeResource{NtmImageStorage: is, NtmRepresentativeStorage: hs}
+	return &NtmRepresentativeResource{NtmImageStorage: is, NtmRepresentativeStorage: hs}
 }
 
 func (s NtmRepresentativeResource) FindAll(r api2go.Request) (api2go.Responder, error) {
