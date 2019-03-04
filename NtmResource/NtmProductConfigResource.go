@@ -13,30 +13,53 @@ import (
 
 type NtmProductConfigResource struct {
 	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
+	NtmGoodsConfigStorage   *NtmDataStorage.NtmGoodsConfigStorage
 	NtmProductResource      *NtmProductResource
 }
 
 func (s NtmProductConfigResource) NewProductConfigResource(args []BmDataStorage.BmStorage) *NtmProductConfigResource {
-	var hs *NtmDataStorage.NtmProductConfigStorage
+	var pcs *NtmDataStorage.NtmProductConfigStorage
+	var gcs *NtmDataStorage.NtmGoodsConfigStorage
 	var pr *NtmProductResource
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmProductConfigStorage" {
-			hs = arg.(*NtmDataStorage.NtmProductConfigStorage)
+			pcs = arg.(*NtmDataStorage.NtmProductConfigStorage)
+		} else if tp.Name() == "NtmGoodsConfigStorage" {
+			gcs = arg.(interface{}).(*NtmDataStorage.NtmGoodsConfigStorage)
 		} else if tp.Name() == "NtmProductResource" {
 			pr = arg.(interface{}).(*NtmProductResource)
 		}
 	}
 	return &NtmProductConfigResource{
-		NtmProductConfigStorage: hs,
+		NtmProductConfigStorage: pcs,
+		NtmGoodsConfigStorage:   gcs,
 		NtmProductResource:      pr,
 	}
 }
 
 func (s NtmProductConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	goodsConfigID, gcok := r.QueryParams["goodsConfigsID"]
 	var result []NtmModel.ProductConfig
-	models := s.NtmProductConfigStorage.GetAll(r, -1, -1)
 
+	if gcok {
+		modelRootID := goodsConfigID[0]
+
+		modelRoot, err := s.NtmGoodsConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+
+		model, err := s.NtmProductConfigStorage.GetOne(modelRoot.GoodsID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+
+		return &Response{Res: result}, nil
+	}
+
+	models := s.NtmProductConfigStorage.GetAll(r, -1, -1)
 	for _, model := range models {
 		if model.ProductID != "" {
 			response, err := s.NtmProductResource.FindOne(model.ProductID, api2go.Request{})

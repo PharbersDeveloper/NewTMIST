@@ -13,30 +13,53 @@ import (
 
 type NtmRepresentativeConfigResource struct {
 	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
+	NtmResourceConfigStorage       *NtmDataStorage.NtmResourceConfigStorage
 	NtmRepresentativeResource      *NtmRepresentativeResource
 }
 
 func (s NtmRepresentativeConfigResource) NewRepresentativeConfigResource(args []BmDataStorage.BmStorage) *NtmRepresentativeConfigResource {
-	var hs *NtmDataStorage.NtmRepresentativeConfigStorage
+	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
+	var rcs *NtmDataStorage.NtmResourceConfigStorage
 	var rr *NtmRepresentativeResource
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmRepresentativeConfigStorage" {
-			hs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
+			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
+		} else if tp.Name() == "NtmResourceConfigStorage" {
+			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
 		} else if tp.Name() == "NtmRepresentativeResource" {
 			rr = arg.(interface{}).(*NtmRepresentativeResource)
 		}
 	}
 	return &NtmRepresentativeConfigResource{
-		NtmRepresentativeConfigStorage: hs,
+		NtmRepresentativeConfigStorage: repcs,
+		NtmResourceConfigStorage:       rcs,
 		NtmRepresentativeResource:      rr,
 	}
 }
 
 func (s NtmRepresentativeConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	resourceConfigsID, rcok := r.QueryParams["resourceConfigsID"]
 	var result []NtmModel.RepresentativeConfig
-	models := s.NtmRepresentativeConfigStorage.GetAll(r, -1, -1)
 
+	if rcok {
+		modelRootID := resourceConfigsID[0]
+
+		modelRoot, err := s.NtmResourceConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+
+		model, err := s.NtmRepresentativeConfigStorage.GetOne(modelRoot.ResourceID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+
+		return &Response{Res: result}, nil
+	}
+
+	models := s.NtmRepresentativeConfigStorage.GetAll(r, -1, -1)
 	for _, model := range models {
 		if model.RepresentativeID != "" {
 			response, err := s.NtmRepresentativeResource.FindOne(model.RepresentativeID, api2go.Request{})
