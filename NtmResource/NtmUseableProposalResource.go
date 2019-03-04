@@ -11,38 +11,38 @@ import (
 	"strconv"
 )
 
-type NtmRegionConfigResource struct {
-	NtmRegionConfigStorage		*NtmDataStorage.NtmRegionConfigStorage
-	NtmRegionResource			*NtmRegionResource
+type NtmUseableProposalResource struct {
+	NtmUseableProposalStorage	*NtmDataStorage.NtmUseableProposalStorage
+	NtmProposalResource			*NtmProposalResource
 }
 
-func (s NtmRegionConfigResource) NewRegionConfigResource(args []BmDataStorage.BmStorage) *NtmRegionConfigResource {
-	var rcs *NtmDataStorage.NtmRegionConfigStorage
-	var rr *NtmRegionResource
+func (s NtmUseableProposalResource) NewUseableProposalResource(args []BmDataStorage.BmStorage) *NtmUseableProposalResource {
+	var rcs *NtmDataStorage.NtmUseableProposalStorage
+	var rr *NtmProposalResource
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmRegionConfigStorage" {
-			rcs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
-		} else if tp.Name() == "NtmRegionResource" {
-			rr = arg.(interface{}).(*NtmRegionResource)
+		if tp.Name() == "NtmUseableProposalStorage" {
+			rcs = arg.(*NtmDataStorage.NtmUseableProposalStorage)
+		} else if tp.Name() == "NtmProposalResource" {
+			rr = arg.(interface{}).(*NtmProposalResource)
 		}
 	}
-	return &NtmRegionConfigResource{NtmRegionResource: rr, NtmRegionConfigStorage: rcs}
+	return &NtmUseableProposalResource{NtmProposalResource: rr, NtmUseableProposalStorage: rcs}
 }
 
-func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	var result []NtmModel.RegionConfig
-	models := s.NtmRegionConfigStorage.GetAll(r, -1, -1)
+func (s NtmUseableProposalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	var result []NtmModel.UseableProposal
+	models := s.NtmUseableProposalStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		if model.RegionID != "" {
-			response, err := s.NtmRegionResource.FindOne(model.RegionID, api2go.Request{})
+		if model.ProposalID != "" {
+			response, err := s.NtmProposalResource.FindOne(model.ProposalID, api2go.Request{})
 			item := response.Result()
 			if err != nil {
 				return &Response{}, err
 			}
-			model.Region = item.(NtmModel.Region)
+			model.Proposal = item.(NtmModel.Proposal)
 		}
 
 		result = append(result, *model)
@@ -52,9 +52,9 @@ func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, er
 }
 
 // PaginatedFindAll can be used to load models in chunks
-func (s NtmRegionConfigResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
+func (s NtmUseableProposalResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result                      []NtmModel.RegionConfig
+		result                      []NtmModel.UseableProposal
 		number, size, offset, limit string
 	)
 
@@ -87,7 +87,7 @@ func (s NtmRegionConfigResource) PaginatedFindAll(r api2go.Request) (uint, api2g
 		}
 
 		start := sizeI * (numberI - 1)
-		for _, iter := range s.NtmRegionConfigStorage.GetAll(r, int(start), int(sizeI)) {
+		for _, iter := range s.NtmUseableProposalStorage.GetAll(r, int(start), int(sizeI)) {
 			result = append(result, *iter)
 		}
 
@@ -102,63 +102,63 @@ func (s NtmRegionConfigResource) PaginatedFindAll(r api2go.Request) (uint, api2g
 			return 0, &Response{}, err
 		}
 
-		for _, iter := range s.NtmRegionConfigStorage.GetAll(r, int(offsetI), int(limitI)) {
+		for _, iter := range s.NtmUseableProposalStorage.GetAll(r, int(offsetI), int(limitI)) {
 			result = append(result, *iter)
 		}
 	}
 
-	in := NtmModel.RegionConfig{}
-	count := s.NtmRegionConfigStorage.Count(r, in)
+	in := NtmModel.UseableProposal{}
+	count := s.NtmUseableProposalStorage.Count(r, in)
 
 	return uint(count), &Response{Res: result}, nil
 }
 
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
-func (s NtmRegionConfigResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmRegionConfigStorage.GetOne(ID)
+func (s NtmUseableProposalResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
+	model, err := s.NtmUseableProposalStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	if model.RegionID != "" {
-		response, err := s.NtmRegionResource.FindOne(model.RegionID, api2go.Request{})
+	if model.ProposalID != "" {
+		response, err := s.NtmProposalResource.FindOne(model.ProposalID, api2go.Request{})
 		item := response.Result()
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Region = item.(NtmModel.Region)
+		model.Proposal = item.(NtmModel.Proposal)
 	}
 
 	return &Response{Res: model}, nil
 }
 
 // Create method to satisfy `api2go.DataSource` interface
-func (s NtmRegionConfigResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.RegionConfig)
+func (s NtmUseableProposalResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.UseableProposal)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	id := s.NtmRegionConfigStorage.Insert(model)
+	id := s.NtmUseableProposalStorage.Insert(model)
 	model.ID = id
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
 
 // Delete to satisfy `api2go.DataSource` interface
-func (s NtmRegionConfigResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
-	err := s.NtmRegionConfigStorage.Delete(id)
+func (s NtmUseableProposalResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
+	err := s.NtmUseableProposalStorage.Delete(id)
 	return &Response{Code: http.StatusNoContent}, err
 }
 
 //Update stores all changes on the model
-func (s NtmRegionConfigResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.RegionConfig)
+func (s NtmUseableProposalResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.UseableProposal)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	err := s.NtmRegionConfigStorage.Update(model)
+	err := s.NtmUseableProposalStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }
