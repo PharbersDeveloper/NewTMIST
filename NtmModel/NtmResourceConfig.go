@@ -4,6 +4,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"github.com/manyminds/api2go/jsonapi"
 	"errors"
+	"strconv"
 )
 
 // ResourceConfig Info
@@ -92,5 +93,67 @@ func (u *ResourceConfig) SetToOneReferenceID(name, ID string) error {
 }
 
 func (u *ResourceConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "scenario-id":
+			rst[k] = v[0]
+		case "applicant-id":
+			rst[k] = v[0]
+		case "status":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			rst[k] = val
+		case "course-type":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			rst[k] = val
+		case "lt[create-time]":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			r := make(map[string]interface{})
+			r["$lt"] = val
+			rst["create-time"] = r
+		case "lte[create-time]":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			r := make(map[string]interface{})
+			r["$lte"] = val
+			rst["create-time"] = r
+		case "gt[apply-time]":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			r := make(map[string]interface{})
+			r["$gt"] = val
+			rst["apply-time"] = r
+		case "gte[apply-time]":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			r := make(map[string]interface{})
+			r["$gte"] = val
+			rst["apply-time"] = r
+		case "ne[course-type]":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			r := make(map[string]interface{})
+			r["$ne"] = val
+			rst["course-type"] = r
+		}
+	}
+
+	return rst
 }
