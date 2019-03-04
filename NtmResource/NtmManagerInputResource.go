@@ -11,50 +11,60 @@ import (
 	"strconv"
 )
 
-type NtmHospitalResource struct {
-	NtmHospitalStorage *NtmDataStorage.NtmHospitalStorage
-	NtmImageStorage    *NtmDataStorage.NtmImageStorage
+type NtmManagerInputResource struct {
+	NtmManagerInputStorage *NtmDataStorage.NtmManagerInputStorage
+	NtmPaperInputStorage   *NtmDataStorage.NtmPaperInputStorage
 }
 
-func (s NtmHospitalResource) NewHospitalResource (args []BmDataStorage.BmStorage) *NtmHospitalResource {
-	var is *NtmDataStorage.NtmImageStorage
-	var hs *NtmDataStorage.NtmHospitalStorage
+func (s NtmManagerInputResource) NewManagerInputResource(args []BmDataStorage.BmStorage) *NtmManagerInputResource {
+	var bis *NtmDataStorage.NtmManagerInputStorage
+	var pis *NtmDataStorage.NtmPaperInputStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmImageStorage" {
-			is = arg.(*NtmDataStorage.NtmImageStorage)
-		} else if tp.Name() == "NtmHospitalStorage" {
-			hs = arg.(*NtmDataStorage.NtmHospitalStorage)
+		if tp.Name() == "NtmManagerInputStorage" {
+			bis = arg.(*NtmDataStorage.NtmManagerInputStorage)
+		} else if tp.Name() == "NtmPaperInputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
 		}
 	}
-	return &NtmHospitalResource{NtmImageStorage: is, NtmHospitalStorage: hs}
+	return &NtmManagerInputResource{
+		NtmManagerInputStorage: bis,
+		NtmPaperInputStorage:   pis,
+	}
 }
 
-func (s NtmHospitalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	var result []NtmModel.Hospital
-	models := s.NtmHospitalStorage.GetAll(r, -1, -1)
+func (s NtmManagerInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	paperInputsID, piok := r.QueryParams["paperInputsID"]
+	var result []NtmModel.ManagerInput
 
-	for _, model := range models {
-		// get all sweets for the model
-		model.Imgs = []*NtmModel.Image{}
-		for _, kID := range model.ImagesIDs {
-			choc, err := s.NtmImageStorage.GetOne(kID)
+	if piok {
+		modelRootID := paperInputsID[0]
+
+		modelRoot, err := s.NtmPaperInputStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		for _, modelID := range modelRoot.ManagerInputIDs {
+			model, err := s.NtmManagerInputStorage.GetOne(modelID)
 			if err != nil {
 				return &Response{}, err
 			}
-			model.Imgs = append(model.Imgs, &choc)
+			result = append(result, model)
 		}
-
-		result = append(result, *model)
+		return &Response{Res: result}, nil
 	}
 
+	models := s.NtmManagerInputStorage.GetAll(r, -1, -1)
+	for _, model := range models {
+		result = append(result, *model)
+	}
 	return &Response{Res: result}, nil
 }
 
 // PaginatedFindAll can be used to load models in chunks
-func (s NtmHospitalResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
+func (s NtmManagerInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result                      []NtmModel.Hospital
+		result                      []NtmModel.ManagerInput
 		number, size, offset, limit string
 	)
 
@@ -87,7 +97,7 @@ func (s NtmHospitalResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Re
 		}
 
 		start := sizeI * (numberI - 1)
-		for _, iter := range s.NtmHospitalStorage.GetAll(r, int(start), int(sizeI)) {
+		for _, iter := range s.NtmManagerInputStorage.GetAll(r, int(start), int(sizeI)) {
 			result = append(result, *iter)
 		}
 
@@ -102,63 +112,53 @@ func (s NtmHospitalResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Re
 			return 0, &Response{}, err
 		}
 
-		for _, iter := range s.NtmHospitalStorage.GetAll(r, int(offsetI), int(limitI)) {
+		for _, iter := range s.NtmManagerInputStorage.GetAll(r, int(offsetI), int(limitI)) {
 			result = append(result, *iter)
 		}
 	}
 
-	in := NtmModel.Hospital{}
-	count := s.NtmHospitalStorage.Count(r, in)
+	in := NtmModel.ManagerInput{}
+	count := s.NtmManagerInputStorage.Count(r, in)
 
 	return uint(count), &Response{Res: result}, nil
 }
 
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
-func (s NtmHospitalResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmHospitalStorage.GetOne(ID)
+func (s NtmManagerInputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
+	model, err := s.NtmManagerInputStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
-
-	model.Imgs = []*NtmModel.Image{}
-	for _, kID := range model.ImagesIDs {
-		choc, err := s.NtmImageStorage.GetOne(kID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.Imgs = append(model.Imgs, &choc)
-	}
-
 	return &Response{Res: model}, nil
 }
 
 // Create method to satisfy `api2go.DataSource` interface
-func (s NtmHospitalResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.Hospital)
+func (s NtmManagerInputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.ManagerInput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	id := s.NtmHospitalStorage.Insert(model)
+	id := s.NtmManagerInputStorage.Insert(model)
 	model.ID = id
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
 
 // Delete to satisfy `api2go.DataSource` interface
-func (s NtmHospitalResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
-	err := s.NtmHospitalStorage.Delete(id)
+func (s NtmManagerInputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
+	err := s.NtmManagerInputStorage.Delete(id)
 	return &Response{Code: http.StatusNoContent}, err
 }
 
 //Update stores all changes on the model
-func (s NtmHospitalResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.Hospital)
+func (s NtmManagerInputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.ManagerInput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	err := s.NtmHospitalStorage.Update(model)
+	err := s.NtmManagerInputStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }
