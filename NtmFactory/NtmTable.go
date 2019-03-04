@@ -28,6 +28,7 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmResourceConfig": NtmModel.ResourceConfig{},
 	"NtmGoodsConfig": NtmModel.GoodsConfig{},
 	"NtmDestConfig": NtmModel.DestConfig{},
+	"NtmScenario": NtmModel.Scenario{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -46,6 +47,7 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmResourceConfigStorage": NtmDataStorage.NtmResourceConfigStorage{},
 	"NtmGoodsConfigStorage": NtmDataStorage.NtmGoodsConfigStorage{},
 	"NtmDestConfigStorage": NtmDataStorage.NtmDestConfigStorage{},
+	"NtmScenarioStorage": NtmDataStorage.NtmScenarioStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -64,6 +66,7 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmResourceConfigResource": NtmResource.NtmResourceConfigResource{},
 	"NtmGoodsConfigResource": NtmResource.NtmGoodsConfigResource{},
 	"NtmDestConfigResource": NtmResource.NtmDestConfigResource{},
+	"NtmScenarioResource": NtmResource.NtmScenarioResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
