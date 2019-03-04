@@ -17,7 +17,7 @@ type NtmProductResource struct {
 	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
 }
 
-func (s NtmProductResource) NewProductResource(args []BmDataStorage.BmStorage) NtmProductResource {
+func (s NtmProductResource) NewProductResource(args []BmDataStorage.BmStorage) *NtmProductResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var ps *NtmDataStorage.NtmProductStorage
 	var pcs *NtmDataStorage.NtmProductConfigStorage
@@ -31,7 +31,7 @@ func (s NtmProductResource) NewProductResource(args []BmDataStorage.BmStorage) N
 			pcs = arg.(*NtmDataStorage.NtmProductConfigStorage)
 		}
 	}
-	return NtmProductResource{
+	return &NtmProductResource{
 		NtmImageStorage:         is,
 		NtmProductStorage:       ps,
 		NtmProductConfigStorage: pcs,
