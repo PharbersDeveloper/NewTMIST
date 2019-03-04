@@ -13,74 +13,47 @@ import (
 
 type NtmImageResource struct {
 	NtmImageStorage *NtmDataStorage.NtmImageStorage
+	NtmProductStorage *NtmDataStorage.NtmProductStorage
 }
 
 func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) NtmImageResource {
 	var cs *NtmDataStorage.NtmImageStorage
+	var ps *NtmDataStorage.NtmProductStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmImageStorage" {
 			cs = arg.(*NtmDataStorage.NtmImageStorage)
+		} else if tp.Name() == "NtmProductStorage" {
+			ps = arg.(*NtmDataStorage.NtmProductStorage)
 		}
 	}
-	return NtmImageResource{NtmImageStorage: cs}
+	return NtmImageResource{
+		NtmImageStorage: cs,
+		NtmProductStorage: ps,
+	}
 }
 
 // FindAll images
 func (c NtmImageResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	//sessioninfosID, ok := r.QueryParams["sessioninfosID"]
-	//brandsID, brdok := r.QueryParams["brandsID"]
-	//yardsID, ydok := r.QueryParams["yardsID"]
+	productsID, pok := r.QueryParams["productsID"]
 	result := []NtmModel.Image{}
-	//if ok {
-	//	modelRootID := sessioninfosID[0]
-	//
-	//	modelRoot, err := c.BmSessioninfoStorage.GetOne(modelRootID)
-	//	if err != nil {
-	//		return &Response{}, err
-	//	}
-	//	for _, modelID := range modelRoot.ImagesIDs {
-	//		model, err := c.BmImageStorage.GetOne(modelID)
-	//		if err != nil {
-	//			return &Response{}, err
-	//		}
-	//		result = append(result, model)
-	//	}
-	//
-	//	return &Response{Res: result}, nil
-	//} else if brdok {
-	//	modelRootID := brandsID[0]
-	//
-	//	modelRoot, err := c.BmBrandStorage.GetOne(modelRootID)
-	//	if err != nil {
-	//		return &Response{}, err
-	//	}
-	//	for _, modelID := range modelRoot.ImagesIDs {
-	//		model, err := c.BmImageStorage.GetOne(modelID)
-	//		if err != nil {
-	//			return &Response{}, err
-	//		}
-	//		result = append(result, model)
-	//	}
-	//
-	//	return &Response{Res: result}, nil
-	//} else if ydok {
-	//	modelRootID := yardsID[0]
-	//
-	//	modelRoot, err := c.BmYardStorage.GetOne(modelRootID)
-	//	if err != nil {
-	//		return &Response{}, err
-	//	}
-	//	for _, modelID := range modelRoot.ImagesIDs {
-	//		model, err := c.BmImageStorage.GetOne(modelID)
-	//		if err != nil {
-	//			return &Response{}, err
-	//		}
-	//		result = append(result, model)
-	//	}
-	//
-	//	return &Response{Res: result}, nil
-	//}
+	if pok {
+		modelRootID := productsID[0]
+
+		modelRoot, err := c.NtmProductStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		for _, modelID := range modelRoot.ImagesIDs {
+			model, err := c.NtmImageStorage.GetOne(modelID)
+			if err != nil {
+				return &Response{}, err
+			}
+			result = append(result, model)
+		}
+
+		return &Response{Res: result}, nil
+	}
 	result = c.NtmImageStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }

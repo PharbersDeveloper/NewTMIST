@@ -12,28 +12,54 @@ import (
 )
 
 type NtmProductResource struct {
-	NtmProductStorage	*NtmDataStorage.NtmProductStorage
-	NtmImageStorage		*NtmDataStorage.NtmImageStorage
+	NtmProductStorage       *NtmDataStorage.NtmProductStorage
+	NtmImageStorage         *NtmDataStorage.NtmImageStorage
+	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
 }
 
-func (s NtmProductResource) NewProductResource (args []BmDataStorage.BmStorage) NtmProductResource {
+func (s NtmProductResource) NewProductResource(args []BmDataStorage.BmStorage) NtmProductResource {
 	var is *NtmDataStorage.NtmImageStorage
-	var hs *NtmDataStorage.NtmProductStorage
+	var ps *NtmDataStorage.NtmProductStorage
+	var pcs *NtmDataStorage.NtmProductConfigStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmImageStorage" {
 			is = arg.(*NtmDataStorage.NtmImageStorage)
 		} else if tp.Name() == "NtmProductStorage" {
-			hs = arg.(*NtmDataStorage.NtmProductStorage)
+			ps = arg.(*NtmDataStorage.NtmProductStorage)
+		} else if tp.Name() == "NtmProductConfigStorage" {
+			pcs = arg.(*NtmDataStorage.NtmProductConfigStorage)
 		}
 	}
-	return NtmProductResource{NtmImageStorage: is, NtmProductStorage: hs}
+	return NtmProductResource{
+		NtmImageStorage:         is,
+		NtmProductStorage:       ps,
+		NtmProductConfigStorage: pcs,
+	}
 }
 
 func (s NtmProductResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	productConfigID, pcok := r.QueryParams["productConfigsID"]
 	var result []NtmModel.Product
-	models := s.NtmProductStorage.GetAll(r, -1, -1)
 
+	if pcok {
+		modelRootID := productConfigID[0]
+
+		modelRoot, err := s.NtmProductConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+
+		model, err := s.NtmProductStorage.GetOne(modelRoot.ProductID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+
+		return &Response{Res: result}, nil
+	}
+
+	models := s.NtmProductStorage.GetAll(r, -1, -1)
 	for _, model := range models {
 		// get all sweets for the model
 		model.Imgs = []*NtmModel.Image{}
