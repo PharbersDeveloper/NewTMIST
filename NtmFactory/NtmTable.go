@@ -52,6 +52,14 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmHospitalConfigStorage": NtmDataStorage.NtmHospitalConfigStorage{},
 	"NtmResourceConfigStorage": NtmDataStorage.NtmResourceConfigStorage{},
 	"NtmGoodsConfigStorage": NtmDataStorage.NtmGoodsConfigStorage{},
+	"NtmBusinessInputStorage": NtmDataStorage.NtmBusinessInputStorage{},
+	"NtmRepresentativeInputStorage": NtmDataStorage.NtmRepresentativeInputStorage{},
+	"NtmManagerInputStorage": NtmDataStorage.NtmManagerInputStorage{},
+	"NtmPaperInputStorage": NtmDataStorage.NtmPaperInputStorage{},
+	"NtmDestConfigStorage": NtmDataStorage.NtmDestConfigStorage{},
+	"NtmScenarioStorage": NtmDataStorage.NtmScenarioStorage{},
+	"NtmProposalStorage": NtmDataStorage.NtmProposalStorage{},
+	"NtmUseableProposalStorage": NtmDataStorage.NtmUseableProposalStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -69,6 +77,14 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmHospitalConfigResource": NtmResource.NtmHospitalConfigResource{},
 	"NtmResourceConfigResource": NtmResource.NtmResourceConfigResource{},
 	"NtmGoodsConfigResource": NtmResource.NtmGoodsConfigResource{},
+	"NtmBusinessInputResource": NtmResource.NtmBusinessInputResource{},
+	"NtmRepresentativeInputResource": NtmResource.NtmRepresentativeInputResource{},
+	"NtmManagerInputResource": NtmResource.NtmManagerInputResource{},
+	"NtmPaperInputResource": NtmResource.NtmPaperInputResource{},
+	"NtmDestConfigResource": NtmResource.NtmDestConfigResource{},
+	"NtmScenarioResource": NtmResource.NtmScenarioResource{},
+	"NtmProposalResource": NtmResource.NtmProposalResource{},
+	"NtmUseableProposalResource": NtmResource.NtmUseableProposalResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{

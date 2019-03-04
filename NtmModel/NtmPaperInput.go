@@ -87,15 +87,15 @@ func (c PaperInput) GetReferencedIDs() []jsonapi.ReferenceID {
 func (c PaperInput) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	for key := range c.BusinessInputIDs {
+	for key := range c.BusinessInputs {
 		result = append(result, c.BusinessInputs[key])
 	}
 
-	for key := range c.RepresentativeInputIDs {
+	for key := range c.RepresentativeInputs {
 		result = append(result, c.RepresentativeInputs[key])
 	}
 
-	for key := range c.ManagerInputIDs {
+	for key := range c.ManagerInputs {
 		result = append(result, c.ManagerInputs[key])
 	}
 
