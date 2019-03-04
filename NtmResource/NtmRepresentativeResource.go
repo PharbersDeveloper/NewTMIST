@@ -12,28 +12,55 @@ import (
 )
 
 type NtmRepresentativeResource struct {
-	NtmRepresentativeStorage *NtmDataStorage.NtmRepresentativeStorage
-	NtmImageStorage          *NtmDataStorage.NtmImageStorage
+	NtmRepresentativeStorage       *NtmDataStorage.NtmRepresentativeStorage
+	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
+	NtmImageStorage                *NtmDataStorage.NtmImageStorage
 }
 
 func (s NtmRepresentativeResource) NewRepresentativeResource(args []BmDataStorage.BmStorage) *NtmRepresentativeResource {
 	var is *NtmDataStorage.NtmImageStorage
-	var hs *NtmDataStorage.NtmRepresentativeStorage
+	var reps *NtmDataStorage.NtmRepresentativeStorage
+	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmImageStorage" {
 			is = arg.(*NtmDataStorage.NtmImageStorage)
 		} else if tp.Name() == "NtmRepresentativeStorage" {
-			hs = arg.(*NtmDataStorage.NtmRepresentativeStorage)
+			reps = arg.(*NtmDataStorage.NtmRepresentativeStorage)
+		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
+			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
 		}
 	}
-	return &NtmRepresentativeResource{NtmImageStorage: is, NtmRepresentativeStorage: hs}
+	return &NtmRepresentativeResource{
+		NtmImageStorage:                is,
+		NtmRepresentativeStorage:       reps,
+		NtmRepresentativeConfigStorage: repcs,
+	}
 }
 
 func (s NtmRepresentativeResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	var result []NtmModel.Representative
-	models := s.NtmRepresentativeStorage.GetAll(r, -1, -1)
 
+	representativeConfigsID, rcok := r.QueryParams["representativeConfigsID"]
+	var result []NtmModel.Representative
+
+	if rcok {
+		modelRootID := representativeConfigsID[0]
+
+		modelRoot, err := s.NtmRepresentativeConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+
+		model, err := s.NtmRepresentativeStorage.GetOne(modelRoot.RepresentativeID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+
+		return &Response{Res: result}, nil
+	}
+
+	models := s.NtmRepresentativeStorage.GetAll(r, -1, -1)
 	for _, model := range models {
 		// get all sweets for the model
 		model.Imgs = []*NtmModel.Image{}

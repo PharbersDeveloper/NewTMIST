@@ -12,34 +12,55 @@ import (
 )
 
 type NtmManagerConfigResource struct {
-	NtmManagerConfigStorage *NtmDataStorage.NtmManagerConfigStorage
+	NtmManagerConfigStorage  *NtmDataStorage.NtmManagerConfigStorage
+	NtmResourceConfigStorage *NtmDataStorage.NtmResourceConfigStorage
 }
 
 func (c NtmManagerConfigResource) NewManagerConfigResource(args []BmDataStorage.BmStorage) *NtmManagerConfigResource {
-	var cs *NtmDataStorage.NtmManagerConfigStorage
+	var mcs *NtmDataStorage.NtmManagerConfigStorage
+	var rcs *NtmDataStorage.NtmResourceConfigStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmManagerConfigStorage" {
-			cs = arg.(*NtmDataStorage.NtmManagerConfigStorage)
+			mcs = arg.(*NtmDataStorage.NtmManagerConfigStorage)
+		} else if tp.Name() == "NtmResourceConfigStorage" {
+			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
 		}
 	}
-	return &NtmManagerConfigResource{NtmManagerConfigStorage: cs}
+	return &NtmManagerConfigResource{
+		NtmManagerConfigStorage:  mcs,
+		NtmResourceConfigStorage: rcs,
+	}
 }
 
-// FindAll images
 func (c NtmManagerConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	resourceConfigsID, rcok := r.QueryParams["resourceConfigsID"]
 	result := []NtmModel.ManagerConfig{}
+	if rcok {
+		modelRootID := resourceConfigsID[0]
+
+		modelRoot, err := c.NtmResourceConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+
+		model, err := c.NtmManagerConfigStorage.GetOne(modelRoot.ResourceID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+
+		return &Response{Res: result}, nil
+	}
 	result = c.NtmManagerConfigStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
 
-// FindOne choc
 func (c NtmManagerConfigResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
 	res, err := c.NtmManagerConfigStorage.GetOne(ID)
 	return &Response{Res: res}, err
 }
 
-// Create a new choc
 func (c NtmManagerConfigResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
 	choc, ok := obj.(NtmModel.ManagerConfig)
 	if !ok {
@@ -55,13 +76,11 @@ func (c NtmManagerConfigResource) Create(obj interface{}, r api2go.Request) (api
 	return &Response{Res: choc, Code: http.StatusCreated}, nil
 }
 
-// Delete a choc :(
 func (c NtmManagerConfigResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
 	err := c.NtmManagerConfigStorage.Delete(id)
 	return &Response{Code: http.StatusOK}, err
 }
 
-// Update a choc
 func (c NtmManagerConfigResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
 	choc, ok := obj.(NtmModel.ManagerConfig)
 	if !ok {
