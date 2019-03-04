@@ -29,6 +29,8 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmGoodsConfig": NtmModel.GoodsConfig{},
 	"NtmDestConfig": NtmModel.DestConfig{},
 	"NtmScenario": NtmModel.Scenario{},
+	"NtmProposal": NtmModel.Proposal{},
+	"NtmUseableProposal": NtmModel.UseableProposal{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -48,6 +50,8 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmGoodsConfigStorage": NtmDataStorage.NtmGoodsConfigStorage{},
 	"NtmDestConfigStorage": NtmDataStorage.NtmDestConfigStorage{},
 	"NtmScenarioStorage": NtmDataStorage.NtmScenarioStorage{},
+	"NtmProposalStorage": NtmDataStorage.NtmProposalStorage{},
+	"NtmUseableProposalStorage": NtmDataStorage.NtmUseableProposalStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -67,12 +71,13 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmGoodsConfigResource": NtmResource.NtmGoodsConfigResource{},
 	"NtmDestConfigResource": NtmResource.NtmDestConfigResource{},
 	"NtmScenarioResource": NtmResource.NtmScenarioResource{},
+	"NtmProposalResource": NtmResource.NtmProposalResource{},
+	"NtmUseableProposalResource": NtmResource.NtmUseableProposalResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
 	"NtmCommonPanicHandle":  NtmHandler.CommonPanicHandle{},
 }
-
 var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{
 	//"BmCheckTokenMiddleware": BmMiddleware.CheckTokenMiddleware{},
 }
