@@ -4,18 +4,20 @@ import (
 	"errors"
 	"github.com/manyminds/api2go/jsonapi"
 	"gopkg.in/mgo.v2/bson"
+	"strconv"
 )
 
 // DestConfig Info
 type DestConfig struct {
-	ID           string        `json:"-"`
-	Id_          bson.ObjectId `json:"-" bson:"_id"`
-	ScenarioId   string        `json:"scenario-id" bson:"scenario-id"`
-	DestType 	 float64       `json:"dest-type" bson:"dest-type"` // TODO: 0 => RegionConfig, 1 => HospitalConfig
-	DestID   	 string        `json:"dest-id" bson:"dest-id"`
+	ID         string        `json:"-"`
+	Id_        bson.ObjectId `json:"-" bson:"_id"`
+	ScenarioId string        `json:"scenario-id" bson:"scenario-id"`
+	DestType   float64       `json:"dest-type" bson:"dest-type"`
+	// 0 => RegionConfig; 1 => HospitalConfig
+	DestID     string        `json:"dest-id" bson:"dest-id"`
 
-	RegionConfig		RegionConfig	`json:"-"`
-	HospitalConfig		HospitalConfig 	`json:"-"`
+	RegionConfig   RegionConfig   `json:"-"`
+	HospitalConfig HospitalConfig `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -96,6 +98,12 @@ func (u *DestConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
 		switch k {
 		case "scenario-id":
 			rst[k] = v[0]
+		case "dest-type":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			rst[k] = val
 		}
 	}
 

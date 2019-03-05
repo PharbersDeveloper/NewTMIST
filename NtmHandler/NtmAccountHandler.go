@@ -93,6 +93,7 @@ func (h NtmAccountHandler) AccountValidation(w http.ResponseWriter, r *http.Requ
 		err = h.rd.PushToken(token, time.Hour*24*365)
 		redisDriver.HSet(token+"_info", "uid", out.ID)
 		redisDriver.HSet(token+"_info", "nickname", out.Nickname)
+		redisDriver.Expire(token+"_info", time.Hour*24*365)
 
 		out.Password = ""
 		out.Token = token

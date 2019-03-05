@@ -7,21 +7,21 @@ import (
 )
 
 type HospitalConfig struct {
-	ID  				string        `json:"-"`
-	Id_ 				bson.ObjectId `json:"-" bson:"_id"`
+	ID  string        `json:"-"`
+	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	DoctorNumber		int `json:"doctor-number" bson:"doctor-number"`
-	BedNumber      		int `json:"bed-number" bson:"bed-number"`
-	Income				float64 `json:"income" bson:"income"`
-	ProductConfigIDs	[]string `json:"product-config-ids" bson:"product-config-ids"`
+	DoctorNumber int     `json:"doctor-number" bson:"doctor-number"`
+	BedNumber    int     `json:"bed-number" bson:"bed-number"`
+	Income       float64 `json:"income" bson:"income"`
 
-	PolicyIDs			[]string `json:"-" bson:"policy-ids"`
-	HospitalID 			string `json:"-" bson:"hospital-id"`
-	DepartmentIDs		[]string `json:"-" bson:"department-ids"`
-	Hospital    		Hospital `json:"-"`
-	Policies 			[]*Policy `json:"-"`
-	Departments			[]*Department `json:"-"`
+	Hospital   Hospital `json:"-"`
+	HospitalID string   `json:"-" bson:"hospital-id"`
 
+	DepartmentIDs []string      `json:"-" bson:"department-ids"`
+	Departments   []*Department `json:"-"`
+
+	PolicyIDs []string  `json:"-" bson:"policy-ids"`
+	Policies  []*Policy `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -59,7 +59,7 @@ func (u HospitalConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 
 	for _, kID := range u.PolicyIDs {
 		result = append(result, jsonapi.ReferenceID{
-			ID: kID,
+			ID:   kID,
 			Type: "policies",
 			Name: "policies",
 		})
@@ -67,7 +67,7 @@ func (u HospitalConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 
 	for _, kID := range u.DepartmentIDs {
 		result = append(result, jsonapi.ReferenceID{
-			ID: kID,
+			ID:   kID,
 			Type: "departments",
 			Name: "departments",
 		})
@@ -124,7 +124,6 @@ func (u *HospitalConfig) SetToManyReferenceIDs(name string, IDs []string) error 
 
 	return errors.New("There is no to-many relationship with the name " + name)
 }
-
 
 // AddToManyIDs adds some new leafs that a users loves so much
 func (u *HospitalConfig) AddToManyIDs(name string, IDs []string) error {

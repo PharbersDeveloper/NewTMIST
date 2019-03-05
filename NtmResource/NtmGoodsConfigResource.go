@@ -38,8 +38,11 @@ func (s NtmGoodsConfigResource) FindAll(r api2go.Request) (api2go.Responder, err
 	models := s.NtmGoodsConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		mcr, err := s.NtmProductConfigResource.FindOne(model.GoodsID, api2go.Request{})
-		if err == nil {
+		if model.GoodsType == 0 {
+			mcr, err := s.NtmProductConfigResource.FindOne(model.GoodsID, api2go.Request{})
+			if err != nil {
+				return &Response{}, err
+			}
 			model.ProductConfig = mcr.Result().(NtmModel.ProductConfig)
 		}
 
@@ -119,9 +122,12 @@ func (s NtmGoodsConfigResource) FindOne(ID string, r api2go.Request) (api2go.Res
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	rcr, err := s.NtmProductConfigResource.FindOne(model.GoodsID, api2go.Request{})
-	if err == nil {
-		model.ProductConfig = rcr.Result().(NtmModel.ProductConfig)
+	if model.GoodsType == 0 {
+		mcr, err := s.NtmProductConfigResource.FindOne(model.GoodsID, api2go.Request{})
+		if err != nil {
+			return &Response{}, err
+		}
+		model.ProductConfig = mcr.Result().(NtmModel.ProductConfig)
 	}
 
 	return &Response{Res: model}, nil
