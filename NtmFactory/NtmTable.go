@@ -91,9 +91,10 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
-	"NtmCommonPanicHandle":         NtmHandler.CommonPanicHandle{},
-	"NtmAccountHandler":            NtmHandler.NtmAccountHandler{},
-	"NtmGetUseableProposalsHandler": NtmHandler.NtmGetUseableProposalsHandler{},
+	"NtmCommonPanicHandle":         	NtmHandler.CommonPanicHandle{},
+	"NtmAccountHandler":            	NtmHandler.NtmAccountHandler{},
+	"NtmGetUseableProposalsHandler": 	NtmHandler.NtmGetUseableProposalsHandler{},
+	"NtmGeneratePaperHandler": 			NtmHandler.NtmGeneratePaperHandler{},
 }
 var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{
 	"NtmCheckTokenMiddleware": NtmMiddleware.NtmCheckTokenMiddleware{},
