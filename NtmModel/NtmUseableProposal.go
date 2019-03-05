@@ -73,5 +73,13 @@ func (u *UseableProposal) SetToOneReferenceID(name, ID string) error {
 }
 
 func (u *UseableProposal) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "account-id":
+			rst[k] = v[0]
+		}
+	}
+
+	return rst
 }

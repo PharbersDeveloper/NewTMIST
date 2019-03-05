@@ -1,18 +1,15 @@
 package NtmHandler
 
 import (
-	"encoding/json"
 	"net/http"
 	"reflect"
+	"strings"
+	"io/ioutil"
 
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/julienschmidt/httprouter"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"strings"
-	"fmt"
-	"github.com/PharbersDeveloper/NtmPods/NtmModel"
-	"gopkg.in/mgo.v2/bson"
 )
 
 type NtmGetUseableProposalsHandler struct {
@@ -59,8 +56,7 @@ func (h NtmGetUseableProposalsHandler) NewGetUseableProposalsHandler(args ...int
 }
 
 func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
-	w.Header().Add("Content-Type", "application/json")
-
+	// 验证token
 	auth := r.Header.Get("Authorization")
 	arr := strings.Split(auth, " ")
 	if len(arr) < 2 || arr[0] != "bearer" {
@@ -72,49 +68,30 @@ func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter
 		panic(err.Error())
 	}
 
+	// 取出uid
 	redisDriver := h.rd.GetRedisClient()
+	defer redisDriver.Close()
 	uid, _ := redisDriver.HGet(token+"_info", "uid").Result()
-	fmt.Println(uid)
 
-	var out NtmModel.UseableProposal
-	cond := bson.M{"account-id": uid}
-	err = h.db.FindOneByCondition(&out, &out, cond)
-
-	//response := map[string]interface{}{
-	//	"status": "",
-	//	"result": nil,
-	//	"error":  nil,
-	//}
-
-	//if err == nil && out.ID != "" {
-	//	hex := md5.New()
-	//	io.WriteString(hex, out.ID)
-	//	out.Password = ""
-	//	token := fmt.Sprintf("%x", hex.Sum(nil))
-	//	err = h.rd.PushToken(token, time.Hour*24*365)
-	//	out.Token = token
-	//
-	//	response["status"] = "ok"
-	//	response["result"] = out
-	//	response["error"] = err
-	//
-	//	//reval, _ := json.Marshal(response)
-	//	enc := json.NewEncoder(w)
-	//	enc.Encode(response)
-	//	return 0
-	//} else {
-	//	response["status"] = "error"
-	//	response["error"] = "账户或密码错误！"
-	//	enc := json.NewEncoder(w)
-	//	enc.Encode(response)
-	//	return 1
-	//}
-
-	data := []string{
-		"北京市",
+	// 拼接转发的URL
+	scheme := "http://"
+	if r.TLS != nil {
+		scheme = "https://"
 	}
-	enc := json.NewEncoder(w)
-	enc.Encode(data)
+	toUrl := strings.Replace(r.URL.Path, "GetUseableProposals", h.Args[0], -1) + "?account-id=" + uid
+	useableProposalURL := strings.Join([]string{scheme, r.Host, toUrl}, "")
+
+	// 转发
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", useableProposalURL, nil)
+	for k, v := range r.Header {
+		req.Header.Add(k, v[0])
+	}
+	response, _ := client.Do(req)
+
+	body, err := ioutil.ReadAll(response.Body)
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(body)
 	return 0
 }
 
