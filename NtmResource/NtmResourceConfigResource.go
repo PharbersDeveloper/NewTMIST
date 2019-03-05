@@ -17,7 +17,7 @@ type NtmResourceConfigResource struct {
 	NtmRepresentativeConfigResource *NtmRepresentativeConfigResource
 }
 
-func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) NtmResourceConfigResource {
+func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) *NtmResourceConfigResource {
 	var rcs *NtmDataStorage.NtmResourceConfigStorage
 	var mcr *NtmManagerConfigResource
 	var repcr *NtmRepresentativeConfigResource
@@ -31,7 +31,7 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 			repcr = arg.(interface{}).(*NtmRepresentativeConfigResource)
 		}
 	}
-	return NtmResourceConfigResource{
+	return &NtmResourceConfigResource{
 		NtmResourceConfigStorage:        rcs,
 		NtmManagerConfigResource:        mcr,
 		NtmRepresentativeConfigResource: repcr,
@@ -43,13 +43,17 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 	models := s.NtmResourceConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
-		if err == nil {
+		if model.ResourceType == 0 {
+			mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
+			if err != nil {
+				return &Response{}, err
+			}
 			model.ManagerConfig = mcr.Result().(NtmModel.ManagerConfig)
-		}
-
-		rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
-		if err == nil {
+		} else if model.ResourceType == 1 {
+			rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
+			if err != nil {
+				return &Response{}, err
+			}
 			model.RepresentativeConfig = rcr.Result().(NtmModel.RepresentativeConfig)
 		}
 
@@ -129,13 +133,17 @@ func (s NtmResourceConfigResource) FindOne(ID string, r api2go.Request) (api2go.
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
-	if err == nil {
+	if model.ResourceType == 0 {
+		mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
+		if err != nil {
+			return &Response{}, err
+		}
 		model.ManagerConfig = mcr.Result().(NtmModel.ManagerConfig)
-	}
-
-	rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
-	if err == nil {
+	} else if model.ResourceType == 1 {
+		rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
+		if err != nil {
+			return &Response{}, err
+		}
 		model.RepresentativeConfig = rcr.Result().(NtmModel.RepresentativeConfig)
 	}
 

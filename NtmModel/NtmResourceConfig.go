@@ -98,8 +98,12 @@ func (u *ResourceConfig) GetConditionsBsonM(parameters map[string][]string) bson
 		switch k {
 		case "scenario-id":
 			rst[k] = v[0]
-		case "applicant-id":
-			rst[k] = v[0]
+		case "resource-type":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			rst[k] = val
 		case "status":
 			val, err := strconv.ParseFloat(v[0], 64)
 			if err != nil {

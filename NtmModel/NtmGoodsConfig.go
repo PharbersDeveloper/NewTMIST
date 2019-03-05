@@ -4,6 +4,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"github.com/manyminds/api2go/jsonapi"
 	"errors"
+	"strconv"
 )
 
 // GoodsConfig Info
@@ -80,6 +81,12 @@ func (u *GoodsConfig) GetConditionsBsonM(parameters map[string][]string) bson.M 
 		switch k {
 		case "scenario-id":
 			rst[k] = v[0]
+		case "goods-type":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			rst[k] = val
 		}
 	}
 

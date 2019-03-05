@@ -1,6 +1,9 @@
 package NtmModel
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+	"strconv"
+)
 
 // Scenario Info
 type Scenario struct {
@@ -22,5 +25,19 @@ func (c *Scenario) SetID(id string) error {
 }
 
 func (u *Scenario) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "proposal-id":
+			rst[k] = v[0]
+		case "phase":
+			val, err := strconv.ParseFloat(v[0], 64)
+			if err != nil {
+				panic(err.Error())
+			}
+			rst[k] = val
+		}
+	}
+
+	return rst
 }
