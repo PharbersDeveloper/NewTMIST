@@ -7,6 +7,7 @@ import (
 	"github.com/PharbersDeveloper/NtmPods/NtmResource"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
+	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
 )
 
 type NtmTable struct{}
@@ -90,11 +91,12 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
-	"NtmCommonPanicHandle": NtmHandler.CommonPanicHandle{},
-	"NtmAccountHandler":    NtmHandler.NtmAccountHandler{},
+	"NtmCommonPanicHandle":         NtmHandler.CommonPanicHandle{},
+	"NtmAccountHandler":            NtmHandler.NtmAccountHandler{},
+	"NtmGetUseableProposalsHandler": NtmHandler.NtmGetUseableProposalsHandler{},
 }
 var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{
-	//"BmCheckTokenMiddleware": BmMiddleware.CheckTokenMiddleware{},
+	"NtmCheckTokenMiddleware": NtmMiddleware.NtmCheckTokenMiddleware{},
 }
 
 var NTM_DAEMON_FACTORY = map[string]interface{}{
