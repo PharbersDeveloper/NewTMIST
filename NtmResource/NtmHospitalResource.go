@@ -51,11 +51,12 @@ func (s NtmHospitalResource) FindAll(r api2go.Request) (api2go.Responder, error)
 		if err != nil {
 			return &Response{}, err
 		}
-		r.QueryParams["ids"] = []string{modelRoot.HospitalID} //这块有问题，待会想一下
 
-
-		result = s.NtmHospitalStorage.GetAll(r, -1, -1)
-
+		model, err := s.NtmHospitalStorage.GetOne(modelRoot.HospitalID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, &model)
 		return &Response{Res: result}, nil
 	}
 
