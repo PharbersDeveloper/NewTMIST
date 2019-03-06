@@ -37,7 +37,7 @@ func (c Product) GetReferences() []jsonapi.Reference {
 }
 
 func (c Product) GetReferencedIDs() []jsonapi.ReferenceID {
-	result := []jsonapi.ReferenceID{}
+	var result []jsonapi.ReferenceID
 
 	for _, kID := range c.ImagesIDs {
 		result = append(result, jsonapi.ReferenceID{
@@ -50,7 +50,7 @@ func (c Product) GetReferencedIDs() []jsonapi.ReferenceID {
 }
 
 func (c Product) GetReferencedStructs() []jsonapi.MarshalIdentifier {
-	result := []jsonapi.MarshalIdentifier{}
+	var result []jsonapi.MarshalIdentifier
 
 	for key := range c.Imgs {
 		result = append(result, c.Imgs[key])
@@ -89,5 +89,18 @@ func (c *Product) DeleteToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Product) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	r := make(map[string]interface{})
+	var ids []bson.ObjectId
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

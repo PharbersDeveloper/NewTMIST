@@ -28,7 +28,7 @@ func (s NtmImageStorage) NewImageStorage(args []BmDaemons.BmDaemon) *NtmImageSto
 // GetAll of the modelleaf
 func (s NtmImageStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.Image {
 	in := NtmModel.Image{}
-	out := []NtmModel.Image{}
+	var out []NtmModel.Image
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {

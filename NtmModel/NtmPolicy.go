@@ -3,10 +3,10 @@ package NtmModel
 import "gopkg.in/mgo.v2/bson"
 
 type Policy struct {
-	ID			string        `json:"-"`
-	Id_			bson.ObjectId `json:"-" bson:"_id"`
-	Name		string        `json:"name" bson:"name"`
-	Describe	string    	  `json:"describe" bson:"describe"`
+	ID       string        `json:"-"`
+	Id_      bson.ObjectId `json:"-" bson:"_id"`
+	Name     string        `json:"name" bson:"name"`
+	Describe string        `json:"describe" bson:"describe"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -21,5 +21,18 @@ func (c *Policy) SetID(id string) error {
 }
 
 func (u *Policy) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	r := make(map[string]interface{})
+	var ids []bson.ObjectId
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

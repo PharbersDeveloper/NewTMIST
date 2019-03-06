@@ -44,33 +44,17 @@ func (s NtmProductResource) FindAll(r api2go.Request) (api2go.Responder, error) 
 
 	if pcok {
 		modelRootID := productConfigID[0]
-
 		modelRoot, err := s.NtmProductConfigStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-
 		model, err := s.NtmProductStorage.GetOne(modelRoot.ProductID)
-		if err != nil {
-			return &Response{}, err
-		}
 		result = append(result, model)
-
 		return &Response{Res: result}, nil
 	}
 
 	models := s.NtmProductStorage.GetAll(r, -1, -1)
 	for _, model := range models {
-		// get all sweets for the model
-		model.Imgs = []*NtmModel.Image{}
-		for _, kID := range model.ImagesIDs {
-			choc, err := s.NtmImageStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Imgs = append(model.Imgs, &choc)
-		}
-
 		result = append(result, *model)
 	}
 

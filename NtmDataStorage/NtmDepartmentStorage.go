@@ -14,8 +14,8 @@ import (
 // NtmDepartmentStorage stores all of the tasty modelleaf, needs to be injected into
 // Department and Department Resource. In the real world, you would use a database for that.
 type NtmDepartmentStorage struct {
-	Departments  map[string]*NtmModel.Department
-	idCount int
+	Departments map[string]*NtmModel.Department
+	idCount     int
 
 	db *BmMongodb.BmMongodb
 }

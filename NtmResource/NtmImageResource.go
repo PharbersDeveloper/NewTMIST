@@ -12,14 +12,14 @@ import (
 )
 
 type NtmImageResource struct {
-	NtmImageStorage *NtmDataStorage.NtmImageStorage
-	NtmProductStorage *NtmDataStorage.NtmProductStorage
-	NtmHospitalStorage *NtmDataStorage.NtmHospitalStorage
-	NtmRegionStorage *NtmDataStorage.NtmRegionStorage
+	NtmImageStorage          *NtmDataStorage.NtmImageStorage
+	NtmProductStorage        *NtmDataStorage.NtmProductStorage
+	NtmHospitalStorage       *NtmDataStorage.NtmHospitalStorage
+	NtmRegionStorage         *NtmDataStorage.NtmRegionStorage
 	NtmRepresentativeStorage *NtmDataStorage.NtmRepresentativeStorage
 }
 
-func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) NtmImageResource {
+func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) *NtmImageResource {
 	var cs *NtmDataStorage.NtmImageStorage
 	var ps *NtmDataStorage.NtmProductStorage
 	var hs *NtmDataStorage.NtmHospitalStorage
@@ -39,12 +39,12 @@ func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) NtmIm
 			rt = arg.(*NtmDataStorage.NtmRepresentativeStorage)
 		}
 	}
-	return NtmImageResource{
-		NtmImageStorage: cs,
-		NtmProductStorage: ps,
-		NtmHospitalStorage: hs,
-		NtmRegionStorage: rs,
-		NtmRepresentativeStorage:rt,
+	return &NtmImageResource{
+		NtmImageStorage:          cs,
+		NtmProductStorage:        ps,
+		NtmHospitalStorage:       hs,
+		NtmRegionStorage:         rs,
+		NtmRepresentativeStorage: rt,
 	}
 }
 
@@ -54,72 +54,38 @@ func (c NtmImageResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	hospitalsID, hsok := r.QueryParams["hospitalsID"]
 	regionsID, rsok := r.QueryParams["regionsID"]
 	representativeID, rtok := r.QueryParams["representativesID"]
-	result := []NtmModel.Image{}
+
 	if pok {
 		modelRootID := productsID[0]
-
 		modelRoot, err := c.NtmProductStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.ImagesIDs {
-			model, err := c.NtmImageStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
-
-		return &Response{Res: result}, nil
+		r.QueryParams["ids"] = modelRoot.ImagesIDs
 	} else if hsok {
 		modelRootID := hospitalsID[0]
-
 		modelRoot, err := c.NtmHospitalStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.ImagesIDs {
-			model, err := c.NtmImageStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
-
-		return &Response{Res: result}, nil
+		r.QueryParams["ids"] = modelRoot.ImagesIDs
 	} else if rsok {
 		modelRootID := regionsID[0]
-
 		modelRoot, err := c.NtmRegionStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.ImagesIDs {
-			model, err := c.NtmImageStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
-
-		return &Response{Res: result}, nil
+		r.QueryParams["ids"] = modelRoot.ImagesIDs
 	} else if rtok {
 		modelRootID := representativeID[0]
-
 		modelRoot, err := c.NtmRepresentativeStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.ImagesIDs {
-			model, err := c.NtmImageStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
-
-		return &Response{Res: result}, nil
+		r.QueryParams["ids"] = modelRoot.ImagesIDs
 	}
+
+	var result []NtmModel.Image
 	result = c.NtmImageStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
