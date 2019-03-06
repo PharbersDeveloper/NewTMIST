@@ -2,28 +2,30 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"net/http"
-
-	"github.com/alfredyang1986/BmServiceDef/BmApiResolver"
 	"github.com/alfredyang1986/BmServiceDef/BmConfig"
 	"github.com/alfredyang1986/BmServiceDef/BmPodsDefine"
-	"github.com/julienschmidt/httprouter"
+	"github.com/alfredyang1986/BmServiceDef/BmApiResolver"
+
 	"github.com/manyminds/api2go"
-	"os"
-	"github.com/PharbersDeveloper/NtmPods/BmFactory"
+	"github.com/julienschmidt/httprouter"
+
+	"./NtmFactory"
 )
 
 func main() {
-	version := "v2"
-	fmt.Println("pod archi begins")
+	version := "v0"
+	prodEnv := "NTM_HOME"
+	fmt.Println("NTM pods archi begins, version =", version)
 
-	fac := BmFactory.BmTable{}
-	var pod = BmPodsDefine.Pod{ Name: "alfred test", Factory:fac }
-	bmHome := os.Getenv("PHARBERS_HOME")
-	pod.RegisterSerFromYAML(bmHome + "/resource/service-def.yaml")
+	fac := NtmFactory.NtmTable{}
+	var pod = BmPodsDefine.Pod{Name: "new TMIST", Factory: fac}
+	ntmHome := os.Getenv(prodEnv)
+	pod.RegisterSerFromYAML(ntmHome + "/resource/service-def.yaml")
 
 	var bmRouter BmConfig.BmRouterConfig
-	bmRouter.GenerateConfig("PHARBERS_HOME")
+	bmRouter.GenerateConfig(prodEnv)
 
 	addr := bmRouter.Host + ":" + bmRouter.Port
 	fmt.Println("Listening on ", addr)
@@ -37,5 +39,5 @@ func main() {
 	pod.RegisterPanicHandler(handler)
 	http.ListenAndServe(":"+bmRouter.Port, handler)
 
-	fmt.Println("pod archi ends")
+	fmt.Println("NTM pods archi ends, version =", version)
 }
