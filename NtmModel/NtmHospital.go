@@ -7,18 +7,17 @@ import (
 )
 
 type Hospital struct {
+	ID               string        `json:"-"`
+	Id_              bson.ObjectId `json:"-" bson:"_id"`
+	Name             string        `json:"name" bson:"name"`
+	Describe         string        `json:"describe" bson:"describe"`
+	Code             string        `json:"code" bson:"code"`
+	HospitalCategory string        `json:"hospital-category" bson:"hospital-category"`
+	HospitalLevel    string        `json:"hospital-level" bson:"hospital-level"`
+	Position         string        `json:"position" bson:"position"`
 
-	ID					string	`json:"-"`
-	Id_					bson.ObjectId `json:"-" bson:"_id"`
-	Name 				string	`json:"name" bson:"name"`
-	Describe 			string	`json:"describe" bson:"describe"`
-	Code 				string	`json:"code" bson:"code"`
-	HospitalCategory	string	`json:"hospital-category" bson:"hospital-category"`
-	HospitalLevel		string	`json:"hospital-level" bson:"hospital-level"`
-	Position			string	`json:"position" bson:"position"`
-
-	ImagesIDs			[]string	`json:"-" bson:"image-ids"`
-	Imgs				[]*Image	`json:"-"`
+	ImagesIDs []string `json:"-" bson:"image-ids"`
+	Imgs      []*Image `json:"-"`
 }
 
 func (c Hospital) GetID() string {
@@ -44,7 +43,7 @@ func (c Hospital) GetReferencedIDs() []jsonapi.ReferenceID {
 
 	for _, kID := range c.ImagesIDs {
 		result = append(result, jsonapi.ReferenceID{
-			ID: kID,
+			ID:   kID,
 			Type: "images",
 			Name: "images",
 		})
@@ -60,7 +59,6 @@ func (c Hospital) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	}
 	return result
 }
-
 
 func (c *Hospital) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "images" {
@@ -93,5 +91,18 @@ func (c *Hospital) DeleteToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Hospital) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

@@ -13,49 +13,66 @@ import (
 
 type NtmHospitalConfigResource struct {
 	NtmHospitalConfigStorage 	*NtmDataStorage.NtmHospitalConfigStorage
-	NtmHospitalResource			*NtmHospitalResource
-	NtmPolicyResource			*NtmPolicyResource
-	NtmDepartmentResource		*NtmDepartmentResource
+	NtmHospitalStorage			*NtmDataStorage.NtmHospitalStorage
+	NtmPolicyStorage 			*NtmDataStorage.NtmPolicyStorage
+	NtmDepartmentStorage 		*NtmDataStorage.NtmDepartmentStorage
+	NtmDestConfigStorage 		*NtmDataStorage.NtmDestConfigStorage
 }
 
 func (s NtmHospitalConfigResource) NewHospitalConfigResource(args []BmDataStorage.BmStorage) *NtmHospitalConfigResource {
 	var hcs *NtmDataStorage.NtmHospitalConfigStorage
-	var hr *NtmHospitalResource
-	var pr *NtmPolicyResource
-	var dr *NtmDepartmentResource
+	var hs *NtmDataStorage.NtmHospitalStorage
+	var ps *NtmDataStorage.NtmPolicyStorage
+	var ds *NtmDataStorage.NtmDepartmentStorage
+	var dcs *NtmDataStorage.NtmDestConfigStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 
 		if tp.Name() == "NtmHospitalConfigStorage" {
 			hcs = arg.(*NtmDataStorage.NtmHospitalConfigStorage)
-		} else if tp.Name() == "NtmHospitalResource" {
-			hr = arg.(interface{}).(*NtmHospitalResource)
-		} else if tp.Name() == "NtmPolicyResource" {
-			pr = arg.(interface{}).(*NtmPolicyResource)
-		} else if tp.Name() == "NtmDepartmentResource" {
-			dr = arg.(interface{}).(*NtmDepartmentResource)
+		} else if tp.Name() == "NtmHospitalStorage" {
+			hs = arg.(*NtmDataStorage.NtmHospitalStorage)
+		} else if tp.Name() == "NtmPolicyStorage" {
+			ps = arg.(*NtmDataStorage.NtmPolicyStorage)
+		} else if tp.Name() == "NtmDepartmentStorage" {
+			ds = arg.(*NtmDataStorage.NtmDepartmentStorage)
+		} else if tp.Name() == "NtmDestConfigStorage" {
+			dcs = arg.(*NtmDataStorage.NtmDestConfigStorage)
 		}
 	}
 	return &NtmHospitalConfigResource{
 		NtmHospitalConfigStorage: hcs,
-		NtmHospitalResource: hr,
-		NtmPolicyResource: pr,
-		NtmDepartmentResource: dr,
+		NtmHospitalStorage: hs,
+		NtmPolicyStorage: ps,
+		NtmDepartmentStorage: ds,
+		NtmDestConfigStorage: dcs,
 	}
 }
 
 func (s NtmHospitalConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	destConfigsID, dcok := r.QueryParams["destConfigsID"]
+
 	var result []NtmModel.HospitalConfig
+
+
+	if dcok {
+		modelRootID := destConfigsID[0]
+		modelRoot, err := s.NtmDestConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		model, err := s.NtmHospitalConfigStorage.GetOne(modelRoot.DestID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		result = append(result, model)
+		return &Response{Res: result}, nil
+	}
+
 	models := s.NtmHospitalConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		err := s.ResetReferencedModel(model)
-
-		if err != nil {
-			return &Response{}, err
-		}
-
 		result = append(result, *model)
 	}
 
@@ -114,10 +131,6 @@ func (s NtmHospitalConfigResource) PaginatedFindAll(r api2go.Request) (uint, api
 		}
 
 		for _, iter := range s.NtmHospitalConfigStorage.GetAll(r, int(offsetI), int(limitI)) {
-			err = s.ResetReferencedModel(iter)
-			if err == nil {
-				return 0, &Response{}, err
-			}
 			result = append(result, *iter)
 		}
 	}
@@ -136,7 +149,7 @@ func (s NtmHospitalConfigResource) FindOne(ID string, r api2go.Request) (api2go.
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	err = s.ResetReferencedModel(&model)
+	err = s.ResetReferencedModel(&model, &r)
 
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
@@ -154,7 +167,7 @@ func (s NtmHospitalConfigResource) Create(obj interface{}, r api2go.Request) (ap
 	id := s.NtmHospitalConfigStorage.Insert(model)
 	model.ID = id
 
-	s.ResetReferencedModel(&model)
+	s.ResetReferencedModel(&model, &r)
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
@@ -174,40 +187,30 @@ func (s NtmHospitalConfigResource) Update(obj interface{}, r api2go.Request) (ap
 
 	err := s.NtmHospitalConfigStorage.Update(model)
 
-	s.ResetReferencedModel(&model)
+	s.ResetReferencedModel(&model, &r)
 
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }
 
-func (s NtmHospitalConfigResource) ResetReferencedModel(model *NtmModel.HospitalConfig) error {
+func (s NtmHospitalConfigResource) ResetReferencedModel(model *NtmModel.HospitalConfig, r *api2go.Request) error {
 	model.Policies = []*NtmModel.Policy{}
-	for _, tmpID := range model.PolicyIDs {
-		response, err := s.NtmPolicyResource.FindOne(tmpID, api2go.Request{})
-		item := response.Result()
-		if err != nil {
-			return err
-		}
-		policy := item.(NtmModel.Policy)
-		model.Policies = append(model.Policies, &policy)
+	r.QueryParams["ids"] = model.PolicyIDs
+	for _, policy := range s.NtmPolicyStorage.GetAll(*r, -1,-1) {
+		model.Policies = append(model.Policies, policy)
 	}
+
 	model.Departments = []*NtmModel.Department{}
-	for _, tmpID := range model.DepartmentIDs {
-		response, err := s.NtmDepartmentResource.FindOne(tmpID, api2go.Request{})
-		item := response.Result()
-		if err != nil {
-			return err
-		}
-		department := item.(NtmModel.Department)
-		model.Departments = append(model.Departments, &department)
+	r.QueryParams["ids"] = model.DepartmentIDs
+	for _, department := range s.NtmDepartmentStorage.GetAll(*r, -1, -1) {
+		model.Departments = append(model.Departments, department)
 	}
 
 	if model.HospitalID != "" {
-		response, err := s.NtmHospitalResource.FindOne(model.HospitalID,  api2go.Request{})
-		item := response.Result()
+		hospital, err := s.NtmHospitalStorage.GetOne(model.HospitalID)
 		if err != nil {
 			return err
 		}
-		model.Hospital = item.(NtmModel.Hospital)
+		model.Hospital = &hospital
 	}
 
 	return nil

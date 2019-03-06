@@ -56,7 +56,13 @@ go get github.com/PharbersDeveloper/NtmServiceDeploy
 
 ## 3.2 编译docker file
 ```
-docker built . 
+cd $GOPATH
+docker build -t ntm:1.0 -f src/github.com/PharbersDeveloper/NtmServiceDeploy/Dockerfile . 
 ```
 
-## 3.3 docker 发布
+## 3.3 docker 运行
+```angular2html
+docker run -p 31415:31415 -d ntm:1.0
+```
+
+## 3.4 docker 发布

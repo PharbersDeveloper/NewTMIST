@@ -26,13 +26,13 @@ func (s NtmDepartmentStorage) NewDepartmentStorage(args []BmDaemons.BmDaemon) *N
 }
 
 // GetAll of the modelleaf
-func (s NtmDepartmentStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.Department {
+func (s NtmDepartmentStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.Department {
 	in := NtmModel.Department{}
-	var out []NtmModel.Department
+	var out []*NtmModel.Department
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
-			s.db.ResetIdWithId_(&iter)
+			s.db.ResetIdWithId_(iter)
 			out[i] = iter
 		}
 		return out

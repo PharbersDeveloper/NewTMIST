@@ -14,38 +14,55 @@ import (
 type NtmHospitalResource struct {
 	NtmHospitalStorage *NtmDataStorage.NtmHospitalStorage
 	NtmImageStorage    *NtmDataStorage.NtmImageStorage
+	NtmHospitalConfigStorage *NtmDataStorage.NtmHospitalConfigStorage
 }
 
 func (s NtmHospitalResource) NewHospitalResource (args []BmDataStorage.BmStorage) *NtmHospitalResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var hs *NtmDataStorage.NtmHospitalStorage
+	var hcs *NtmDataStorage.NtmHospitalConfigStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmImageStorage" {
 			is = arg.(*NtmDataStorage.NtmImageStorage)
 		} else if tp.Name() == "NtmHospitalStorage" {
 			hs = arg.(*NtmDataStorage.NtmHospitalStorage)
+		} else if tp.Name() == "NtmHospitalConfigStorage" {
+			hcs = arg.(*NtmDataStorage.NtmHospitalConfigStorage)
 		}
 	}
-	return &NtmHospitalResource{NtmImageStorage: is, NtmHospitalStorage: hs}
+	return &NtmHospitalResource{
+		NtmImageStorage: is,
+		NtmHospitalStorage: hs,
+		NtmHospitalConfigStorage: hcs,
+	}
 }
 
 func (s NtmHospitalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	var result []NtmModel.Hospital
-	models := s.NtmHospitalStorage.GetAll(r, -1, -1)
+	var result []*NtmModel.Hospital
 
-	for _, model := range models {
-		// get all sweets for the model
-		model.Imgs = []*NtmModel.Image{}
-		for _, kID := range model.ImagesIDs {
-			choc, err := s.NtmImageStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Imgs = append(model.Imgs, &choc)
+	hospitalConfigsID, pciok := r.QueryParams["hospitalConfigsID"]
+
+	if pciok {
+		modelRootID := hospitalConfigsID[0]
+
+		modelRoot, err := s.NtmHospitalConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
 		}
 
-		result = append(result, *model)
+		model, err := s.NtmHospitalStorage.GetOne(modelRoot.HospitalID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, &model)
+		return &Response{Res: result}, nil
+	}
+
+	models := s.NtmHospitalStorage.GetAll(r, -1, -1)
+	for _, model := range models {
+		result = append(result, model)
 	}
 
 	return &Response{Res: result}, nil

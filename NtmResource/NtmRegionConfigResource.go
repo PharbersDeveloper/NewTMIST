@@ -13,38 +13,52 @@ import (
 
 type NtmRegionConfigResource struct {
 	NtmRegionConfigStorage		*NtmDataStorage.NtmRegionConfigStorage
-	NtmRegionResource			*NtmRegionResource
+	NtmRegionStorage			*NtmDataStorage.NtmRegionStorage
+	NtmDestConfigStorage 		*NtmDataStorage.NtmDestConfigStorage
 }
 
 func (s NtmRegionConfigResource) NewRegionConfigResource(args []BmDataStorage.BmStorage) *NtmRegionConfigResource {
 	var rcs *NtmDataStorage.NtmRegionConfigStorage
-	var rr *NtmRegionResource
+	var rs *NtmDataStorage.NtmRegionStorage
+	var dcs *NtmDataStorage.NtmDestConfigStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmRegionConfigStorage" {
 			rcs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
-		} else if tp.Name() == "NtmRegionResource" {
-			rr = arg.(interface{}).(*NtmRegionResource)
+		} else if tp.Name() == "NtmRegionStorage" {
+			rs = arg.(*NtmDataStorage.NtmRegionStorage)
+		} else if tp.Name() == "NtmDestConfigStorage" {
+			dcs = arg.(*NtmDataStorage.NtmDestConfigStorage)
 		}
 	}
-	return &NtmRegionConfigResource{NtmRegionResource: rr, NtmRegionConfigStorage: rcs}
+	return &NtmRegionConfigResource{
+		NtmRegionStorage: rs,
+		NtmRegionConfigStorage: rcs,
+		NtmDestConfigStorage: dcs,
+	}
 }
 
 func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	destConfigsID, dcok := r.QueryParams["destConfigsID"]
 	var result []NtmModel.RegionConfig
-	models := s.NtmRegionConfigStorage.GetAll(r, -1, -1)
 
-	for _, model := range models {
-		if model.RegionID != "" {
-			response, err := s.NtmRegionResource.FindOne(model.RegionID, api2go.Request{})
-			item := response.Result()
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Region = item.(NtmModel.Region)
+	if dcok {
+		modelRootID := destConfigsID[0]
+		modelRoot, err := s.NtmDestConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
 		}
+		model, err := s.NtmRegionConfigStorage.GetOne(modelRoot.DestID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		result = append(result, model)
+		return &Response{Res: result}, nil
+	}
 
+	models := s.NtmRegionConfigStorage.GetAll(r, -1, -1)
+	for _, model := range models {
 		result = append(result, *model)
 	}
 
@@ -122,12 +136,11 @@ func (s NtmRegionConfigResource) FindOne(ID string, r api2go.Request) (api2go.Re
 	}
 
 	if model.RegionID != "" {
-		response, err := s.NtmRegionResource.FindOne(model.RegionID, api2go.Request{})
-		item := response.Result()
+		regionModel, err := s.NtmRegionStorage.GetOne(model.RegionID)
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Region = item.(NtmModel.Region)
+		model.Region = &regionModel
 	}
 
 	return &Response{Res: model}, nil
