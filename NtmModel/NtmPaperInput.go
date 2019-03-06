@@ -1,9 +1,9 @@
 package NtmModel
 
 import (
-	"gopkg.in/mgo.v2/bson"
-	"github.com/manyminds/api2go/jsonapi"
 	"errors"
+	"github.com/manyminds/api2go/jsonapi"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type PaperInput struct {
@@ -31,10 +31,6 @@ func (c PaperInput) GetID() string {
 func (c *PaperInput) SetID(id string) error {
 	c.ID = id
 	return nil
-}
-
-func (u *PaperInput) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
 }
 
 func (c PaperInput) GetReferences() []jsonapi.Reference {
@@ -158,4 +154,21 @@ func (c *PaperInput) DeleteToManyIDs(name string, IDs []string) error {
 		}
 	}
 	return errors.New("There is no to-many relationship with the name " + name)
+}
+
+func (u *PaperInput) GetConditionsBsonM(parameters map[string][]string) bson.M {
+	rst := make(map[string]interface{})
+	r := make(map[string]interface{})
+	var ids []bson.ObjectId
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

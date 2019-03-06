@@ -35,7 +35,7 @@ func (s NtmManagerInputResource) NewManagerInputResource(args []BmDataStorage.Bm
 
 func (s NtmManagerInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	paperInputsID, piok := r.QueryParams["paperInputsID"]
-	var result []NtmModel.ManagerInput
+	var result []*NtmModel.ManagerInput
 
 	if piok {
 		modelRootID := paperInputsID[0]
@@ -44,20 +44,12 @@ func (s NtmManagerInputResource) FindAll(r api2go.Request) (api2go.Responder, er
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.ManagerInputIDs {
-			model, err := s.NtmManagerInputStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
+
+		r.QueryParams["ids"] = modelRoot.ManagerInputIDs
+		result = s.NtmManagerInputStorage.GetAll(r, -1, -1)
 		return &Response{Res: result}, nil
 	}
 
-	models := s.NtmManagerInputStorage.GetAll(r, -1, -1)
-	for _, model := range models {
-		result = append(result, *model)
-	}
 	return &Response{Res: result}, nil
 }
 
