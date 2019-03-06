@@ -51,6 +51,11 @@ func (s NtmBusinessInputResource) FindAll(r api2go.Request) (api2go.Responder, e
 
 		return &Response{Res: result}, nil
 	}
+
+	models := s.NtmBusinessInputStorage.GetAll(r, -1, -1)
+	for _, model := range models {
+		result = append(result, model)
+	}
 	return &Response{Res: result}, nil
 }
 

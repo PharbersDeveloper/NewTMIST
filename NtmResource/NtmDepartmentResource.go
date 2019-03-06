@@ -13,22 +13,47 @@ import (
 
 type NtmDepartmentResource struct {
 	NtmDepartmentStorage *NtmDataStorage.NtmDepartmentStorage
+	NtmHospitalConfigStorage *NtmDataStorage.NtmHospitalConfigStorage
 }
 
 func (c NtmDepartmentResource) NewDepartmentResource(args []BmDataStorage.BmStorage) *NtmDepartmentResource {
 	var cs *NtmDataStorage.NtmDepartmentStorage
+	var hcs *NtmDataStorage.NtmHospitalConfigStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmDepartmentStorage" {
 			cs = arg.(*NtmDataStorage.NtmDepartmentStorage)
+		}else if tp.Name() == "NtmHospitalConfigStorage" {
+	 		hcs = arg.(*NtmDataStorage.NtmHospitalConfigStorage)
 		}
 	}
-	return &NtmDepartmentResource{NtmDepartmentStorage: cs}
+	return &NtmDepartmentResource{
+		NtmDepartmentStorage: cs,
+		NtmHospitalConfigStorage: hcs,
+	}
 }
 
 // FindAll Departments
 func (c NtmDepartmentResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	result := c.NtmDepartmentStorage.GetAll(r, -1, -1)
+	var result []*NtmModel.Department
+	hospitalConfigsID, pciok := r.QueryParams["hospitalConfigsID"]
+
+	if pciok {
+		modelRootID := hospitalConfigsID[0]
+
+		modelRoot, err := c.NtmHospitalConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		r.QueryParams["ids"] = modelRoot.DepartmentIDs
+
+		result = c.NtmDepartmentStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
+
+	result = c.NtmDepartmentStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
 

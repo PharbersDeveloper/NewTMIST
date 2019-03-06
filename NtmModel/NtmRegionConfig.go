@@ -14,7 +14,7 @@ type RegionConfig struct {
  	HealthSpending      float64  `json:"health-spending" bson:"health-spending"`
 
 	RegionID 			string `json:"-" bson:"region-id"`
-	Region   			Region `json:"-"`
+	Region   			*Region `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -57,7 +57,7 @@ func (u RegionConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 func (u RegionConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	if u.RegionID != "" {
+	if u.RegionID != "" && u.Region != nil {
 		result = append(result, u.Region)
 	}
 
@@ -74,5 +74,18 @@ func (u *RegionConfig) SetToOneReferenceID(name, ID string) error {
 }
 
 func (u *RegionConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

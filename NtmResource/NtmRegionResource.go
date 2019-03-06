@@ -12,11 +12,11 @@ import (
 )
 
 type NtmRegionResource struct {
-	NtmRegionStorage	*NtmDataStorage.NtmRegionStorage
-	NtmImageStorage		*NtmDataStorage.NtmImageStorage
+	NtmRegionStorage *NtmDataStorage.NtmRegionStorage
+	NtmImageStorage  *NtmDataStorage.NtmImageStorage
 }
 
-func (s NtmRegionResource) NewRegionResource (args []BmDataStorage.BmStorage) *NtmRegionResource {
+func (s NtmRegionResource) NewRegionResource(args []BmDataStorage.BmStorage) *NtmRegionResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var hs *NtmDataStorage.NtmRegionStorage
 	for _, arg := range args {
@@ -35,16 +35,6 @@ func (s NtmRegionResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	models := s.NtmRegionStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		// get all sweets for the model
-		model.Imgs = []*NtmModel.Image{}
-		for _, kID := range model.ImagesIDs {
-			choc, err := s.NtmImageStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Imgs = append(model.Imgs, &choc)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -54,7 +44,7 @@ func (s NtmRegionResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 // PaginatedFindAll can be used to load models in chunks
 func (s NtmRegionResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result           []NtmModel.Region
+		result                      []NtmModel.Region
 		number, size, offset, limit string
 	)
 
