@@ -25,11 +25,11 @@ go get github.com/alfredyang1986/BmServiceDef
 // 上面语句如果报异常`can't load package`, 可以忽略, 
 // 也可以进入下载的$GO_PATH/src对应的目录下, 新建一个main.go, 运行`go install`
 
-go get gopkg.in/mgo.v2
-go get gopkg.in/yaml.v2
-go get github.com/manyminds/api2go
-go get github.com/hashicorp/go-uuid
-go get github.com/aliyun/aliyun-oss-go-sdk/oss
+// go get gopkg.in/mgo.v2
+// go get gopkg.in/yaml.v2
+// go get github.com/manyminds/api2go
+// go get github.com/hashicorp/go-uuid
+// go get github.com/aliyun/aliyun-oss-go-sdk/oss
 
 ```
 
@@ -51,7 +51,7 @@ go run main.go
 # 3. 发布
 ## 3.1 下载docker文件
 ```
-go get github.com/alfredyang1986/BmServiceDeploy
+go get github.com/PharbersDeveloper/NtmServiceDeploy
 ```
 
 ## 3.2 编译docker file
