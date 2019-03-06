@@ -7,14 +7,13 @@ import (
 )
 
 type Region struct {
+	ID       string        `json:"-"`
+	Id_      bson.ObjectId `json:"-" bson:"_id"`
+	Name     string        `json:"name" bson:"name"`
+	Describe string        `json:"describe" bson:"describe"`
 
-	ID					string	`json:"-"`
-	Id_					bson.ObjectId `json:"-" bson:"_id"`
-	Name 				string	`json:"name" bson:"name"`
-	Describe 			string	`json:"describe" bson:"describe"`
-	
-	ImagesIDs			[]string	`json:"-" bson:"image-ids"`
-	Imgs				[]*Image	`json:"-"`
+	ImagesIDs []string `json:"-" bson:"image-ids"`
+	Imgs      []*Image `json:"-"`
 }
 
 func (c Region) GetID() string {
@@ -40,7 +39,7 @@ func (c Region) GetReferencedIDs() []jsonapi.ReferenceID {
 
 	for _, kID := range c.ImagesIDs {
 		result = append(result, jsonapi.ReferenceID{
-			ID: kID,
+			ID:   kID,
 			Type: "images",
 			Name: "images",
 		})
@@ -56,7 +55,6 @@ func (c Region) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	}
 	return result
 }
-
 
 func (c *Region) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "images" {
@@ -89,5 +87,18 @@ func (c *Region) DeleteToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Region) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	r := make(map[string]interface{})
+	var ids []bson.ObjectId
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

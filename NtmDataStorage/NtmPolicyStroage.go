@@ -26,13 +26,13 @@ func (s NtmPolicyStorage) NewPolicyStorage(args []BmDaemons.BmDaemon) *NtmPolicy
 }
 
 // GetAll of the modelleaf
-func (s NtmPolicyStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.Policy {
+func (s NtmPolicyStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.Policy {
 	in := NtmModel.Policy{}
-	var out []NtmModel.Policy
+	var out []*NtmModel.Policy
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
-			s.db.ResetIdWithId_(&iter)
+			s.db.ResetIdWithId_(iter)
 			out[i] = iter
 		}
 		return out

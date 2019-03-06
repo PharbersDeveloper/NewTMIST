@@ -13,28 +13,28 @@ import (
 
 type NtmDestConfigResource struct {
 	NtmDestConfigStorage    		*NtmDataStorage.NtmDestConfigStorage
-	NtmRegionConfigResource       	*NtmRegionConfigResource
-	NtmHospitalConfigResource		*NtmHospitalConfigResource
+	NtmRegionConfigStorage			*NtmDataStorage.NtmRegionConfigStorage
+	NtmHospitalConfigStorage 		*NtmDataStorage.NtmHospitalConfigStorage
 }
 
 func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStorage) *NtmDestConfigResource {
 	var dcs *NtmDataStorage.NtmDestConfigStorage
-	var rcr *NtmRegionConfigResource
-	var hcr *NtmHospitalConfigResource
+	var rcs *NtmDataStorage.NtmRegionConfigStorage
+	var hcs *NtmDataStorage.NtmHospitalConfigStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmDestConfigStorage" {
 			dcs = arg.(*NtmDataStorage.NtmDestConfigStorage)
-		} else if tp.Name() == "NtmRegionConfigResource" {
-			rcr = arg.(interface{}).(*NtmRegionConfigResource)
-		} else if tp.Name() == "NtmHospitalConfigResource" {
-			hcr = arg.(interface{}).(*NtmHospitalConfigResource)
+		} else if tp.Name() == "NtmRegionConfigStorage" {
+			rcs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
+		} else if tp.Name() == "NtmHospitalConfigStorage" {
+			hcs = arg.(*NtmDataStorage.NtmHospitalConfigStorage)
 		}
 	}
 	return &NtmDestConfigResource{
 		NtmDestConfigStorage:    	dcs,
-		NtmRegionConfigResource: 	rcr,
-		NtmHospitalConfigResource: 	hcr,
+		NtmRegionConfigStorage: 	rcs,
+		NtmHospitalConfigStorage: 	hcs,
 	}
 }
 
@@ -43,20 +43,6 @@ func (s NtmDestConfigResource) FindAll(r api2go.Request) (api2go.Responder, erro
 	models := s.NtmDestConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		if model.DestType == 0 {
-			rcr, err := s.NtmRegionConfigResource.FindOne(model.DestID, api2go.Request{})
-			if err != nil {
-				return &Response{}, err
-			}
-			model.RegionConfig = rcr.Result().(NtmModel.RegionConfig)
-		} else if model.DestType == 1 {
-			hcr, err := s.NtmHospitalConfigResource.FindOne(model.DestID, api2go.Request{})
-			if err != nil {
-				return &Response{}, err
-			}
-			model.HospitalConfig = hcr.Result().(NtmModel.HospitalConfig)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -133,19 +119,19 @@ func (s NtmDestConfigResource) FindOne(ID string, r api2go.Request) (api2go.Resp
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	if model.DestType == 0 {
-		rcr, err := s.NtmRegionConfigResource.FindOne(model.DestID, api2go.Request{})
-		if err != nil {
-			return &Response{}, err
-		}
-		model.RegionConfig = rcr.Result().(NtmModel.RegionConfig)
-	} else if model.DestType == 1 {
-		hcr, err := s.NtmHospitalConfigResource.FindOne(model.DestID, api2go.Request{})
-		if err != nil {
-			return &Response{}, err
-		}
-		model.HospitalConfig = hcr.Result().(NtmModel.HospitalConfig)
-	}
+	//if model.DestType == 0 {
+	//	rcr, err := s.NtmRegionConfigResource.FindOne(model.DestID, api2go.Request{})
+	//	if err != nil {
+	//		return &Response{}, err
+	//	}
+	//	model.RegionConfig = rcr.Result().(NtmModel.RegionConfig)
+	//} else if model.DestType == 1 {
+	//	hcr, err := s.NtmHospitalConfigResource.FindOne(model.DestID, api2go.Request{})
+	//	if err != nil {
+	//		return &Response{}, err
+	//	}
+	//	model.HospitalConfig = hcr.Result().(NtmModel.HospitalConfig)
+	//}
 
 	return &Response{Res: model}, nil
 }

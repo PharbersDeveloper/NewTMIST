@@ -16,8 +16,8 @@ type DestConfig struct {
 	// 0 => RegionConfig; 1 => HospitalConfig
 	DestID     string        `json:"dest-id" bson:"dest-id"`
 
-	RegionConfig   RegionConfig   `json:"-"`
-	HospitalConfig HospitalConfig `json:"-"`
+	RegionConfig   *RegionConfig   `json:"-"`
+	HospitalConfig *HospitalConfig `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -70,9 +70,9 @@ func (u DestConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 func (u DestConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	if u.DestType == 0 {
+	if u.DestType == 0 && u.RegionConfig != nil{
 		result = append(result, u.RegionConfig)
-	} else if u.DestType == 1 {
+	} else if u.DestType == 1 && u.HospitalConfig != nil {
 		result = append(result, u.HospitalConfig)
 	}
 
@@ -96,6 +96,14 @@ func (u *DestConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
 		case "scenario-id":
 			rst[k] = v[0]
 		case "dest-type":

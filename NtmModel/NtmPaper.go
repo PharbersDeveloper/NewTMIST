@@ -34,8 +34,8 @@ func (c Paper) SetID(id string) error {
 func (c Paper) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
-			Type: "PaperInput",
-			Name: "PaperInput",
+			Type: "paperInputs",
+			Name: "paperInputs",
 		},
 	}
 }
@@ -46,8 +46,8 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 	for _, kID := range c.InputIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID: kID,
-			Type: "PaperInput",
-			Name: "PaperInput",
+			Type: "paperInputs",
+			Name: "paperInputs",
 		})
 	}
 	return result
@@ -94,5 +94,18 @@ func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Paper) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

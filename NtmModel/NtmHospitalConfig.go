@@ -14,7 +14,7 @@ type HospitalConfig struct {
 	BedNumber    int     `json:"bed-number" bson:"bed-number"`
 	Income       float64 `json:"income" bson:"income"`
 
-	Hospital   Hospital `json:"-"`
+	Hospital   *Hospital `json:"-"`
 	HospitalID string   `json:"-" bson:"hospital-id"`
 
 	DepartmentIDs []string      `json:"-" bson:"department-ids"`
@@ -96,7 +96,7 @@ func (u HospitalConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 		result = append(result, u.Departments[key])
 	}
 
-	if u.HospitalID != "" {
+	if u.HospitalID != "" && u.Hospital!= nil {
 		result = append(result, u.Hospital)
 	}
 
@@ -167,5 +167,18 @@ func (u *HospitalConfig) DeleteToManyIDs(name string, IDs []string) error {
 }
 
 func (u *HospitalConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }
