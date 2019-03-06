@@ -13,21 +13,21 @@ import (
 
 type NtmPaperResource struct {
 	NtmPaperStorage			*NtmDataStorage.NtmPaperStorage
-	NtmPaperInputResource	*NtmPaperInputResource
+	NtmPaperInputStorage	*NtmDataStorage.NtmPaperInputStorage
 }
 
 func (s NtmPaperResource) NewPaperResource (args []BmDataStorage.BmStorage) *NtmPaperResource {
 	var ps *NtmDataStorage.NtmPaperStorage
-	var pir *NtmPaperInputResource
+	var pis *NtmDataStorage.NtmPaperInputStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
-		} else if tp.Name() == "NtmPaperInputResource" {
-			pir = arg.(interface{}).(*NtmPaperInputResource)
+		} else if tp.Name() == "NtmPaperInputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
 		}
 	}
-	return &NtmPaperResource{NtmPaperInputResource: pir, NtmPaperStorage: ps}
+	return &NtmPaperResource{NtmPaperInputStorage: pis, NtmPaperStorage: ps}
 }
 
 func (s NtmPaperResource) FindAll(r api2go.Request) (api2go.Responder, error) {
@@ -35,19 +35,15 @@ func (s NtmPaperResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	models := s.NtmPaperStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		// get all sweets for the model
 		model.PaperInputs = []*NtmModel.PaperInput{}
+
 		for _, pid := range model.InputIDs {
-			response, err := s.NtmPaperInputResource.FindOne(pid, api2go.Request{})
-			item := response.Result()
+			paperInput, err := s.NtmPaperInputStorage.GetOne(pid)
 			if err != nil {
 				return &Response{}, err
 			}
-
-			temp := item.(NtmModel.PaperInput)
-			model.PaperInputs = append(model.PaperInputs, &temp)
+			model.PaperInputs = append(model.PaperInputs, &paperInput)
 		}
-
 		result = append(result, *model)
 	}
 
@@ -126,13 +122,11 @@ func (s NtmPaperResource) FindOne(ID string, r api2go.Request) (api2go.Responder
 
 	model.PaperInputs = []*NtmModel.PaperInput{}
 	for _, pid := range model.InputIDs {
-		response, err := s.NtmPaperInputResource.FindOne(pid, api2go.Request{})
-		item := response.Result()
+		paperInput, err := s.NtmPaperInputStorage.GetOne(pid)
 		if err != nil {
-			return &Response{}, err
+			return &Response{}, nil
 		}
-		temp := item.(NtmModel.PaperInput)
-		model.PaperInputs = append(model.PaperInputs, &temp)
+		model.PaperInputs = append(model.PaperInputs, &paperInput)
 	}
 
 	return &Response{Res: model}, nil

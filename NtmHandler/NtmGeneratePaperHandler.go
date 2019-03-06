@@ -90,9 +90,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	var inputIds []string
 	json.Unmarshal(body, &temp)
 
-	a := temp["input-ids"].([]interface{})
-
-	for _, v := range a {
+	for _, v := range temp["input-ids"].([]interface{}) {
 		value := v.(string)
 		inputIds = append(inputIds, value)
 	}
@@ -110,11 +108,11 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 		scheme = "https://"
 	}
 	toUrl := strings.Replace(r.URL.Path, "GeneratePaper", h.Args[0], -1) + "/" + oid
-	useableProposalURL := strings.Join([]string{scheme, r.Host, toUrl}, "")
+	paperURL := strings.Join([]string{scheme, r.Host, toUrl}, "")
 
 	// 转发
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", useableProposalURL, nil)
+	req, _ := http.NewRequest("GET", paperURL, nil)
 	for k, v := range r.Header {
 		req.Header.Add(k, v[0])
 	}
