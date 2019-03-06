@@ -14,8 +14,8 @@ import (
 // NtmPolicyStorage stores all of the tasty modelleaf, needs to be injected into
 // Policy and Policy Resource. In the real world, you would use a database for that.
 type NtmPolicyStorage struct {
-	Policies  map[string]*NtmModel.Policy
-	idCount int
+	Policies map[string]*NtmModel.Policy
+	idCount  int
 
 	db *BmMongodb.BmMongodb
 }
