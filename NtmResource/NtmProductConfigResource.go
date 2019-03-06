@@ -14,27 +14,27 @@ import (
 type NtmProductConfigResource struct {
 	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
 	NtmGoodsConfigStorage   *NtmDataStorage.NtmGoodsConfigStorage
-	NtmProductResource      *NtmProductResource
+	NtmProductStorage       *NtmDataStorage.NtmProductStorage
 }
 
 func (s NtmProductConfigResource) NewProductConfigResource(args []BmDataStorage.BmStorage) *NtmProductConfigResource {
 	var pcs *NtmDataStorage.NtmProductConfigStorage
 	var gcs *NtmDataStorage.NtmGoodsConfigStorage
-	var pr *NtmProductResource
+	var pc *NtmDataStorage.NtmProductStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmProductConfigStorage" {
 			pcs = arg.(*NtmDataStorage.NtmProductConfigStorage)
 		} else if tp.Name() == "NtmGoodsConfigStorage" {
 			gcs = arg.(interface{}).(*NtmDataStorage.NtmGoodsConfigStorage)
-		} else if tp.Name() == "NtmProductResource" {
-			pr = arg.(interface{}).(*NtmProductResource)
+		} else if tp.Name() == "NtmProductStorage" {
+			pc = arg.(interface{}).(*NtmDataStorage.NtmProductStorage)
 		}
 	}
 	return &NtmProductConfigResource{
 		NtmProductConfigStorage: pcs,
 		NtmGoodsConfigStorage:   gcs,
-		NtmProductResource:      pr,
+		NtmProductStorage:       pc,
 	}
 }
 
@@ -44,32 +44,20 @@ func (s NtmProductConfigResource) FindAll(r api2go.Request) (api2go.Responder, e
 
 	if gcok {
 		modelRootID := goodsConfigID[0]
-
 		modelRoot, err := s.NtmGoodsConfigStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-
 		model, err := s.NtmProductConfigStorage.GetOne(modelRoot.GoodsID)
 		if err != nil {
 			return &Response{}, err
 		}
 		result = append(result, model)
-
 		return &Response{Res: result}, nil
 	}
 
 	models := s.NtmProductConfigStorage.GetAll(r, -1, -1)
 	for _, model := range models {
-		if model.ProductID != "" {
-			response, err := s.NtmProductResource.FindOne(model.ProductID, api2go.Request{})
-			item := response.Result()
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Product = item.(NtmModel.Product)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -141,28 +129,29 @@ func (s NtmProductConfigResource) PaginatedFindAll(r api2go.Request) (uint, api2
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
 func (s NtmProductConfigResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmProductConfigStorage.GetOne(ID)
+	modelRoot, err := s.NtmProductConfigStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
-
-	if model.ProductID != "" {
-		response, err := s.NtmProductResource.FindOne(model.ProductID, api2go.Request{})
-		item := response.Result()
+	if modelRoot.ProductID != "" {
+		model, err := s.NtmProductStorage.GetOne(modelRoot.ProductID)
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Product = item.(NtmModel.Product)
+		modelRoot.Product = &model
 	}
-
-	return &Response{Res: model}, nil
+	return &Response{Res: modelRoot}, nil
 }
 
 // Create method to satisfy `api2go.DataSource` interface
 func (s NtmProductConfigResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
 	model, ok := obj.(NtmModel.ProductConfig)
 	if !ok {
-		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
+		return &Response{}, api2go.NewHTTPError(
+			errors.New("Invalid instance given"),
+			"Invalid instance given",
+			http.StatusBadRequest,
+		)
 	}
 
 	id := s.NtmProductConfigStorage.Insert(model)
@@ -181,7 +170,11 @@ func (s NtmProductConfigResource) Delete(id string, r api2go.Request) (api2go.Re
 func (s NtmProductConfigResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
 	model, ok := obj.(NtmModel.ProductConfig)
 	if !ok {
-		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
+		return &Response{}, api2go.NewHTTPError(
+			errors.New("Invalid instance given"),
+			"Invalid instance given",
+			http.StatusBadRequest,
+		)
 	}
 
 	err := s.NtmProductConfigStorage.Update(model)

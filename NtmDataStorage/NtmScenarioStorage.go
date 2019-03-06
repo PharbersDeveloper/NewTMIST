@@ -14,8 +14,8 @@ import (
 // NtmScenarioStorage stores all of the tasty modelleaf, needs to be injected into
 // Scenario and Scenario Resource. In the real world, you would use a database for that.
 type NtmScenarioStorage struct {
-	Policies  map[string]*NtmModel.Scenario
-	idCount int
+	Policies map[string]*NtmModel.Scenario
+	idCount  int
 
 	db *BmMongodb.BmMongodb
 }

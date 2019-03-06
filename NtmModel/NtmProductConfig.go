@@ -10,17 +10,17 @@ type ProductConfig struct {
 	ID  string        `json:"-"`
 	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	ProductType     string `json:"product-type" bson:"product-type"`
+	ProductType     string  `json:"product-type" bson:"product-type"`
 	PriceType       string  `json:"price-type" bson:"price-type"`
-	Price           float64  `json:"price" bson:"price"`
+	Price           float64 `json:"price" bson:"price"`
 	LifeCycle       string  `json:"life-cycle" bson:"life-cycle"`
-	LaunchTime      float64  `json:"launch-time" bson:"launch-time"`
+	LaunchTime      float64 `json:"launch-time" bson:"launch-time"`
 	ProductCategory string  `json:"product-category" bson:"product-category"`
 	TreatmentArea   string  `json:"treatment-area" bson:"treatment-area"`
 	ProductFeature  string  `json:"product-feature" bson:"product-feature"`
 
-	ProductID string `json:"-" bson:"product-id"`
-	Product   Product `json:"-"`
+	ProductID string   `json:"-" bson:"product-id"`
+	Product   *Product `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -46,7 +46,7 @@ func (u ProductConfig) GetReferences() []jsonapi.Reference {
 
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
 func (u ProductConfig) GetReferencedIDs() []jsonapi.ReferenceID {
-	result := []jsonapi.ReferenceID{}
+	var result []jsonapi.ReferenceID
 
 	if u.ProductID != "" {
 		result = append(result, jsonapi.ReferenceID{
@@ -61,9 +61,9 @@ func (u ProductConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 
 // GetReferencedStructs to satisfy the jsonapi.MarhsalIncludedRelations interface
 func (u ProductConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
-	result := []jsonapi.MarshalIdentifier{}
+	var result []jsonapi.MarshalIdentifier
 
-	if u.ProductID != "" {
+	if u.ProductID != "" && u.Product != nil {
 		result = append(result, u.Product)
 	}
 
@@ -80,5 +80,18 @@ func (u *ProductConfig) SetToOneReferenceID(name, ID string) error {
 }
 
 func (u *ProductConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

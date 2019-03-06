@@ -7,13 +7,12 @@ import (
 )
 
 type UseableProposal struct {
+	ID        string        `json:"-"`
+	Id_       bson.ObjectId `json:"-" bson:"_id"`
+	AccountID string        `json:"account-id" bson:"account-id"`
 
-	ID			string	`json:"-"`
-	Id_			bson.ObjectId `json:"-" bson:"_id"`
-	AccountID 	string	`json:"account-id" bson:"account-id"`
-
-	ProposalID	string	`json:"-" bson:"proposal-id"`
-	Proposal	Proposal `json:"-"`
+	ProposalID string   `json:"-" bson:"proposal-id"`
+	Proposal   *Proposal `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -39,7 +38,7 @@ func (u UseableProposal) GetReferences() []jsonapi.Reference {
 
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
 func (u UseableProposal) GetReferencedIDs() []jsonapi.ReferenceID {
-	result := []jsonapi.ReferenceID{}
+	var result []jsonapi.ReferenceID
 
 	if u.ProposalID != "" {
 		result = append(result, jsonapi.ReferenceID{
@@ -54,9 +53,9 @@ func (u UseableProposal) GetReferencedIDs() []jsonapi.ReferenceID {
 
 // GetReferencedStructs to satisfy the jsonapi.MarhsalIncludedRelations interface
 func (u UseableProposal) GetReferencedStructs() []jsonapi.MarshalIdentifier {
-	result := []jsonapi.MarshalIdentifier{}
+	var result []jsonapi.MarshalIdentifier
 
-	if u.ProposalID != "" {
+	if u.ProposalID != "" && u.Proposal != nil {
 		result = append(result, u.Proposal)
 	}
 

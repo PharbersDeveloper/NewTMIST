@@ -14,10 +14,10 @@ type ResourceConfig struct {
 	ScenarioId   string        `json:"scenario-id" bson:"scenario-id"`
 	ResourceType float64       `json:"resource-type" bson:"resource-type"`
 	// 0 => ManagerConfig ; 1 => RepresentativeConfig
-	ResourceID   string        `json:"resource-id" bson:"resource-id"`
+	ResourceID string `json:"resource-id" bson:"resource-id"`
 
-	ManagerConfig        ManagerConfig        `json:"-"`
-	RepresentativeConfig RepresentativeConfig `json:"-"`
+	ManagerConfig        *ManagerConfig        `json:"-"`
+	RepresentativeConfig *RepresentativeConfig `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -70,9 +70,9 @@ func (u ResourceConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 func (u ResourceConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	if u.ResourceType == 0 {
+	if u.ResourceType == 0 && u.ManagerConfig != nil {
 		result = append(result, u.ManagerConfig)
-	} else if u.ResourceType == 1 {
+	} else if u.ResourceType == 1 && u.RepresentativeConfig != nil {
 		result = append(result, u.RepresentativeConfig)
 	}
 
@@ -96,6 +96,14 @@ func (u *ResourceConfig) GetConditionsBsonM(parameters map[string][]string) bson
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
 		case "scenario-id":
 			rst[k] = v[0]
 		case "resource-type":

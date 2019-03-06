@@ -45,16 +45,6 @@ func (s NtmProductConfigStorage) GetOne(id string) (NtmModel.ProductConfig, erro
 	out := NtmModel.ProductConfig{ID: id}
 	err := s.db.FindOne(&in, &out)
 	if err == nil {
-		// TODO: 双重绑定没明白啥意思
-		//双重绑定
-		//if out.ProductID != "" {
-		//	item, err := NtmProductStorage{db: s.db}.GetOne(out.ProductID)
-		//	if err != nil {
-		//		return NtmModel.ProductConfig{}, err
-		//	}
-		//	out.Product = item
-		//}
-
 		return out, nil
 	}
 	errMessage := fmt.Sprintf("ProductConfig for id %s not found", id)

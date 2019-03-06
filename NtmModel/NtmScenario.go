@@ -7,10 +7,10 @@ import (
 
 // Scenario Info
 type Scenario struct {
-	ID   		string        `json:"-"`
-	Id_  		bson.ObjectId `json:"-" bson:"_id"`
-	ProposalID	string        `json:"proposal-id" bson:"proposal-id"`
-	Phase  		int       	  `json:"phase" bson:"phase"`
+	ID         string        `json:"-"`
+	Id_        bson.ObjectId `json:"-" bson:"_id"`
+	ProposalID string        `json:"proposal-id" bson:"proposal-id"`
+	Phase      int           `json:"phase" bson:"phase"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

@@ -45,33 +45,20 @@ func (s NtmRepresentativeResource) FindAll(r api2go.Request) (api2go.Responder, 
 
 	if rcok {
 		modelRootID := representativeConfigsID[0]
-
 		modelRoot, err := s.NtmRepresentativeConfigStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-
 		model, err := s.NtmRepresentativeStorage.GetOne(modelRoot.RepresentativeID)
 		if err != nil {
 			return &Response{}, err
 		}
 		result = append(result, model)
-
 		return &Response{Res: result}, nil
 	}
 
 	models := s.NtmRepresentativeStorage.GetAll(r, -1, -1)
 	for _, model := range models {
-		// get all sweets for the model
-		model.Imgs = []*NtmModel.Image{}
-		for _, kID := range model.ImagesIDs {
-			choc, err := s.NtmImageStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Imgs = append(model.Imgs, &choc)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -148,15 +135,11 @@ func (s NtmRepresentativeResource) FindOne(ID string, r api2go.Request) (api2go.
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	model.Imgs = []*NtmModel.Image{}
-	for _, kID := range model.ImagesIDs {
-		choc, err := s.NtmImageStorage.GetOne(kID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.Imgs = append(model.Imgs, &choc)
+	r.QueryParams["ids"] = model.ImagesIDs
+	images := s.NtmImageStorage.GetAll(r, -1, -1)
+	for _, image := range images {
+		model.Imgs = append(model.Imgs, &image)
 	}
-
 	return &Response{Res: model}, nil
 }
 

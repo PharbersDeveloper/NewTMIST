@@ -49,6 +49,9 @@ func (s NtmProductResource) FindAll(r api2go.Request) (api2go.Responder, error) 
 			return &Response{}, err
 		}
 		model, err := s.NtmProductStorage.GetOne(modelRoot.ProductID)
+		if err != nil {
+			return &Response{}, err
+		}
 		result = append(result, model)
 		return &Response{Res: result}, nil
 	}
@@ -131,15 +134,11 @@ func (s NtmProductResource) FindOne(ID string, r api2go.Request) (api2go.Respond
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	model.Imgs = []*NtmModel.Image{}
-	for _, kID := range model.ImagesIDs {
-		choc, err := s.NtmImageStorage.GetOne(kID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.Imgs = append(model.Imgs, &choc)
+	r.QueryParams["ids"] = model.ImagesIDs
+	images := s.NtmImageStorage.GetAll(r, -1, -1)
+	for _, image := range images {
+		model.Imgs = append(model.Imgs, &image)
 	}
-
 	return &Response{Res: model}, nil
 }
 

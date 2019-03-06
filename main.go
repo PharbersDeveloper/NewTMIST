@@ -11,7 +11,7 @@ import (
 	"github.com/manyminds/api2go"
 	"github.com/julienschmidt/httprouter"
 
-	"./NtmFactory"
+	"github.com/PharbersDeveloper/NtmPods/NtmFactory"
 )
 
 func main() {
