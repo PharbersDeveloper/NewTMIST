@@ -12,29 +12,29 @@ import (
 )
 
 type NtmResourceConfigResource struct {
-	NtmResourceConfigStorage        *NtmDataStorage.NtmResourceConfigStorage
-	NtmManagerConfigResource        *NtmManagerConfigResource
-	NtmRepresentativeConfigResource *NtmRepresentativeConfigResource
+	NtmResourceConfigStorage       *NtmDataStorage.NtmResourceConfigStorage
+	NtmManagerConfigStorage        *NtmDataStorage.NtmManagerConfigStorage
+	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
 }
 
 func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) *NtmResourceConfigResource {
 	var rcs *NtmDataStorage.NtmResourceConfigStorage
-	var mcr *NtmManagerConfigResource
-	var repcr *NtmRepresentativeConfigResource
+	var mcs *NtmDataStorage.NtmManagerConfigStorage
+	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmResourceConfigStorage" {
 			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
-		} else if tp.Name() == "NtmManagerConfigResource" {
-			mcr = arg.(interface{}).(*NtmManagerConfigResource)
-		} else if tp.Name() == "NtmRepresentativeConfigResource" {
-			repcr = arg.(interface{}).(*NtmRepresentativeConfigResource)
+		} else if tp.Name() == "NtmManagerConfigStorage" {
+			mcs = arg.(interface{}).(*NtmDataStorage.NtmManagerConfigStorage)
+		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
+			repcs = arg.(interface{}).(*NtmDataStorage.NtmRepresentativeConfigStorage)
 		}
 	}
 	return &NtmResourceConfigResource{
-		NtmResourceConfigStorage:        rcs,
-		NtmManagerConfigResource:        mcr,
-		NtmRepresentativeConfigResource: repcr,
+		NtmResourceConfigStorage:       rcs,
+		NtmManagerConfigStorage:        mcs,
+		NtmRepresentativeConfigStorage: repcs,
 	}
 }
 
@@ -43,20 +43,6 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 	models := s.NtmResourceConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		if model.ResourceType == 0 {
-			mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
-			if err != nil {
-				return &Response{}, err
-			}
-			model.ManagerConfig = mcr.Result().(NtmModel.ManagerConfig)
-		} else if model.ResourceType == 1 {
-			rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
-			if err != nil {
-				return &Response{}, err
-			}
-			model.RepresentativeConfig = rcr.Result().(NtmModel.RepresentativeConfig)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -134,17 +120,17 @@ func (s NtmResourceConfigResource) FindOne(ID string, r api2go.Request) (api2go.
 	}
 
 	if model.ResourceType == 0 {
-		mcr, err := s.NtmManagerConfigResource.FindOne(model.ResourceID, api2go.Request{})
+		mcr, err := s.NtmManagerConfigStorage.GetOne(model.ResourceID)
 		if err != nil {
 			return &Response{}, err
 		}
-		model.ManagerConfig = mcr.Result().(NtmModel.ManagerConfig)
+		model.ManagerConfig = &mcr
 	} else if model.ResourceType == 1 {
-		rcr, err := s.NtmRepresentativeConfigResource.FindOne(model.ResourceID, api2go.Request{})
+		rcr, err := s.NtmRepresentativeConfigStorage.GetOne(model.ResourceID)
 		if err != nil {
 			return &Response{}, err
 		}
-		model.RepresentativeConfig = rcr.Result().(NtmModel.RepresentativeConfig)
+		model.RepresentativeConfig = &rcr
 	}
 
 	return &Response{Res: model}, nil
@@ -154,7 +140,11 @@ func (s NtmResourceConfigResource) FindOne(ID string, r api2go.Request) (api2go.
 func (s NtmResourceConfigResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
 	model, ok := obj.(NtmModel.ResourceConfig)
 	if !ok {
-		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
+		return &Response{}, api2go.NewHTTPError(
+			errors.New("Invalid instance given"),
+			"Invalid instance given",
+			http.StatusBadRequest,
+		)
 	}
 
 	id := s.NtmResourceConfigStorage.Insert(model)

@@ -35,21 +35,18 @@ func (c NtmManagerConfigResource) NewManagerConfigResource(args []BmDataStorage.
 
 func (c NtmManagerConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	resourceConfigsID, rcok := r.QueryParams["resourceConfigsID"]
-	result := []NtmModel.ManagerConfig{}
+	var result []NtmModel.ManagerConfig
 	if rcok {
 		modelRootID := resourceConfigsID[0]
-
 		modelRoot, err := c.NtmResourceConfigStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-
 		model, err := c.NtmManagerConfigStorage.GetOne(modelRoot.ResourceID)
 		if err != nil {
 			return &Response{}, err
 		}
 		result = append(result, model)
-
 		return &Response{Res: result}, nil
 	}
 	result = c.NtmManagerConfigStorage.GetAll(r, -1, -1)

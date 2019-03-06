@@ -12,11 +12,11 @@ type GoodsConfig struct {
 	ID         string        `json:"-"`
 	Id_        bson.ObjectId `json:"-" bson:"_id"`
 	ScenarioId string        `json:"scenario-id" bson:"scenario-id"`
-	GoodsType   float64       `json:"goods-type" bson:"goods-type"`
+	GoodsType  float64       `json:"goods-type" bson:"goods-type"`
 	// 0 => ProductConfig ;
 	GoodsID string `json:"goods-id" bson:"goods-id"`
 
-	ProductConfig ProductConfig `json:"-"`
+	ProductConfig *ProductConfig `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -42,7 +42,7 @@ func (u GoodsConfig) GetReferences() []jsonapi.Reference {
 
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
 func (u GoodsConfig) GetReferencedIDs() []jsonapi.ReferenceID {
-	result := []jsonapi.ReferenceID{}
+	var result []jsonapi.ReferenceID
 
 	if u.GoodsType == 0 {
 		result = append(result, jsonapi.ReferenceID{
@@ -57,9 +57,9 @@ func (u GoodsConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 
 // GetReferencedStructs to satisfy the jsonapi.MarhsalIncludedRelations interface
 func (u GoodsConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
-	result := []jsonapi.MarshalIdentifier{}
+	var result []jsonapi.MarshalIdentifier
 
-	if u.GoodsType == 0 {
+	if u.GoodsType == 0 && u.ProductConfig != nil {
 		result = append(result, u.ProductConfig)
 	}
 
@@ -79,6 +79,14 @@ func (u *GoodsConfig) GetConditionsBsonM(parameters map[string][]string) bson.M 
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
 		case "scenario-id":
 			rst[k] = v[0]
 		case "goods-type":

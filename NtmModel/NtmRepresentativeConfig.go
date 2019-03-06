@@ -20,8 +20,8 @@ type RepresentativeConfig struct {
 	JobEnthusiasm             float64 `json:"job-enthusiasm" bson:"job-enthusiasm"`
 	BehaviorValidity          float64 `json:"behavior-validity" bson:"behavior-validity"`
 
-	RepresentativeID string         `json:"-" bson:"representative-id"`
-	Representative   Representative `json:"-"`
+	RepresentativeID string          `json:"-" bson:"representative-id"`
+	Representative   *Representative `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -64,7 +64,7 @@ func (u RepresentativeConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 func (u RepresentativeConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	if u.RepresentativeID != "" {
+	if u.RepresentativeID != "" && u.Representative != nil {
 		result = append(result, u.Representative)
 	}
 
@@ -81,5 +81,18 @@ func (u *RepresentativeConfig) SetToOneReferenceID(name, ID string) error {
 }
 
 func (u *RepresentativeConfig) GetConditionsBsonM(parameters map[string][]string) bson.M {
-	return bson.M{}
+	rst := make(map[string]interface{})
+	for k, v := range parameters {
+		switch k {
+		case "ids":
+			r := make(map[string]interface{})
+			var ids []bson.ObjectId
+			for i := 0; i < len(v); i++ {
+				ids = append(ids, bson.ObjectIdHex(v[i]))
+			}
+			r["$in"] = ids
+			rst["_id"] = r
+		}
+	}
+	return rst
 }

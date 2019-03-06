@@ -12,23 +12,26 @@ import (
 )
 
 type NtmUseableProposalResource struct {
-	NtmUseableProposalStorage	*NtmDataStorage.NtmUseableProposalStorage
-	NtmProposalResource			*NtmProposalResource
+	NtmUseableProposalStorage *NtmDataStorage.NtmUseableProposalStorage
+	NtmProposalStorage        *NtmDataStorage.NtmProposalStorage
 }
 
 func (s NtmUseableProposalResource) NewUseableProposalResource(args []BmDataStorage.BmStorage) *NtmUseableProposalResource {
 	var rcs *NtmDataStorage.NtmUseableProposalStorage
-	var rr *NtmProposalResource
+	var rs *NtmDataStorage.NtmProposalStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmUseableProposalStorage" {
 			rcs = arg.(*NtmDataStorage.NtmUseableProposalStorage)
-		} else if tp.Name() == "NtmProposalResource" {
-			rr = arg.(interface{}).(*NtmProposalResource)
+		} else if tp.Name() == "NtmProposalStorage" {
+			rs = arg.(*NtmDataStorage.NtmProposalStorage)
 		}
 	}
-	return &NtmUseableProposalResource{NtmProposalResource: rr, NtmUseableProposalStorage: rcs}
+	return &NtmUseableProposalResource{
+		NtmUseableProposalStorage: rcs,
+		NtmProposalStorage:        rs,
+	}
 }
 
 func (s NtmUseableProposalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
@@ -37,14 +40,12 @@ func (s NtmUseableProposalResource) FindAll(r api2go.Request) (api2go.Responder,
 
 	for _, model := range models {
 		if model.ProposalID != "" {
-			response, err := s.NtmProposalResource.FindOne(model.ProposalID, api2go.Request{})
-			item := response.Result()
+			response, err := s.NtmProposalStorage.GetOne(model.ProposalID)
 			if err != nil {
 				return &Response{}, err
 			}
-			model.Proposal = item.(NtmModel.Proposal)
+			model.Proposal = &response
 		}
-
 		result = append(result, *model)
 	}
 
@@ -122,12 +123,11 @@ func (s NtmUseableProposalResource) FindOne(ID string, r api2go.Request) (api2go
 	}
 
 	if model.ProposalID != "" {
-		response, err := s.NtmProposalResource.FindOne(model.ProposalID, api2go.Request{})
-		item := response.Result()
+		response, err := s.NtmProposalStorage.GetOne(model.ProposalID)
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Proposal = item.(NtmModel.Proposal)
+		model.Proposal = &response
 	}
 
 	return &Response{Res: model}, nil

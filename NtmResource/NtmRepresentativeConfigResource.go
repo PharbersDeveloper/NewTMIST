@@ -14,27 +14,27 @@ import (
 type NtmRepresentativeConfigResource struct {
 	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
 	NtmResourceConfigStorage       *NtmDataStorage.NtmResourceConfigStorage
-	NtmRepresentativeResource      *NtmRepresentativeResource
+	NtmRepresentativeStorage       *NtmDataStorage.NtmRepresentativeStorage
 }
 
 func (s NtmRepresentativeConfigResource) NewRepresentativeConfigResource(args []BmDataStorage.BmStorage) *NtmRepresentativeConfigResource {
 	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
 	var rcs *NtmDataStorage.NtmResourceConfigStorage
-	var rr *NtmRepresentativeResource
+	var reps *NtmDataStorage.NtmRepresentativeStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmRepresentativeConfigStorage" {
 			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
 		} else if tp.Name() == "NtmResourceConfigStorage" {
 			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
-		} else if tp.Name() == "NtmRepresentativeResource" {
-			rr = arg.(interface{}).(*NtmRepresentativeResource)
+		} else if tp.Name() == "NtmRepresentativeStorage" {
+			reps = arg.(*NtmDataStorage.NtmRepresentativeStorage)
 		}
 	}
 	return &NtmRepresentativeConfigResource{
 		NtmRepresentativeConfigStorage: repcs,
 		NtmResourceConfigStorage:       rcs,
-		NtmRepresentativeResource:      rr,
+		NtmRepresentativeStorage:       reps,
 	}
 }
 
@@ -44,32 +44,20 @@ func (s NtmRepresentativeConfigResource) FindAll(r api2go.Request) (api2go.Respo
 
 	if rcok {
 		modelRootID := resourceConfigsID[0]
-
 		modelRoot, err := s.NtmResourceConfigStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-
 		model, err := s.NtmRepresentativeConfigStorage.GetOne(modelRoot.ResourceID)
 		if err != nil {
 			return &Response{}, err
 		}
 		result = append(result, model)
-
 		return &Response{Res: result}, nil
 	}
 
 	models := s.NtmRepresentativeConfigStorage.GetAll(r, -1, -1)
 	for _, model := range models {
-		if model.RepresentativeID != "" {
-			response, err := s.NtmRepresentativeResource.FindOne(model.RepresentativeID, api2go.Request{})
-			item := response.Result()
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Representative = item.(NtmModel.Representative)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -141,21 +129,18 @@ func (s NtmRepresentativeConfigResource) PaginatedFindAll(r api2go.Request) (uin
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
 func (s NtmRepresentativeConfigResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmRepresentativeConfigStorage.GetOne(ID)
+	modelRoot, err := s.NtmRepresentativeConfigStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
-
-	if model.RepresentativeID != "" {
-		response, err := s.NtmRepresentativeResource.FindOne(model.RepresentativeID, api2go.Request{})
-		item := response.Result()
+	if modelRoot.RepresentativeID != "" {
+		model, err := s.NtmRepresentativeStorage.GetOne(modelRoot.RepresentativeID)
 		if err != nil {
 			return &Response{}, err
 		}
-		model.Representative = item.(NtmModel.Representative)
+		modelRoot.Representative = &model
 	}
-
-	return &Response{Res: model}, nil
+	return &Response{Res: modelRoot}, nil
 }
 
 // Create method to satisfy `api2go.DataSource` interface
