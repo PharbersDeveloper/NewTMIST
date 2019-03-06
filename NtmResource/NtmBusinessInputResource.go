@@ -35,7 +35,7 @@ func (s NtmBusinessInputResource) NewBusinessInputResource(args []BmDataStorage.
 
 func (s NtmBusinessInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	paperInputsID, piok := r.QueryParams["paperInputsID"]
-	var result []NtmModel.BusinessInput
+	var result []*NtmModel.BusinessInput
 
 	if piok {
 		modelRootID := paperInputsID[0]
@@ -44,19 +44,12 @@ func (s NtmBusinessInputResource) FindAll(r api2go.Request) (api2go.Responder, e
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.BusinessInputIDs {
-			model, err := s.NtmBusinessInputStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
-		return &Response{Res: result}, nil
-	}
+		r.QueryParams["ids"] = modelRoot.BusinessInputIDs
 
-	models := s.NtmBusinessInputStorage.GetAll(r, -1, -1)
-	for _, model := range models {
-		result = append(result, *model)
+
+		result = s.NtmBusinessInputStorage.GetAll(r, -1, -1)
+
+		return &Response{Res: result}, nil
 	}
 	return &Response{Res: result}, nil
 }

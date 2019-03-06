@@ -35,7 +35,7 @@ func (s NtmRepresentativeInputResource) NewRepresentativeInputResource(args []Bm
 
 func (s NtmRepresentativeInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	paperInputsID, piok := r.QueryParams["paperInputsID"]
-	var result []NtmModel.RepresentativeInput
+	var result []*NtmModel.RepresentativeInput
 
 	if piok {
 		modelRootID := paperInputsID[0]
@@ -44,20 +44,13 @@ func (s NtmRepresentativeInputResource) FindAll(r api2go.Request) (api2go.Respon
 		if err != nil {
 			return &Response{}, err
 		}
-		for _, modelID := range modelRoot.RepresentativeInputIDs {
-			model, err := s.NtmRepresentativeInputStorage.GetOne(modelID)
-			if err != nil {
-				return &Response{}, err
-			}
-			result = append(result, model)
-		}
+		r.QueryParams["ids"] = modelRoot.RepresentativeInputIDs
+
+		result = s.NtmRepresentativeInputStorage.GetAll(r, -1, -1)
+
 		return &Response{Res: result}, nil
 	}
 
-	models := s.NtmRepresentativeInputStorage.GetAll(r, -1, -1)
-	for _, model := range models {
-		result = append(result, *model)
-	}
 	return &Response{Res: result}, nil
 }
 
