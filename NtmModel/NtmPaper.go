@@ -14,12 +14,12 @@ type Paper struct {
 	ProposalID 			string			`json:"proposal-id" bson:"proposal-id"`
 	Name 				string			`json:"name" bson:"name"`
 	Describe			string			`json:"describe" bson:"describe"`
-	StartTime			float64			`json:"Paper-level" bson:"Paper-level"`
-	EndTime				float64			`json:"position" bson:"position"`
+	StartTime			float64			`json:"start-time" bson:"start-time"`
+	EndTime				float64			`json:"end-time" bson:"end-time"`
 	InputState			string			`json:"state" bson:"input-state"`
 
 	InputIDs			[]string 		`json:"-" bson:"input-ids"`
-	PaperInputs			[]*PaperInput		`json:"-"`
+	PaperInputs			[]*PaperInput	`json:"-"`
 }
 
 func (c Paper) GetID() string {
