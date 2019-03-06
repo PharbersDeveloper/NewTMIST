@@ -48,33 +48,6 @@ func (s NtmPaperInputResource) FindAll(r api2go.Request) (api2go.Responder, erro
 
 	models := s.NtmPaperInputStorage.GetAll(r, -1, -1)
 	for _, model := range models {
-		model.BusinessInputs = []*NtmModel.BusinessInput{}
-		model.RepresentativeInputs = []*NtmModel.RepresentativeInput{}
-
-		for _, kID := range model.BusinessInputIDs {
-			choc, err := s.NtmBusinessInputStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.BusinessInputs = append(model.BusinessInputs, &choc)
-		}
-
-		for _, kID := range model.RepresentativeInputIDs {
-			choc, err := s.NtmRepresentativeInputStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.RepresentativeInputs = append(model.RepresentativeInputs, &choc)
-		}
-
-		for _, kID := range model.ManagerInputIDs {
-			choc, err := s.NtmManagerInputStorage.GetOne(kID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.ManagerInputs = append(model.ManagerInputs, &choc)
-		}
-
 		result = append(result, *model)
 	}
 
@@ -151,30 +124,35 @@ func (s NtmPaperInputResource) FindOne(ID string, r api2go.Request) (api2go.Resp
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	model.BusinessInputs = []*NtmModel.BusinessInput{}
-	for _, kID := range model.BusinessInputIDs {
-		choc, err := s.NtmBusinessInputStorage.GetOne(kID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.BusinessInputs = append(model.BusinessInputs, &choc)
-	}
+	err = s.ResetReferencedModel(&model, &r)
 
-	for _, kID := range model.RepresentativeInputIDs {
-		choc, err := s.NtmRepresentativeInputStorage.GetOne(kID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.RepresentativeInputs = append(model.RepresentativeInputs, &choc)
+	if err != nil {
+		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
-
-	for _, kID := range model.ManagerInputIDs {
-		choc, err := s.NtmManagerInputStorage.GetOne(kID)
-		if err != nil {
-			return &Response{}, err
-		}
-		model.ManagerInputs = append(model.ManagerInputs, &choc)
-	}
+	//model.BusinessInputs = []*NtmModel.BusinessInput{}
+	//for _, kID := range model.BusinessInputIDs {
+	//	choc, err := s.NtmBusinessInputStorage.GetOne(kID)
+	//	if err != nil {
+	//		return &Response{}, err
+	//	}
+	//	model.BusinessInputs = append(model.BusinessInputs, &choc)
+	//}
+	//
+	//for _, kID := range model.RepresentativeInputIDs {
+	//	choc, err := s.NtmRepresentativeInputStorage.GetOne(kID)
+	//	if err != nil {
+	//		return &Response{}, err
+	//	}
+	//	model.RepresentativeInputs = append(model.RepresentativeInputs, &choc)
+	//}
+	//
+	//for _, kID := range model.ManagerInputIDs {
+	//	choc, err := s.NtmManagerInputStorage.GetOne(kID)
+	//	if err != nil {
+	//		return &Response{}, err
+	//	}
+	//	model.ManagerInputs = append(model.ManagerInputs, &choc)
+	//}
 
 	return &Response{Res: model}, nil
 }
@@ -207,4 +185,26 @@ func (s NtmPaperInputResource) Update(obj interface{}, r api2go.Request) (api2go
 
 	err := s.NtmPaperInputStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
+}
+
+func (s NtmPaperInputResource) ResetReferencedModel(model *NtmModel.PaperInput, r *api2go.Request) error {
+	model.BusinessInputs = []*NtmModel.BusinessInput{}
+	r.QueryParams["ids"] = model.BusinessInputIDs
+	for _, businessInput := range s.NtmBusinessInputStorage.GetAll(*r, -1, -1) {
+		model.BusinessInputs = append(model.BusinessInputs, businessInput)
+	}
+
+	model.RepresentativeInputs = []*NtmModel.RepresentativeInput{}
+	r.QueryParams["ids"] = model.RepresentativeInputIDs
+	for _, representativeInput := range s.NtmRepresentativeInputStorage.GetAll(*r, -1, -1) {
+		model.RepresentativeInputs = append(model.RepresentativeInputs, representativeInput)
+	}
+
+	model.ManagerInputs = []*NtmModel.ManagerInput{}
+	r.QueryParams["ids"] = model.ManagerInputIDs
+	for _, manageInput := range s.NtmManagerInputStorage.GetAll(*r, -1, -1) {
+		model.ManagerInputs = append(model.ManagerInputs, manageInput)
+	}
+
+	return nil
 }
