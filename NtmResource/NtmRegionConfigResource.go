@@ -41,7 +41,7 @@ func (s NtmRegionConfigResource) NewRegionConfigResource(args []BmDataStorage.Bm
 
 func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	destConfigsID, dcok := r.QueryParams["destConfigsID"]
-	var result []NtmModel.RegionConfig
+
 
 	if dcok {
 		modelRootID := destConfigsID[0]
@@ -53,9 +53,10 @@ func (s NtmRegionConfigResource) FindAll(r api2go.Request) (api2go.Responder, er
 		if err != nil {
 			return &Response{}, nil
 		}
-		result = append(result, model)
-		return &Response{Res: result}, nil
+		return &Response{Res: model}, nil
 	}
+
+	var result []NtmModel.RegionConfig
 
 	models := s.NtmRegionConfigStorage.GetAll(r, -1, -1)
 	for _, model := range models {

@@ -53,9 +53,6 @@ func (s NtmHospitalConfigResource) NewHospitalConfigResource(args []BmDataStorag
 func (s NtmHospitalConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	destConfigsID, dcok := r.QueryParams["destConfigsID"]
 
-	var result []NtmModel.HospitalConfig
-
-
 	if dcok {
 		modelRootID := destConfigsID[0]
 		modelRoot, err := s.NtmDestConfigStorage.GetOne(modelRootID)
@@ -63,12 +60,14 @@ func (s NtmHospitalConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 			return &Response{}, nil
 		}
 		model, err := s.NtmHospitalConfigStorage.GetOne(modelRoot.DestID)
+
 		if err != nil {
 			return &Response{}, nil
 		}
-		result = append(result, model)
-		return &Response{Res: result}, nil
+		return &Response{Res: model}, nil
 	}
+
+	var result []NtmModel.HospitalConfig
 
 	models := s.NtmHospitalConfigStorage.GetAll(r, -1, -1)
 
