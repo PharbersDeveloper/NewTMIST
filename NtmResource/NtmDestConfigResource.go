@@ -118,21 +118,6 @@ func (s NtmDestConfigResource) FindOne(ID string, r api2go.Request) (api2go.Resp
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
-
-	//if model.DestType == 0 {
-	//	rcr, err := s.NtmRegionConfigResource.FindOne(model.DestID, api2go.Request{})
-	//	if err != nil {
-	//		return &Response{}, err
-	//	}
-	//	model.RegionConfig = rcr.Result().(NtmModel.RegionConfig)
-	//} else if model.DestType == 1 {
-	//	hcr, err := s.NtmHospitalConfigResource.FindOne(model.DestID, api2go.Request{})
-	//	if err != nil {
-	//		return &Response{}, err
-	//	}
-	//	model.HospitalConfig = hcr.Result().(NtmModel.HospitalConfig)
-	//}
-
 	return &Response{Res: model}, nil
 }
 

@@ -40,7 +40,6 @@ func (s NtmHospitalResource) NewHospitalResource (args []BmDataStorage.BmStorage
 }
 
 func (s NtmHospitalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	var result []*NtmModel.Hospital
 
 	hospitalConfigsID, pciok := r.QueryParams["hospitalConfigsID"]
 
@@ -56,9 +55,10 @@ func (s NtmHospitalResource) FindAll(r api2go.Request) (api2go.Responder, error)
 		if err != nil {
 			return &Response{}, err
 		}
-		result = append(result, &model)
-		return &Response{Res: result}, nil
+		return &Response{Res: model}, nil
 	}
+
+	var result []*NtmModel.Hospital
 
 	models := s.NtmHospitalStorage.GetAll(r, -1, -1)
 	for _, model := range models {

@@ -45,16 +45,6 @@ func (s NtmHospitalConfigStorage) GetOne(id string) (NtmModel.HospitalConfig, er
 	out := NtmModel.HospitalConfig{ID: id}
 	err := s.db.FindOne(&in, &out)
 	if err == nil {
-		// TODO: 双重绑定没明白啥意思
-		//双重绑定
-		//if out.HospitalID != "" {
-		//	item, err := NtmHospitalStorage{db: s.db}.GetOne(out.HospitalID)
-		//	if err != nil {
-		//		return NtmModel.HospitalConfig{}, err
-		//	}
-		//	out.Hospital = item
-		//}
-
 		return out, nil
 	}
 	errMessage := fmt.Sprintf("HospitalConfig for id %s not found", id)
