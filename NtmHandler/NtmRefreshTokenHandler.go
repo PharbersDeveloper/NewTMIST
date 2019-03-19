@@ -72,10 +72,14 @@ func (h RefreshTokenHandler) RefreshAccessToken(w http.ResponseWriter, r *http.R
 		return 1
 	}
 
-	token := h.RdGetToken(refreshToken)
-	token.Expiry = time.Now()
-
 	config := h.au.ConfigFromURIParameter(r)
+	token, err := h.RdGetRefreshToken(refreshToken)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 0
+	}
+
+	token.Expiry = time.Now()
 
 	token, _ = config.TokenSource(context.Background(), token).Token()
 
@@ -98,18 +102,18 @@ func (h RefreshTokenHandler) GetHandlerMethod() string {
 	return h.Method
 }
 
-func (h RefreshTokenHandler) RdGetToken(key string) *oauth2.Token {
+func (h RefreshTokenHandler) RdGetRefreshToken(key string) (*oauth2.Token, error) {
 	client := h.rd.GetRedisClient()
 	defer client.Close()
 
 	result, _ := client.Get(key).Result()
 	token := oauth2.Token{}
-	json.Unmarshal([]byte(result), &token)
+	err := json.Unmarshal([]byte(result), &token)
 
-	return &token
+	return &token, err
 }
 
-func (h RefreshTokenHandler) RdPushToken(key string, token *oauth2.Token) int {
+func (h RefreshTokenHandler) RdPushToken(key string, token *oauth2.Token) error {
 	jsonToken, _ := json.Marshal(token)
 
 	client := h.rd.GetRedisClient()
@@ -119,10 +123,11 @@ func (h RefreshTokenHandler) RdPushToken(key string, token *oauth2.Token) int {
 
 	pipe.Append(key, string(jsonToken))
 
-	pipe.Expire(key, time.Until(token.Expiry))
+	pipe.Expire(key, 0) //time.Until(token.Expiry)
 
-	pipe.Exec()
-	return 0
+	_, err := pipe.Exec()
+
+	return err
 }
 
 func (h RefreshTokenHandler) RdDeleteToken(key string) int {

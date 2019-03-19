@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
-	"time"
 )
 
 type AuthHandler struct {
@@ -91,18 +90,24 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 	}
 
 	config := h.au.ConfigFromURIParameter(r)
+
 	token, err := config.Exchange(context.Background(), code)
-
-	h.RdPushToken(token.RefreshToken, token)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
 	}
 
+	err = h.RdPushRefreshToken(token.RefreshToken, token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 1
+	}
+
+
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
-	err = e.Encode(token); if err != nil {
+	err = e.Encode(token)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
 	}
@@ -118,7 +123,7 @@ func (h AuthHandler) GetHandlerMethod() string {
 	return h.Method
 }
 
-func (h AuthHandler) RdPushToken(key string, token *oauth2.Token) int {
+func (h AuthHandler) RdPushRefreshToken(key string, token *oauth2.Token) error {
 	jsonToken, _ := json.Marshal(token)
 
 	client := h.rd.GetRedisClient()
@@ -128,9 +133,7 @@ func (h AuthHandler) RdPushToken(key string, token *oauth2.Token) int {
 
 	pipe.Append(key, string(jsonToken))
 
-	pipe.Expire(key, time.Until(token.Expiry))
-
-	pipe.Exec()
-	return 0
+	_, err := pipe.Exec()
+	return err
 }
 
