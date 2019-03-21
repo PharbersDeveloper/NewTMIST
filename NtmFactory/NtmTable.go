@@ -96,8 +96,13 @@ var NTM_FUNCTION_FACTORY = map[string]interface{}{
 	"NtmAccountHandler":            	NtmHandler.NtmAccountHandler{},
 	"NtmGetUseableProposalsHandler": 	NtmHandler.NtmGetUseableProposalsHandler{},
 	"NtmGeneratePaperHandler": 			NtmHandler.NtmGeneratePaperHandler{},
+
 	"AuthHandler":						NtmHandler.AuthHandler{},
+	"PasswordAuthHandler":				NtmHandler.AuthHandler{},
+
 	"NtmUserAgentHandler":				NtmHandler.NtmUserAgentHandler{},
+	"NtmAuthUserAgentHandler": 			NtmHandler.NtmUserAgentHandler{},
+
 	"RefreshTokenHandler":				NtmHandler.RefreshTokenHandler{},
 }
 var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{

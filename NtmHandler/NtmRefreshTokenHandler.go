@@ -76,16 +76,31 @@ func (h RefreshTokenHandler) RefreshAccessToken(w http.ResponseWriter, r *http.R
 	token, err := h.RdGetRefreshToken(refreshToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return 0
+		return 1
 	}
 
 	token.Expiry = time.Now()
 
-	token, _ = config.TokenSource(context.Background(), token).Token()
+	token, err = config.TokenSource(context.Background(), token).Token()
 
-	h.RdPushToken(token.RefreshToken, token)
+	scope := token.Extra("scope")
 
-	h.RdDeleteToken(refreshToken)
+	phToken := AuthDaemon.PhToken{
+		Scope: scope.(string),
+	}
+	phToken.AccessToken = token.AccessToken
+	phToken.RefreshToken = token.RefreshToken
+	phToken.Expiry = token.Expiry
+	phToken.TokenType = token.TokenType
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 1
+	}
+
+	h.RdPushToken(token.RefreshToken, &phToken)
+
+	defer h.RdDeleteToken(refreshToken)
 
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
@@ -113,7 +128,7 @@ func (h RefreshTokenHandler) RdGetRefreshToken(key string) (*oauth2.Token, error
 	return &token, err
 }
 
-func (h RefreshTokenHandler) RdPushToken(key string, token *oauth2.Token) error {
+func (h RefreshTokenHandler) RdPushToken(key string, token *AuthDaemon.PhToken) error {
 	jsonToken, _ := json.Marshal(token)
 
 	client := h.rd.GetRedisClient()
@@ -123,7 +138,7 @@ func (h RefreshTokenHandler) RdPushToken(key string, token *oauth2.Token) error 
 
 	pipe.Append(key, string(jsonToken))
 
-	pipe.Expire(key, 0) //time.Until(token.Expiry)
+	//pipe.Expire(key, 0) //time.Until(token.Expiry)
 
 	_, err := pipe.Exec()
 

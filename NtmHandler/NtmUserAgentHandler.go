@@ -8,6 +8,7 @@ import (
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"os"
 	"reflect"
 )
 
@@ -17,7 +18,7 @@ type NtmUserAgentHandler struct {
 	Args       []string
 	db         *BmMongodb.BmMongodb
 	rd         *BmRedis.BmRedis
-	au		   *AuthDaemon.AuthClient
+	au         *AuthDaemon.AuthClient
 }
 
 func (h NtmUserAgentHandler) NewUserAgentHandler(args ...interface{}) NtmUserAgentHandler {
@@ -71,6 +72,18 @@ func (h NtmUserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Re
 	return 0
 }
 
+func (h NtmUserAgentHandler) AuthUserAgent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+	file, err := os.Open(h.Args[0])
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return 1
+	}
+	defer file.Close()
+	fi, _ := file.Stat()
+	http.ServeContent(w, r, file.Name(), fi.ModTime(), file)
+	return 0
+}
+
 func (h NtmUserAgentHandler) GetHttpMethod() string {
 	return h.HttpMethod
 }
@@ -78,4 +91,3 @@ func (h NtmUserAgentHandler) GetHttpMethod() string {
 func (h NtmUserAgentHandler) GetHandlerMethod() string {
 	return h.Method
 }
-

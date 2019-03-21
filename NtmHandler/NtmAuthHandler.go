@@ -8,7 +8,7 @@ import (
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -92,21 +92,73 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 	config := h.au.ConfigFromURIParameter(r)
 
 	token, err := config.Exchange(context.Background(), code)
+
+	scope := token.Extra("scope")
+
+	phToken := AuthDaemon.PhToken{
+		Scope: scope.(string),
+	}
+	phToken.AccessToken = token.AccessToken
+	phToken.RefreshToken = token.RefreshToken
+	phToken.Expiry = token.Expiry
+	phToken.TokenType = token.TokenType
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
 	}
 
-	err = h.RdPushRefreshToken(token.RefreshToken, token)
+	// 存入Redis RefreshToken
+	err = h.RdPushRefreshToken(token.RefreshToken, &phToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
 	}
-
 
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
-	err = e.Encode(token)
+	err = e.Encode(phToken)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 1
+	}
+
+	return 0
+}
+
+func (h AuthHandler) PasswordLogin(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+	body, err := ioutil.ReadAll(r.Body)
+
+	var parameter map[string]interface{}
+	json.Unmarshal(body, &parameter)
+
+	config := h.au.ConfigFromURIParameter(r)
+	token, err := config.PasswordCredentialsToken(context.Background(), parameter["username"].(string), parameter["password"].(string))
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 1
+	}
+
+	scope := token.Extra("scope")
+
+	phToken := AuthDaemon.PhToken{
+		Scope: scope.(string),
+	}
+	phToken.AccessToken = token.AccessToken
+	phToken.RefreshToken = token.RefreshToken
+	phToken.Expiry = token.Expiry
+	phToken.TokenType = token.TokenType
+
+	err = h.RdPushRefreshToken(token.RefreshToken, &phToken)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 1
+	}
+
+	e := json.NewEncoder(w)
+	e.SetIndent("", "  ")
+	err = e.Encode(phToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
@@ -123,7 +175,7 @@ func (h AuthHandler) GetHandlerMethod() string {
 	return h.Method
 }
 
-func (h AuthHandler) RdPushRefreshToken(key string, token *oauth2.Token) error {
+func (h AuthHandler) RdPushRefreshToken(key string, token *AuthDaemon.PhToken) error {
 	jsonToken, _ := json.Marshal(token)
 
 	client := h.rd.GetRedisClient()

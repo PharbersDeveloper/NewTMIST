@@ -1,15 +1,17 @@
 package NtmHandler
 
 import (
+	"fmt"
+	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
+	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strings"
-	"io/ioutil"
 
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
-	"github.com/julienschmidt/httprouter"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
+	"github.com/julienschmidt/httprouter"
 )
 
 type NtmGetUseableProposalsHandler struct {
@@ -56,22 +58,17 @@ func (h NtmGetUseableProposalsHandler) NewGetUseableProposalsHandler(args ...int
 }
 
 func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
-	// 验证token
-	auth := r.Header.Get("Authorization")
-	arr := strings.Split(auth, " ")
-	if len(arr) < 2 || arr[0] != "bearer" {
-		panic("Auth Failed!")
-	}
-	token := arr[1]
-	err := h.rd.CheckToken(token)
+
+	data, err := NtmMiddleware.CheckTokenFormFunction(w, r)
 	if err != nil {
-		panic(err.Error())
+		fmt.Println("fuck")
+		return 1
 	}
 
-	// 取出uid
-	redisDriver := h.rd.GetRedisClient()
-	defer redisDriver.Close()
-	uid, _ := redisDriver.HGet(token+"_info", "uid").Result()
+	fmt.Println(data)
+
+	// TODO: @Alex 逻辑还没写完 暂定写死
+	uid := "5c7e3e02d23dc2be2df26694"
 
 	// 拼接转发的URL
 	scheme := "http://"
@@ -89,7 +86,7 @@ func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter
 	}
 	response, _ := client.Do(req)
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, _ := ioutil.ReadAll(response.Body)
 	w.Header().Add("Content-Type", "application/json")
 	w.Write(body)
 	return 0
