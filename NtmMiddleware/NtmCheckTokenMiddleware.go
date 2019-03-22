@@ -6,6 +6,7 @@ import (
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/manyminds/api2go"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -24,6 +25,8 @@ type result struct {
 	RefreshExpires float64 `json:"refresh_expires_in"`
 	Scope 		string 	`json:"scope"`
 	UserID 		string 	`json:"user_id"`
+	Error       string  `json:"error"`
+	ErrorDescription 	string 	`json:"error_description"`
 }
 
 func (ctm NtmCheckTokenMiddleware) NewCheckTokenMiddleware(args ...interface{}) NtmCheckTokenMiddleware {
@@ -52,6 +55,7 @@ func (ctm NtmCheckTokenMiddleware) NewCheckTokenMiddleware(args ...interface{}) 
 }
 
 func (ctm NtmCheckTokenMiddleware) DoMiddleware(c api2go.APIContexter, w http.ResponseWriter, r *http.Request) {
+
 	if _, err := CheckTokenFormFunction(w, r); err != nil {
 		panic(err.Error())
 	}
@@ -82,13 +86,12 @@ func CheckTokenFormFunction(w http.ResponseWriter, r *http.Request) (result, err
 
 	body, err := ioutil.ReadAll(response.Body)
 
-	//var temp map[string]interface{}
 	temp := result{}
 	err = json.Unmarshal(body, &temp)
-	//phToken := AuthDaemon.PhToken{Scope: temp["scope"].(string)}
-	//phToken.RefreshToken = temp["refresh_token"].(string)
-	////phToken.Expiry =  temp["expiry_id"].(string)
-	//phToken.TokenType = temp["token_type"].(string)
+
+	if temp.Error != "" {
+		err = errors.New(temp.ErrorDescription)
+	}
 
 	return temp, err
 

@@ -59,13 +59,11 @@ func (h NtmGetUseableProposalsHandler) NewGetUseableProposalsHandler(args ...int
 
 func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 
-	data, err := NtmMiddleware.CheckTokenFormFunction(w, r)
+	_, err := NtmMiddleware.CheckTokenFormFunction(w, r)
 	if err != nil {
-		fmt.Println("fuck")
+		panic(fmt.Sprintf(err.Error()))
 		return 1
 	}
-
-	fmt.Println(data)
 
 	// TODO: @Alex 逻辑还没写完 暂定写死
 	uid := "5c7e3e02d23dc2be2df26694"

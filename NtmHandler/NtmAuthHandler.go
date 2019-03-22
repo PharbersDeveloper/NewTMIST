@@ -93,6 +93,11 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 
 	token, err := config.Exchange(context.Background(), code)
 
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 1
+	}
+
 	scope := token.Extra("scope")
 
 	phToken := AuthDaemon.PhToken{
@@ -102,11 +107,6 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 	phToken.RefreshToken = token.RefreshToken
 	phToken.Expiry = token.Expiry
 	phToken.TokenType = token.TokenType
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return 1
-	}
 
 	// 存入Redis RefreshToken
 	err = h.RdPushRefreshToken(token.RefreshToken, &phToken)

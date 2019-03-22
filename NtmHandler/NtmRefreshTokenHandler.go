@@ -98,13 +98,13 @@ func (h RefreshTokenHandler) RefreshAccessToken(w http.ResponseWriter, r *http.R
 		return 1
 	}
 
-	h.RdPushToken(token.RefreshToken, &phToken)
+	h.RdPushToken(phToken.RefreshToken, &phToken)
 
 	defer h.RdDeleteToken(refreshToken)
 
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
-	e.Encode(token)
+	e.Encode(phToken)
 
 	return 0
 }
