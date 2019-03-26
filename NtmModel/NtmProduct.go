@@ -7,12 +7,14 @@ import (
 )
 
 type Product struct {
-	ID              string        `json:"-"`
-	Id_             bson.ObjectId `json:"-" bson:"_id"`
-	Name            string        `json:"name" bson:"name"`
-	GeneralName     string        `json:"general-name" bson:"general-name"`
-	Describe        string        `json:"describe" bson:"describe"`
-	ProductCategory string        `json:"product-category" bson:"product-category"`
+	ID               string        `json:"-"`
+	Id_              bson.ObjectId `json:"-" bson:"_id"`
+	Name             string        `json:"name" bson:"name"`
+	GeneralName      string        `json:"general-name" bson:"general-name"`
+	Describe         string        `json:"describe" bson:"describe"`
+	ProductCategory  string        `json:"product-category" bson:"product-category"`
+	MedicareCategory string        `json:"medicare-category" bson:"medicare-category"`
+	CorpName         string        `json:"corp-name" bson:"corp-name"`
 
 	ImagesIDs []string `json:"-" bson:"image-ids"`
 	Imgs      []*Image `json:"-"`

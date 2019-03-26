@@ -3,11 +3,13 @@ package NtmModel
 import "gopkg.in/mgo.v2/bson"
 
 type ManagerInput struct {
-	ID           string        `json:"-"`
-	Id_          bson.ObjectId `json:"-" bson:"_id"`
-	StrategyTime float64       `json:"strategy-time" bson:"strategy-time"`
-	AdminTime    float64       `json:"admin-time" bson:"admin-time"`
-	KPI          float64       `json:"KPI" bson:"KPI"`
+	ID                   string        `json:"-"`
+	Id_                  bson.ObjectId `json:"-" bson:"_id"`
+	StrategyAnalysisTime float64       `json:"strategy-analysis-time" bson:"strategy-analysis-time"`
+	AdminWorkTime        float64       `json:"admin-work-time" bson:"admin-work-time"`
+	ClientManagementTime float64       `json:"client-management-time" bson:"client-management-time"`
+	KPIAnalysisTime      float64       `json:"KPI-analysis-time" bson:"KPI-analysis-time"`
+	TeamMeetingTime      float64       `json:"team-meeting-time" bson:"team-meeting-time"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

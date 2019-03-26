@@ -10,12 +10,17 @@ type HospitalConfig struct {
 	ID  string        `json:"-"`
 	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	DoctorNumber int     `json:"doctor-number" bson:"doctor-number"`
-	BedNumber    int     `json:"bed-number" bson:"bed-number"`
-	Income       float64 `json:"income" bson:"income"`
+	DoctorNumber  int     `json:"doctor-number" bson:"doctor-number"`
+	BedNumber     int     `json:"bed-number" bson:"bed-number"`
+	Income        float64 `json:"income" bson:"income"`
+	Potential     float64 `json:"potential" bson:"potential"`
+	LastYearSales float64 `json:"last-year-sales" bson:"last-year-sales"`
+	SpaceBelongs  string  `json:"space-belongs" bson:"space-belongs"`
+	Ability2Pay   string  `json:"ability-to-pay" bson:"ability-to-pay"`
+	AccessStatus   string  `json:"access-status" bson:"access-status"`
 
 	Hospital   *Hospital `json:"-"`
-	HospitalID string   `json:"-" bson:"hospital-id"`
+	HospitalID string    `json:"-" bson:"hospital-id"`
 
 	DepartmentIDs []string      `json:"-" bson:"department-ids"`
 	Departments   []*Department `json:"-"`
@@ -96,7 +101,7 @@ func (u HospitalConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 		result = append(result, u.Departments[key])
 	}
 
-	if u.HospitalID != "" && u.Hospital!= nil {
+	if u.HospitalID != "" && u.Hospital != nil {
 		result = append(result, u.Hospital)
 	}
 

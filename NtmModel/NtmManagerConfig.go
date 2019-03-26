@@ -7,9 +7,12 @@ type ManagerConfig struct {
 	ID  string        `json:"-"`
 	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	ManagerKPI     float64 `json:"manager-kpi" bson:"manager-kpi"`
-	ManagerTime    float64 `json:"manager-time" bson:"manager-time"`
-	VisitTotalTime float64 `json:"visit-total-time" bson:"visit-total-time"`
+	TotalBusinessIndicators int32 `json:"total-business-indicators" bson:"total-business-indicators"`
+	TotalBudgets             int32 `json:"total-budgets" bson:"total-budgets"`
+	TotalMeetingPlaces      int32 `json:"total-meeting-places" bson:"total-meeting-places"`
+	ManagerKPI              int32 `json:"manager-kpi" bson:"manager-kpi"`
+	ManagerTime             int32 `json:"manager-time" bson:"manager-time"`
+	VisitTotalTime          int32 `json:"visit-total-time" bson:"visit-total-time"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
