@@ -13,21 +13,21 @@ import (
 
 type NtmPaperResource struct {
 	NtmPaperStorage			*NtmDataStorage.NtmPaperStorage
-	NtmPaperInputStorage	*NtmDataStorage.NtmPaperInputStorage
+	NtmPaperinputStorage	*NtmDataStorage.NtmPaperinputStorage
 }
 
 func (s NtmPaperResource) NewPaperResource (args []BmDataStorage.BmStorage) *NtmPaperResource {
 	var ps *NtmDataStorage.NtmPaperStorage
-	var pis *NtmDataStorage.NtmPaperInputStorage
+	var pis *NtmDataStorage.NtmPaperinputStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
-		} else if tp.Name() == "NtmPaperInputStorage" {
-			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
+		} else if tp.Name() == "NtmPaperinputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
 		}
 	}
-	return &NtmPaperResource{NtmPaperInputStorage: pis, NtmPaperStorage: ps}
+	return &NtmPaperResource{NtmPaperinputStorage: pis, NtmPaperStorage: ps}
 }
 
 func (s NtmPaperResource) FindAll(r api2go.Request) (api2go.Responder, error) {
@@ -35,14 +35,14 @@ func (s NtmPaperResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	models := s.NtmPaperStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {
-		model.PaperInputs = []*NtmModel.PaperInput{}
+		model.Paperinputs = []*NtmModel.Paperinput{}
 
 		for _, pid := range model.InputIDs {
-			paperInput, err := s.NtmPaperInputStorage.GetOne(pid)
+			Paperinput, err := s.NtmPaperinputStorage.GetOne(pid)
 			if err != nil {
 				return &Response{}, err
 			}
-			model.PaperInputs = append(model.PaperInputs, &paperInput)
+			model.Paperinputs = append(model.Paperinputs, &Paperinput)
 		}
 		result = append(result, *model)
 	}
@@ -120,13 +120,13 @@ func (s NtmPaperResource) FindOne(ID string, r api2go.Request) (api2go.Responder
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
 
-	model.PaperInputs = []*NtmModel.PaperInput{}
+	model.Paperinputs = []*NtmModel.Paperinput{}
 	for _, pid := range model.InputIDs {
-		paperInput, err := s.NtmPaperInputStorage.GetOne(pid)
+		Paperinput, err := s.NtmPaperinputStorage.GetOne(pid)
 		if err != nil {
 			return &Response{}, nil
 		}
-		model.PaperInputs = append(model.PaperInputs, &paperInput)
+		model.Paperinputs = append(model.Paperinputs, &Paperinput)
 	}
 
 	return &Response{Res: model}, nil

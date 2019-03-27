@@ -6,8 +6,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// 未完成
-type PaperReport struct {
+type Paperinput struct {
 	ID      string        `json:"-"`
 	Id_     bson.ObjectId `json:"-" bson:"_id"`
 	PaperId string        `json:"paper-id" bson:"paper-id"`
@@ -24,17 +23,17 @@ type PaperReport struct {
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c PaperReport) GetID() string {
+func (c Paperinput) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *PaperReport) SetID(id string) error {
+func (c *Paperinput) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (c PaperReport) GetReferences() []jsonapi.Reference {
+func (c Paperinput) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "Businessinputs",
@@ -51,7 +50,7 @@ func (c PaperReport) GetReferences() []jsonapi.Reference {
 	}
 }
 
-func (c PaperReport) GetReferencedIDs() []jsonapi.ReferenceID {
+func (c Paperinput) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 
 	for _, kID := range c.BusinessinputIDs {
@@ -81,7 +80,7 @@ func (c PaperReport) GetReferencedIDs() []jsonapi.ReferenceID {
 	return result
 }
 
-func (c PaperReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (c Paperinput) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	for key := range c.Businessinputs {
@@ -99,7 +98,7 @@ func (c PaperReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	return result
 }
 
-func (c *PaperReport) SetToManyReferenceIDs(name string, IDs []string) error {
+func (c *Paperinput) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "Businessinputs" {
 		c.BusinessinputIDs = IDs
 		return nil
@@ -113,7 +112,7 @@ func (c *PaperReport) SetToManyReferenceIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *PaperReport) AddToManyIDs(name string, IDs []string) error {
+func (c *Paperinput) AddToManyIDs(name string, IDs []string) error {
 	if name == "Businessinputs" {
 		c.BusinessinputIDs = append(c.BusinessinputIDs, IDs...)
 		return nil
@@ -128,7 +127,7 @@ func (c *PaperReport) AddToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *PaperReport) DeleteToManyIDs(name string, IDs []string) error {
+func (c *Paperinput) DeleteToManyIDs(name string, IDs []string) error {
 	if name == "Businessinputs" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.BusinessinputIDs {
@@ -157,7 +156,7 @@ func (c *PaperReport) DeleteToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (u *PaperReport) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *Paperinput) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	r := make(map[string]interface{})
 	var ids []bson.ObjectId

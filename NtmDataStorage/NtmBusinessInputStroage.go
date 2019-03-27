@@ -11,27 +11,27 @@ import (
 	"github.com/manyminds/api2go"
 )
 
-// NtmBusinessInputStorage stores all of the tasty modelleaf, needs to be injected into
-// BusinessInput and BusinessInput Resource. In the real world, you would use a database for that.
-type NtmBusinessInputStorage struct {
-	images  map[string]*NtmModel.BusinessInput
+// NtmBusinessinputStorage stores all of the tasty modelleaf, needs to be injected into
+// Businessinput and Businessinput Resource. In the real world, you would use a database for that.
+type NtmBusinessinputStorage struct {
+	images  map[string]*NtmModel.Businessinput
 	idCount int
 
 	db *BmMongodb.BmMongodb
 }
 
-func (s NtmBusinessInputStorage) NewBusinessInputStorage(args []BmDaemons.BmDaemon) *NtmBusinessInputStorage {
+func (s NtmBusinessinputStorage) NewBusinessinputStorage(args []BmDaemons.BmDaemon) *NtmBusinessinputStorage {
 	mdb := args[0].(*BmMongodb.BmMongodb)
-	return &NtmBusinessInputStorage{make(map[string]*NtmModel.BusinessInput), 1, mdb}
+	return &NtmBusinessinputStorage{make(map[string]*NtmModel.Businessinput), 1, mdb}
 }
 
 // GetAll of the modelleaf
-func (s NtmBusinessInputStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.BusinessInput {
-	in := NtmModel.BusinessInput{}
-	var out []NtmModel.BusinessInput
+func (s NtmBusinessinputStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.Businessinput {
+	in := NtmModel.Businessinput{}
+	var out []NtmModel.Businessinput
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
-		var tmp []*NtmModel.BusinessInput
+		var tmp []*NtmModel.Businessinput
 		for i := 0; i < len(out); i++ {
 			ptr := out[i]
 			s.db.ResetIdWithId_(&ptr)
@@ -44,19 +44,19 @@ func (s NtmBusinessInputStorage) GetAll(r api2go.Request, skip int, take int) []
 }
 
 // GetOne tasty modelleaf
-func (s NtmBusinessInputStorage) GetOne(id string) (NtmModel.BusinessInput, error) {
-	in := NtmModel.BusinessInput{ID: id}
-	out := NtmModel.BusinessInput{ID: id}
+func (s NtmBusinessinputStorage) GetOne(id string) (NtmModel.Businessinput, error) {
+	in := NtmModel.Businessinput{ID: id}
+	out := NtmModel.Businessinput{ID: id}
 	err := s.db.FindOne(&in, &out)
 	if err == nil {
 		return out, nil
 	}
-	errMessage := fmt.Sprintf("BusinessInput for id %s not found", id)
-	return NtmModel.BusinessInput{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
+	errMessage := fmt.Sprintf("Businessinput for id %s not found", id)
+	return NtmModel.Businessinput{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
 }
 
 // Insert a fresh one
-func (s *NtmBusinessInputStorage) Insert(c NtmModel.BusinessInput) string {
+func (s *NtmBusinessinputStorage) Insert(c NtmModel.Businessinput) string {
 	tmp, err := s.db.InsertBmObject(&c)
 	if err != nil {
 		fmt.Println(err)
@@ -66,27 +66,27 @@ func (s *NtmBusinessInputStorage) Insert(c NtmModel.BusinessInput) string {
 }
 
 // Delete one :(
-func (s *NtmBusinessInputStorage) Delete(id string) error {
-	in := NtmModel.BusinessInput{ID: id}
+func (s *NtmBusinessinputStorage) Delete(id string) error {
+	in := NtmModel.Businessinput{ID: id}
 	err := s.db.Delete(&in)
 	if err != nil {
-		return fmt.Errorf("BusinessInput with id %s does not exist", id)
+		return fmt.Errorf("Businessinput with id %s does not exist", id)
 	}
 
 	return nil
 }
 
 // Update updates an existing modelleaf
-func (s *NtmBusinessInputStorage) Update(c NtmModel.BusinessInput) error {
+func (s *NtmBusinessinputStorage) Update(c NtmModel.Businessinput) error {
 	err := s.db.Update(&c)
 	if err != nil {
-		return fmt.Errorf("BusinessInput with id does not exist")
+		return fmt.Errorf("Businessinput with id does not exist")
 	}
 
 	return nil
 }
 
-func (s *NtmBusinessInputStorage) Count(req api2go.Request, c NtmModel.BusinessInput) int {
+func (s *NtmBusinessinputStorage) Count(req api2go.Request, c NtmModel.Businessinput) int {
 	r, _ := s.db.Count(req, &c)
 	return r
 }

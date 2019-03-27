@@ -11,46 +11,46 @@ import (
 	"strconv"
 )
 
-type NtmPaperInputResource struct {
-	NtmPaperInputStorage          *NtmDataStorage.NtmPaperInputStorage
-	NtmBusinessInputStorage       *NtmDataStorage.NtmBusinessInputStorage
-	NtmRepresentativeInputStorage *NtmDataStorage.NtmRepresentativeInputStorage
-	NtmManagerInputStorage        *NtmDataStorage.NtmManagerInputStorage
+type NtmPaperinputResource struct {
+	NtmPaperinputStorage          *NtmDataStorage.NtmPaperinputStorage
+	NtmBusinessinputStorage       *NtmDataStorage.NtmBusinessinputStorage
+	NtmRepresentativeinputStorage *NtmDataStorage.NtmRepresentativeinputStorage
+	NtmManagerinputStorage        *NtmDataStorage.NtmManagerinputStorage
 	NtmPaperStorage				  *NtmDataStorage.NtmPaperStorage
 }
 
-func (s NtmPaperInputResource) NewPaperInputResource(args []BmDataStorage.BmStorage) *NtmPaperInputResource {
-	var pis *NtmDataStorage.NtmPaperInputStorage
-	var bis *NtmDataStorage.NtmBusinessInputStorage
-	var ris *NtmDataStorage.NtmRepresentativeInputStorage
-	var mis *NtmDataStorage.NtmManagerInputStorage
+func (s NtmPaperinputResource) NewPaperinputResource(args []BmDataStorage.BmStorage) *NtmPaperinputResource {
+	var pis *NtmDataStorage.NtmPaperinputStorage
+	var bis *NtmDataStorage.NtmBusinessinputStorage
+	var ris *NtmDataStorage.NtmRepresentativeinputStorage
+	var mis *NtmDataStorage.NtmManagerinputStorage
 	var ps *NtmDataStorage.NtmPaperStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmPaperInputStorage" {
-			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
-		} else if tp.Name() == "NtmBusinessInputStorage" {
-			bis = arg.(*NtmDataStorage.NtmBusinessInputStorage)
-		} else if tp.Name() == "NtmRepresentativeInputStorage" {
-			ris = arg.(*NtmDataStorage.NtmRepresentativeInputStorage)
-		} else if tp.Name() == "NtmManagerInputStorage" {
-			mis = arg.(*NtmDataStorage.NtmManagerInputStorage)
+		if tp.Name() == "NtmPaperinputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
+		} else if tp.Name() == "NtmBusinessinputStorage" {
+			bis = arg.(*NtmDataStorage.NtmBusinessinputStorage)
+		} else if tp.Name() == "NtmRepresentativeinputStorage" {
+			ris = arg.(*NtmDataStorage.NtmRepresentativeinputStorage)
+		} else if tp.Name() == "NtmManagerinputStorage" {
+			mis = arg.(*NtmDataStorage.NtmManagerinputStorage)
 		} else if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
 		}
 	}
-	return &NtmPaperInputResource{
-		NtmPaperInputStorage:          pis,
-		NtmBusinessInputStorage:       bis,
-		NtmRepresentativeInputStorage: ris,
-		NtmManagerInputStorage:        mis,
+	return &NtmPaperinputResource{
+		NtmPaperinputStorage:          pis,
+		NtmBusinessinputStorage:       bis,
+		NtmRepresentativeinputStorage: ris,
+		NtmManagerinputStorage:        mis,
 		NtmPaperStorage: ps,
 	}
 }
 
-func (s NtmPaperInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+func (s NtmPaperinputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	papersID, dcok := r.QueryParams["papersID"]
-	var result []NtmModel.PaperInput
+	var result []NtmModel.Paperinput
 
 	if dcok {
 		modelRootID := papersID[0]
@@ -61,12 +61,12 @@ func (s NtmPaperInputResource) FindAll(r api2go.Request) (api2go.Responder, erro
 
 		r.QueryParams["ids"] = modelRoot.InputIDs
 
-		result := s.NtmPaperInputStorage.GetAll(r, -1,-1)
+		result := s.NtmPaperinputStorage.GetAll(r, -1,-1)
 
 		return &Response{Res: result}, nil
 	}
 
-	models := s.NtmPaperInputStorage.GetAll(r, -1, -1)
+	models := s.NtmPaperinputStorage.GetAll(r, -1, -1)
 	for _, model := range models {
 		result = append(result, *model)
 	}
@@ -75,9 +75,9 @@ func (s NtmPaperInputResource) FindAll(r api2go.Request) (api2go.Responder, erro
 }
 
 // PaginatedFindAll can be used to load models in chunks
-func (s NtmPaperInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
+func (s NtmPaperinputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result                      []NtmModel.PaperInput
+		result                      []NtmModel.Paperinput
 		number, size, offset, limit string
 	)
 
@@ -110,7 +110,7 @@ func (s NtmPaperInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.
 		}
 
 		start := sizeI * (numberI - 1)
-		for _, iter := range s.NtmPaperInputStorage.GetAll(r, int(start), int(sizeI)) {
+		for _, iter := range s.NtmPaperinputStorage.GetAll(r, int(start), int(sizeI)) {
 			result = append(result, *iter)
 		}
 
@@ -125,21 +125,21 @@ func (s NtmPaperInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.
 			return 0, &Response{}, err
 		}
 
-		for _, iter := range s.NtmPaperInputStorage.GetAll(r, int(offsetI), int(limitI)) {
+		for _, iter := range s.NtmPaperinputStorage.GetAll(r, int(offsetI), int(limitI)) {
 			result = append(result, *iter)
 		}
 	}
 
-	in := NtmModel.PaperInput{}
-	count := s.NtmPaperInputStorage.Count(r, in)
+	in := NtmModel.Paperinput{}
+	count := s.NtmPaperinputStorage.Count(r, in)
 
 	return uint(count), &Response{Res: result}, nil
 }
 
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
-func (s NtmPaperInputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmPaperInputStorage.GetOne(ID)
+func (s NtmPaperinputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
+	model, err := s.NtmPaperinputStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
@@ -153,52 +153,52 @@ func (s NtmPaperInputResource) FindOne(ID string, r api2go.Request) (api2go.Resp
 }
 
 // Create method to satisfy `api2go.DataSource` interface
-func (s NtmPaperInputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.PaperInput)
+func (s NtmPaperinputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Paperinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	id := s.NtmPaperInputStorage.Insert(model)
+	id := s.NtmPaperinputStorage.Insert(model)
 	model.ID = id
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
 
 // Delete to satisfy `api2go.DataSource` interface
-func (s NtmPaperInputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
-	err := s.NtmPaperInputStorage.Delete(id)
+func (s NtmPaperinputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
+	err := s.NtmPaperinputStorage.Delete(id)
 	return &Response{Code: http.StatusNoContent}, err
 }
 
 //Update stores all changes on the model
-func (s NtmPaperInputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.PaperInput)
+func (s NtmPaperinputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Paperinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	err := s.NtmPaperInputStorage.Update(model)
+	err := s.NtmPaperinputStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }
 
-func (s NtmPaperInputResource) ResetReferencedModel(model *NtmModel.PaperInput, r *api2go.Request) error {
-	model.BusinessInputs = []*NtmModel.BusinessInput{}
-	r.QueryParams["ids"] = model.BusinessInputIDs
-	for _, businessInput := range s.NtmBusinessInputStorage.GetAll(*r, -1, -1) {
-		model.BusinessInputs = append(model.BusinessInputs, businessInput)
+func (s NtmPaperinputResource) ResetReferencedModel(model *NtmModel.Paperinput, r *api2go.Request) error {
+	model.Businessinputs = []*NtmModel.Businessinput{}
+	r.QueryParams["ids"] = model.BusinessinputIDs
+	for _, Businessinput := range s.NtmBusinessinputStorage.GetAll(*r, -1, -1) {
+		model.Businessinputs = append(model.Businessinputs, Businessinput)
 	}
 
-	model.RepresentativeInputs = []*NtmModel.RepresentativeInput{}
-	r.QueryParams["ids"] = model.RepresentativeInputIDs
-	for _, representativeInput := range s.NtmRepresentativeInputStorage.GetAll(*r, -1, -1) {
-		model.RepresentativeInputs = append(model.RepresentativeInputs, representativeInput)
+	model.Representativeinputs = []*NtmModel.Representativeinput{}
+	r.QueryParams["ids"] = model.RepresentativeinputIDs
+	for _, Representativeinput := range s.NtmRepresentativeinputStorage.GetAll(*r, -1, -1) {
+		model.Representativeinputs = append(model.Representativeinputs, Representativeinput)
 	}
 
-	model.ManagerInputs = []*NtmModel.ManagerInput{}
-	r.QueryParams["ids"] = model.ManagerInputIDs
-	for _, manageInput := range s.NtmManagerInputStorage.GetAll(*r, -1, -1) {
-		model.ManagerInputs = append(model.ManagerInputs, manageInput)
+	model.Managerinputs = []*NtmModel.Managerinput{}
+	r.QueryParams["ids"] = model.ManagerinputIDs
+	for _, manageInput := range s.NtmManagerinputStorage.GetAll(*r, -1, -1) {
+		model.Managerinputs = append(model.Managerinputs, manageInput)
 	}
 
 	return nil

@@ -11,42 +11,42 @@ import (
 	"strconv"
 )
 
-type NtmRepresentativeInputResource struct {
-	NtmRepresentativeInputStorage *NtmDataStorage.NtmRepresentativeInputStorage
-	NtmPaperInputStorage          *NtmDataStorage.NtmPaperInputStorage
+type NtmRepresentativeinputResource struct {
+	NtmRepresentativeinputStorage *NtmDataStorage.NtmRepresentativeinputStorage
+	NtmPaperinputStorage          *NtmDataStorage.NtmPaperinputStorage
 }
 
-func (s NtmRepresentativeInputResource) NewRepresentativeInputResource(args []BmDataStorage.BmStorage) *NtmRepresentativeInputResource {
-	var bis *NtmDataStorage.NtmRepresentativeInputStorage
-	var pis *NtmDataStorage.NtmPaperInputStorage
+func (s NtmRepresentativeinputResource) NewRepresentativeinputResource(args []BmDataStorage.BmStorage) *NtmRepresentativeinputResource {
+	var bis *NtmDataStorage.NtmRepresentativeinputStorage
+	var pis *NtmDataStorage.NtmPaperinputStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmRepresentativeInputStorage" {
-			bis = arg.(*NtmDataStorage.NtmRepresentativeInputStorage)
-		} else if tp.Name() == "NtmPaperInputStorage" {
-			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
+		if tp.Name() == "NtmRepresentativeinputStorage" {
+			bis = arg.(*NtmDataStorage.NtmRepresentativeinputStorage)
+		} else if tp.Name() == "NtmPaperinputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
 		}
 	}
-	return &NtmRepresentativeInputResource{
-		NtmRepresentativeInputStorage: bis,
-		NtmPaperInputStorage:          pis,
+	return &NtmRepresentativeinputResource{
+		NtmRepresentativeinputStorage: bis,
+		NtmPaperinputStorage:          pis,
 	}
 }
 
-func (s NtmRepresentativeInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	paperInputsID, piok := r.QueryParams["paperInputsID"]
-	var result []*NtmModel.RepresentativeInput
+func (s NtmRepresentativeinputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	PaperinputsID, piok := r.QueryParams["PaperinputsID"]
+	var result []*NtmModel.Representativeinput
 
 	if piok {
-		modelRootID := paperInputsID[0]
+		modelRootID := PaperinputsID[0]
 
-		modelRoot, err := s.NtmPaperInputStorage.GetOne(modelRootID)
+		modelRoot, err := s.NtmPaperinputStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-		r.QueryParams["ids"] = modelRoot.RepresentativeInputIDs
+		r.QueryParams["ids"] = modelRoot.RepresentativeinputIDs
 
-		result = s.NtmRepresentativeInputStorage.GetAll(r, -1, -1)
+		result = s.NtmRepresentativeinputStorage.GetAll(r, -1, -1)
 
 		return &Response{Res: result}, nil
 	}
@@ -55,9 +55,9 @@ func (s NtmRepresentativeInputResource) FindAll(r api2go.Request) (api2go.Respon
 }
 
 // PaginatedFindAll can be used to load models in chunks
-func (s NtmRepresentativeInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
+func (s NtmRepresentativeinputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result                      []NtmModel.RepresentativeInput
+		result                      []NtmModel.Representativeinput
 		number, size, offset, limit string
 	)
 
@@ -90,7 +90,7 @@ func (s NtmRepresentativeInputResource) PaginatedFindAll(r api2go.Request) (uint
 		}
 
 		start := sizeI * (numberI - 1)
-		for _, iter := range s.NtmRepresentativeInputStorage.GetAll(r, int(start), int(sizeI)) {
+		for _, iter := range s.NtmRepresentativeinputStorage.GetAll(r, int(start), int(sizeI)) {
 			result = append(result, *iter)
 		}
 
@@ -105,21 +105,21 @@ func (s NtmRepresentativeInputResource) PaginatedFindAll(r api2go.Request) (uint
 			return 0, &Response{}, err
 		}
 
-		for _, iter := range s.NtmRepresentativeInputStorage.GetAll(r, int(offsetI), int(limitI)) {
+		for _, iter := range s.NtmRepresentativeinputStorage.GetAll(r, int(offsetI), int(limitI)) {
 			result = append(result, *iter)
 		}
 	}
 
-	in := NtmModel.RepresentativeInput{}
-	count := s.NtmRepresentativeInputStorage.Count(r, in)
+	in := NtmModel.Representativeinput{}
+	count := s.NtmRepresentativeinputStorage.Count(r, in)
 
 	return uint(count), &Response{Res: result}, nil
 }
 
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
-func (s NtmRepresentativeInputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmRepresentativeInputStorage.GetOne(ID)
+func (s NtmRepresentativeinputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
+	model, err := s.NtmRepresentativeinputStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
@@ -127,31 +127,31 @@ func (s NtmRepresentativeInputResource) FindOne(ID string, r api2go.Request) (ap
 }
 
 // Create method to satisfy `api2go.DataSource` interface
-func (s NtmRepresentativeInputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.RepresentativeInput)
+func (s NtmRepresentativeinputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Representativeinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	id := s.NtmRepresentativeInputStorage.Insert(model)
+	id := s.NtmRepresentativeinputStorage.Insert(model)
 	model.ID = id
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
 
 // Delete to satisfy `api2go.DataSource` interface
-func (s NtmRepresentativeInputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
-	err := s.NtmRepresentativeInputStorage.Delete(id)
+func (s NtmRepresentativeinputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
+	err := s.NtmRepresentativeinputStorage.Delete(id)
 	return &Response{Code: http.StatusNoContent}, err
 }
 
 //Update stores all changes on the model
-func (s NtmRepresentativeInputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.RepresentativeInput)
+func (s NtmRepresentativeinputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Representativeinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	err := s.NtmRepresentativeInputStorage.Update(model)
+	err := s.NtmRepresentativeinputStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }
