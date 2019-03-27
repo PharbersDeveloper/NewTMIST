@@ -10,14 +10,19 @@ type ProductConfig struct {
 	ID  string        `json:"-"`
 	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	ProductType     string  `json:"product-type" bson:"product-type"`
-	PriceType       string  `json:"price-type" bson:"price-type"`
-	Price           float64 `json:"price" bson:"price"`
-	LifeCycle       string  `json:"life-cycle" bson:"life-cycle"`
-	LaunchTime      float64 `json:"launch-time" bson:"launch-time"`
-	ProductCategory string  `json:"product-category" bson:"product-category"`
-	TreatmentArea   string  `json:"treatment-area" bson:"treatment-area"`
-	ProductFeature  string  `json:"product-feature" bson:"product-feature"`
+	ProductType      string  `json:"product-type" bson:"product-type"`
+	PriceType        string  `json:"price-type" bson:"price-type"`
+	ReferencePrice   float64 `json:"reference-price" bson:"reference-price"`
+	CostPrice        float64 `json:"cost-price" bson:"cost-price"`
+	LifeCycle        string  `json:"life-cycle" bson:"life-cycle"`
+	LaunchTime       float64 `json:"launch-time" bson:"launch-time"`
+	TreatmentArea    string  `json:"treatment-area" bson:"treatment-area"`
+	ProductFeature   string  `json:"product-feature" bson:"product-feature"`
+	CostEffective    string  `json:"cost-effective" bson:"cost-effective"`
+	Safety           string  `json:"safety" bson:"safety"`
+	Effectiveness    string  `json:"effectiveness" bson:"effectiveness"`
+	Convenience      string  `json:"convenience" bson:"convenience"`
+	TargetDepartment string  `json:"target-department" bson:"target-department"`
 
 	ProductID string   `json:"-" bson:"product-id"`
 	Product   *Product `json:"-"`

@@ -35,7 +35,7 @@ func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) *NtmI
 			hs = arg.(*NtmDataStorage.NtmHospitalStorage)
 		} else if tp.Name() == "NtmRegionStorage" {
 			rs = arg.(*NtmDataStorage.NtmRegionStorage)
-		} else if tp.Name() == "NtmRepresentative" {
+		} else if tp.Name() == "NtmRepresentativeStorage" {
 			rt = arg.(*NtmDataStorage.NtmRepresentativeStorage)
 		}
 	}

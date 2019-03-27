@@ -3,6 +3,8 @@ package NtmMiddleware
 import (
 	"encoding/json"
 	"fmt"
+	"errors"
+	"encoding/json"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/manyminds/api2go"

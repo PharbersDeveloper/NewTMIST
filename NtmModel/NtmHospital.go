@@ -12,6 +12,7 @@ type Hospital struct {
 	Name             string        `json:"name" bson:"name"`
 	Describe         string        `json:"describe" bson:"describe"`
 	Code             string        `json:"code" bson:"code"`
+	Regtime          string        `json:"regtime" bson:"regtime"`
 	HospitalCategory string        `json:"hospital-category" bson:"hospital-category"`
 	HospitalLevel    string        `json:"hospital-level" bson:"hospital-level"`
 	Position         string        `json:"position" bson:"position"`
