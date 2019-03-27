@@ -36,16 +36,16 @@ func (c *Paperinput) SetID(id string) error {
 func (c Paperinput) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
-			Type: "Businessinputs",
-			Name: "Businessinputs",
+			Type: "businessinputs",
+			Name: "businessinputs",
 		},
 		{
-			Type: "Representativeinputs",
-			Name: "Representativeinputs",
+			Type: "representativeinputs",
+			Name: "representativeinputs",
 		},
 		{
-			Type: "Managerinputs",
-			Name: "Managerinputs",
+			Type: "managerinputs",
+			Name: "managerinputs",
 		},
 	}
 }
@@ -56,24 +56,24 @@ func (c Paperinput) GetReferencedIDs() []jsonapi.ReferenceID {
 	for _, kID := range c.BusinessinputIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "Businessinputs",
-			Name: "Businessinputs",
+			Type: "businessinputs",
+			Name: "businessinputs",
 		})
 	}
 
 	for _, kID := range c.RepresentativeinputIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "Representativeinputs",
-			Name: "Representativeinputs",
+			Type: "representativeinputs",
+			Name: "representativeinputs",
 		})
 	}
 
 	for _, kID := range c.ManagerinputIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "Managerinputs",
-			Name: "Managerinputs",
+			Type: "managerinputs",
+			Name: "managerinputs",
 		})
 	}
 
@@ -99,13 +99,13 @@ func (c Paperinput) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 }
 
 func (c *Paperinput) SetToManyReferenceIDs(name string, IDs []string) error {
-	if name == "Businessinputs" {
+	if name == "businessinputs" {
 		c.BusinessinputIDs = IDs
 		return nil
-	} else if name == "Representativeinputs" {
+	} else if name == "representativeinputs" {
 		c.RepresentativeinputIDs = IDs
 		return nil
-	} else if name == "Managerinputs" {
+	} else if name == "managerinputs" {
 		c.ManagerinputIDs = IDs
 		return nil
 	}
@@ -113,13 +113,13 @@ func (c *Paperinput) SetToManyReferenceIDs(name string, IDs []string) error {
 }
 
 func (c *Paperinput) AddToManyIDs(name string, IDs []string) error {
-	if name == "Businessinputs" {
+	if name == "businessinputs" {
 		c.BusinessinputIDs = append(c.BusinessinputIDs, IDs...)
 		return nil
-	} else if name == "Representativeinputs" {
+	} else if name == "representativeinputs" {
 		c.RepresentativeinputIDs = append(c.RepresentativeinputIDs, IDs...)
 		return nil
-	} else if name == "Managerinputs" {
+	} else if name == "managerinputs" {
 		c.ManagerinputIDs = append(c.ManagerinputIDs, IDs...)
 		return nil
 	}
@@ -128,7 +128,7 @@ func (c *Paperinput) AddToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Paperinput) DeleteToManyIDs(name string, IDs []string) error {
-	if name == "Businessinputs" {
+	if name == "businessinputs" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.BusinessinputIDs {
 				if ID == oldID {
@@ -136,7 +136,7 @@ func (c *Paperinput) DeleteToManyIDs(name string, IDs []string) error {
 				}
 			}
 		}
-	} else if name == "Representativeinputs" {
+	} else if name == "representativeinputs" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.RepresentativeinputIDs {
 				if ID == oldID {
@@ -144,7 +144,7 @@ func (c *Paperinput) DeleteToManyIDs(name string, IDs []string) error {
 				}
 			}
 		}
-	} else if name == "Managerinputs" {
+	} else if name == "managerinputs" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.ManagerinputIDs {
 				if ID == oldID {

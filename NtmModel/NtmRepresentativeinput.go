@@ -5,7 +5,7 @@ import "gopkg.in/mgo.v2/bson"
 type Representativeinput struct {
 	ID                       string        `json:"-"`
 	Id_                      bson.ObjectId `json:"-" bson:"_id"`
-	RepresentativeId         string        `json:"representative-id" bson:"representative-id"`
+	ResourceConfigId         string        `json:"resource-config-id" bson:"resource-config-id"`
 	ProductKnowledgeTraining float64       `json:"product-knowledge-training" bson:"product-knowledge-training"`
 	SalesAbilityTraining     float64       `json:"sales-ability-training" bson:"sales-ability-training"`
 	RegionTraining           float64       `json:"region-training" bson:"region-training"`

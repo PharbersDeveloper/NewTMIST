@@ -19,6 +19,7 @@ type RepresentativeConfig struct {
 	RegionalManagementAbility float64 `json:"regional-management-ability" bson:"regional-management-ability"`
 	JobEnthusiasm             float64 `json:"job-enthusiasm" bson:"job-enthusiasm"`
 	BehaviorValidity          float64 `json:"behavior-validity" bson:"behavior-validity"`
+	TotalTime 				  float64 `json:"total-time" bson:"total-time"`
 
 	RepresentativeID string          `json:"-" bson:"representative-id"`
 	Representative   *Representative `json:"-"`

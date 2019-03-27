@@ -37,6 +37,7 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmProposal":             NtmModel.Proposal{},
 	"NtmUseableProposal":      NtmModel.UseableProposal{},
 	"NtmPaper":                NtmModel.Paper{},
+	"NtmSalesConfig":		   NtmModel.SalesConfig{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -63,6 +64,7 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmProposalStorage":             NtmDataStorage.NtmProposalStorage{},
 	"NtmUseableProposalStorage":      NtmDataStorage.NtmUseableProposalStorage{},
 	"NtmPaperStorage":                NtmDataStorage.NtmPaperStorage{},
+	"NtmSalesConfigStorage":		  NtmDataStorage.NtmSalesConfigStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -89,6 +91,7 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmProposalResource":             NtmResource.NtmProposalResource{},
 	"NtmUseableProposalResource":      NtmResource.NtmUseableProposalResource{},
 	"NtmPaperResource":                NtmResource.NtmPaperResource{},
+	"NtmSalesConfigResource":		   NtmResource.NtmSalesConfigResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{

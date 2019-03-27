@@ -5,12 +5,12 @@ import "gopkg.in/mgo.v2/bson"
 type Businessinput struct {
 	ID               string        `json:"-"`
 	Id_              bson.ObjectId `json:"-" bson:"_id"`
-	HospitalId       string        `json:"hospital-id" bson:"hospital-id"`
-	RepresentativeId string        `json:"representative-id" bson:"representative-id"`
+	DestConfigId     string        `json:"dest-config-id" bson:"dest-config-id"`
+	ResourceConfigId string        `json:"resource-config-id" bson:"resource-config-id"`
 	SalesTarget      float64       `json:"sales-target" bson:"sales-target"`
 	Budget           float64       `json:"budget" bson:"budget"`
 	MeetingPlaces    float64       `json:"meeting-places" bson:"meeting-places"`
-	VisitTime        float64       `json:"vivit-time" bson:"vivit-time"`
+	VisitTime        float64       `json:"visit-time" bson:"visit-time"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -36,6 +36,10 @@ func (u *Businessinput) GetConditionsBsonM(parameters map[string][]string) bson.
 			}
 			r["$in"] = ids
 			rst["_id"] = r
+		case "dest-config-id":
+			rst[k] = v[0]
+		case "resource-config-id":
+			rst[k] = v[0]
 		}
 	}
 	return rst

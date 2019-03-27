@@ -34,11 +34,11 @@ func (s NtmBusinessinputResource) NewBusinessinputResource(args []BmDataStorage.
 }
 
 func (s NtmBusinessinputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	PaperinputsID, piok := r.QueryParams["PaperinputsID"]
+	paperinputsID, piok := r.QueryParams["paperinputsID"]
 	var result []*NtmModel.Businessinput
 
 	if piok {
-		modelRootID := PaperinputsID[0]
+		modelRootID := paperinputsID[0]
 
 		modelRoot, err := s.NtmPaperinputStorage.GetOne(modelRootID)
 		if err != nil {

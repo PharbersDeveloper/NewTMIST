@@ -1,18 +1,18 @@
 package NtmHandler
 
 import (
-		"fmt"
-	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
+	"fmt"
+	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
 	"github.com/PharbersDeveloper/NtmPods/NtmModel"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/julienschmidt/httprouter"
+	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
-		"net/http"
+	"net/http"
 	"reflect"
 	"strings"
-	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
 	"time"
 )
 
@@ -63,30 +63,43 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	mdb := []BmDaemons.BmDaemon{h.db}
 	w.Header().Add("Content-Type", "application/json")
 
-	token, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
-	if err != nil {
-		panic(fmt.Sprintf(err.Error()))
-	}
+	// TODO @Alex 这块还要重新调试
+	//_, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
+	//if err != nil {
+	//	panic(fmt.Sprintf(err.Error()))
+	//}
 
 	proposalId := r.FormValue("proposal-id")
 	proposalModel, err := NtmDataStorage.NtmProposalStorage{}.NewProposalStorage(mdb).GetOne(proposalId)
-	if err != nil {
+
+
+	var (
+		out NtmModel.Paper
+		paperId string
+		)
+	cond := bson.M{"proposal-id": proposalId}
+
+	err = h.db.FindOneByCondition(&NtmModel.Paper{}, &out, cond)
+
+	if err != nil && err.Error() != "not found" {
 		panic(fmt.Sprintf(err.Error()))
-	}
+	} else if len(out.ID) > 0 {
+		paperId = out.ID
+	} else {
+		paperModel := NtmModel.Paper{
+			AccountID: "5c4552455ee2dd7c36a94a9e", //token.UserID,
+			ProposalID: proposalModel.ID,
+			Name: proposalModel.Name,
+			Describe: proposalModel.Describe,
+			StartTime: time.Now().Unix(),
+			EndTime: 0,
+			InputState: "未开始",
+			InputIDs: proposalModel.InputIDs,
+			ReportIDs: proposalModel.ReportIDs,
+		}
 
-	paperModel := NtmModel.Paper{
-		AccountID: token.UserID,
-		ProposalID: proposalModel.ID,
-		Name: proposalModel.Name,
-		Describe: proposalModel.Describe,
-		StartTime: time.Now().Unix(),
-		EndTime: 0,
-		InputState: "未开始",
-		InputIDs: proposalModel.InputIDs,
-		ReportIDs: proposalModel.ReportIDs,
+		paperId = NtmDataStorage.NtmPaperStorage{}.NewPaperStorage(mdb).Insert(paperModel)
 	}
-
-	paperId := NtmDataStorage.NtmPaperStorage{}.NewPaperStorage(mdb).Insert(paperModel)
 
 	//拼接转发的URL
 	scheme := "http://"
