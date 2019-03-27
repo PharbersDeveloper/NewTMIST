@@ -11,27 +11,27 @@ import (
 	"github.com/manyminds/api2go"
 )
 
-// NtmPaperInputStorage stores all of the tasty modelleaf, needs to be injected into
-// PaperInput and PaperInput Resource. In the real world, you would use a database for that.
-type NtmPaperInputStorage struct {
-	images  map[string]*NtmModel.PaperInput
+// NtmPaperinputStorage stores all of the tasty modelleaf, needs to be injected into
+// Paperinput and Paperinput Resource. In the real world, you would use a database for that.
+type NtmPaperinputStorage struct {
+	images  map[string]*NtmModel.Paperinput
 	idCount int
 
 	db *BmMongodb.BmMongodb
 }
 
-func (s NtmPaperInputStorage) NewPaperInputStorage(args []BmDaemons.BmDaemon) *NtmPaperInputStorage {
+func (s NtmPaperinputStorage) NewPaperinputStorage(args []BmDaemons.BmDaemon) *NtmPaperinputStorage {
 	mdb := args[0].(*BmMongodb.BmMongodb)
-	return &NtmPaperInputStorage{make(map[string]*NtmModel.PaperInput), 1, mdb}
+	return &NtmPaperinputStorage{make(map[string]*NtmModel.Paperinput), 1, mdb}
 }
 
 // GetAll of the modelleaf
-func (s NtmPaperInputStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.PaperInput {
-	in := NtmModel.PaperInput{}
-	var out []NtmModel.PaperInput
+func (s NtmPaperinputStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.Paperinput {
+	in := NtmModel.Paperinput{}
+	var out []NtmModel.Paperinput
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
-		var tmp []*NtmModel.PaperInput
+		var tmp []*NtmModel.Paperinput
 		for i := 0; i < len(out); i++ {
 			ptr := out[i]
 			s.db.ResetIdWithId_(&ptr)
@@ -44,19 +44,19 @@ func (s NtmPaperInputStorage) GetAll(r api2go.Request, skip int, take int) []*Nt
 }
 
 // GetOne tasty modelleaf
-func (s NtmPaperInputStorage) GetOne(id string) (NtmModel.PaperInput, error) {
-	in := NtmModel.PaperInput{ID: id}
-	out := NtmModel.PaperInput{ID: id}
+func (s NtmPaperinputStorage) GetOne(id string) (NtmModel.Paperinput, error) {
+	in := NtmModel.Paperinput{ID: id}
+	out := NtmModel.Paperinput{ID: id}
 	err := s.db.FindOne(&in, &out)
 	if err == nil {
 		return out, nil
 	}
-	errMessage := fmt.Sprintf("PaperInput for id %s not found", id)
-	return NtmModel.PaperInput{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
+	errMessage := fmt.Sprintf("Paperinput for id %s not found", id)
+	return NtmModel.Paperinput{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
 }
 
 // Insert a fresh one
-func (s *NtmPaperInputStorage) Insert(c NtmModel.PaperInput) string {
+func (s *NtmPaperinputStorage) Insert(c NtmModel.Paperinput) string {
 	tmp, err := s.db.InsertBmObject(&c)
 	if err != nil {
 		fmt.Println(err)
@@ -66,27 +66,27 @@ func (s *NtmPaperInputStorage) Insert(c NtmModel.PaperInput) string {
 }
 
 // Delete one :(
-func (s *NtmPaperInputStorage) Delete(id string) error {
-	in := NtmModel.PaperInput{ID: id}
+func (s *NtmPaperinputStorage) Delete(id string) error {
+	in := NtmModel.Paperinput{ID: id}
 	err := s.db.Delete(&in)
 	if err != nil {
-		return fmt.Errorf("PaperInput with id %s does not exist", id)
+		return fmt.Errorf("Paperinput with id %s does not exist", id)
 	}
 
 	return nil
 }
 
 // Update updates an existing modelleaf
-func (s *NtmPaperInputStorage) Update(c NtmModel.PaperInput) error {
+func (s *NtmPaperinputStorage) Update(c NtmModel.Paperinput) error {
 	err := s.db.Update(&c)
 	if err != nil {
-		return fmt.Errorf("PaperInput with id does not exist")
+		return fmt.Errorf("Paperinput with id does not exist")
 	}
 
 	return nil
 }
 
-func (s *NtmPaperInputStorage) Count(req api2go.Request, c NtmModel.PaperInput) int {
+func (s *NtmPaperinputStorage) Count(req api2go.Request, c NtmModel.Paperinput) int {
 	r, _ := s.db.Count(req, &c)
 	return r
 }

@@ -11,48 +11,48 @@ import (
 	"strconv"
 )
 
-type NtmBusinessInputResource struct {
-	NtmBusinessInputStorage *NtmDataStorage.NtmBusinessInputStorage
-	NtmPaperInputStorage    *NtmDataStorage.NtmPaperInputStorage
+type NtmBusinessinputResource struct {
+	NtmBusinessinputStorage *NtmDataStorage.NtmBusinessinputStorage
+	NtmPaperinputStorage    *NtmDataStorage.NtmPaperinputStorage
 }
 
-func (s NtmBusinessInputResource) NewBusinessInputResource(args []BmDataStorage.BmStorage) *NtmBusinessInputResource {
-	var bis *NtmDataStorage.NtmBusinessInputStorage
-	var pis *NtmDataStorage.NtmPaperInputStorage
+func (s NtmBusinessinputResource) NewBusinessinputResource(args []BmDataStorage.BmStorage) *NtmBusinessinputResource {
+	var bis *NtmDataStorage.NtmBusinessinputStorage
+	var pis *NtmDataStorage.NtmPaperinputStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmBusinessInputStorage" {
-			bis = arg.(*NtmDataStorage.NtmBusinessInputStorage)
-		} else if tp.Name() == "NtmPaperInputStorage" {
-			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
+		if tp.Name() == "NtmBusinessinputStorage" {
+			bis = arg.(*NtmDataStorage.NtmBusinessinputStorage)
+		} else if tp.Name() == "NtmPaperinputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
 		}
 	}
-	return &NtmBusinessInputResource{
-		NtmBusinessInputStorage: bis,
-		NtmPaperInputStorage:    pis,
+	return &NtmBusinessinputResource{
+		NtmBusinessinputStorage: bis,
+		NtmPaperinputStorage:    pis,
 	}
 }
 
-func (s NtmBusinessInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	paperInputsID, piok := r.QueryParams["paperInputsID"]
-	var result []*NtmModel.BusinessInput
+func (s NtmBusinessinputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	PaperinputsID, piok := r.QueryParams["PaperinputsID"]
+	var result []*NtmModel.Businessinput
 
 	if piok {
-		modelRootID := paperInputsID[0]
+		modelRootID := PaperinputsID[0]
 
-		modelRoot, err := s.NtmPaperInputStorage.GetOne(modelRootID)
+		modelRoot, err := s.NtmPaperinputStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
-		r.QueryParams["ids"] = modelRoot.BusinessInputIDs
+		r.QueryParams["ids"] = modelRoot.BusinessinputIDs
 
 
-		result = s.NtmBusinessInputStorage.GetAll(r, -1, -1)
+		result = s.NtmBusinessinputStorage.GetAll(r, -1, -1)
 
 		return &Response{Res: result}, nil
 	}
 
-	models := s.NtmBusinessInputStorage.GetAll(r, -1, -1)
+	models := s.NtmBusinessinputStorage.GetAll(r, -1, -1)
 	for _, model := range models {
 		result = append(result, model)
 	}
@@ -60,9 +60,9 @@ func (s NtmBusinessInputResource) FindAll(r api2go.Request) (api2go.Responder, e
 }
 
 // PaginatedFindAll can be used to load models in chunks
-func (s NtmBusinessInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
+func (s NtmBusinessinputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result                      []NtmModel.BusinessInput
+		result                      []NtmModel.Businessinput
 		number, size, offset, limit string
 	)
 
@@ -95,7 +95,7 @@ func (s NtmBusinessInputResource) PaginatedFindAll(r api2go.Request) (uint, api2
 		}
 
 		start := sizeI * (numberI - 1)
-		for _, iter := range s.NtmBusinessInputStorage.GetAll(r, int(start), int(sizeI)) {
+		for _, iter := range s.NtmBusinessinputStorage.GetAll(r, int(start), int(sizeI)) {
 			result = append(result, *iter)
 		}
 
@@ -110,21 +110,21 @@ func (s NtmBusinessInputResource) PaginatedFindAll(r api2go.Request) (uint, api2
 			return 0, &Response{}, err
 		}
 
-		for _, iter := range s.NtmBusinessInputStorage.GetAll(r, int(offsetI), int(limitI)) {
+		for _, iter := range s.NtmBusinessinputStorage.GetAll(r, int(offsetI), int(limitI)) {
 			result = append(result, *iter)
 		}
 	}
 
-	in := NtmModel.BusinessInput{}
-	count := s.NtmBusinessInputStorage.Count(r, in)
+	in := NtmModel.Businessinput{}
+	count := s.NtmBusinessinputStorage.Count(r, in)
 
 	return uint(count), &Response{Res: result}, nil
 }
 
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
-func (s NtmBusinessInputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmBusinessInputStorage.GetOne(ID)
+func (s NtmBusinessinputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
+	model, err := s.NtmBusinessinputStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
@@ -132,31 +132,31 @@ func (s NtmBusinessInputResource) FindOne(ID string, r api2go.Request) (api2go.R
 }
 
 // Create method to satisfy `api2go.DataSource` interface
-func (s NtmBusinessInputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.BusinessInput)
+func (s NtmBusinessinputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Businessinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	id := s.NtmBusinessInputStorage.Insert(model)
+	id := s.NtmBusinessinputStorage.Insert(model)
 	model.ID = id
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
 
 // Delete to satisfy `api2go.DataSource` interface
-func (s NtmBusinessInputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
-	err := s.NtmBusinessInputStorage.Delete(id)
+func (s NtmBusinessinputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
+	err := s.NtmBusinessinputStorage.Delete(id)
 	return &Response{Code: http.StatusNoContent}, err
 }
 
 //Update stores all changes on the model
-func (s NtmBusinessInputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.BusinessInput)
+func (s NtmBusinessinputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Businessinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	err := s.NtmBusinessInputStorage.Update(model)
+	err := s.NtmBusinessinputStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }

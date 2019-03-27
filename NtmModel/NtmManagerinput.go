@@ -2,7 +2,7 @@ package NtmModel
 
 import "gopkg.in/mgo.v2/bson"
 
-type ManagerInput struct {
+type Managerinput struct {
 	ID                   string        `json:"-"`
 	Id_                  bson.ObjectId `json:"-" bson:"_id"`
 	StrategyAnalysisTime float64       `json:"strategy-analysis-time" bson:"strategy-analysis-time"`
@@ -13,17 +13,17 @@ type ManagerInput struct {
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c ManagerInput) GetID() string {
+func (c Managerinput) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *ManagerInput) SetID(id string) error {
+func (c *Managerinput) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (u *ManagerInput) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *Managerinput) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	r := make(map[string]interface{})
 	var ids []bson.ObjectId

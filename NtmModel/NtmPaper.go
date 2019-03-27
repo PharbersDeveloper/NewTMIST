@@ -18,7 +18,7 @@ type Paper struct {
 	InputState string        `json:"state" bson:"input-state"`
 
 	InputIDs    []string      `json:"-" bson:"input-ids"`
-	PaperInputs []*PaperInput `json:"-"`
+	Paperinputs []*Paperinput `json:"-"`
 
 	ReportIDs    []string       `json:"-" bson:"report-ids"`
 	PaperReports []*PaperReport `json:"-"`
@@ -36,8 +36,8 @@ func (c Paper) SetID(id string) error {
 func (c Paper) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
-			Type: "paperInputs",
-			Name: "paperInputs",
+			Type: "Paperinputs",
+			Name: "Paperinputs",
 		},
 	}
 }
@@ -48,8 +48,8 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 	for _, kID := range c.InputIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "paperInputs",
-			Name: "paperInputs",
+			Type: "Paperinputs",
+			Name: "Paperinputs",
 		})
 	}
 	return result
@@ -58,14 +58,14 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 func (c Paper) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	for key := range c.PaperInputs {
-		result = append(result, c.PaperInputs[key])
+	for key := range c.Paperinputs {
+		result = append(result, c.Paperinputs[key])
 	}
 	return result
 }
 
 func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
-	if name == "PaperInput" {
+	if name == "Paperinput" {
 		c.InputIDs = IDs
 		return nil
 	}
@@ -73,7 +73,7 @@ func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 }
 
 func (c *Paper) AddToManyIDs(name string, IDs []string) error {
-	if name == "PaperInput" {
+	if name == "Paperinput" {
 		c.InputIDs = append(c.InputIDs, IDs...)
 		return nil
 	}
@@ -82,7 +82,7 @@ func (c *Paper) AddToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
-	if name == "PaperInput" {
+	if name == "Paperinput" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.InputIDs {
 				if ID == oldID {

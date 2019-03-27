@@ -2,7 +2,7 @@ package NtmModel
 
 import "gopkg.in/mgo.v2/bson"
 
-type BusinessInput struct {
+type Businessinput struct {
 	ID               string        `json:"-"`
 	Id_              bson.ObjectId `json:"-" bson:"_id"`
 	HospitalId       string        `json:"hospital-id" bson:"hospital-id"`
@@ -14,17 +14,17 @@ type BusinessInput struct {
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c BusinessInput) GetID() string {
+func (c Businessinput) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *BusinessInput) SetID(id string) error {
+func (c *Businessinput) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (u *BusinessInput) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *Businessinput) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	r := make(map[string]interface{})
 	var ids []bson.ObjectId

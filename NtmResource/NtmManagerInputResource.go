@@ -11,42 +11,42 @@ import (
 	"strconv"
 )
 
-type NtmManagerInputResource struct {
-	NtmManagerInputStorage *NtmDataStorage.NtmManagerInputStorage
-	NtmPaperInputStorage   *NtmDataStorage.NtmPaperInputStorage
+type NtmManagerinputResource struct {
+	NtmManagerinputStorage *NtmDataStorage.NtmManagerinputStorage
+	NtmPaperinputStorage   *NtmDataStorage.NtmPaperinputStorage
 }
 
-func (s NtmManagerInputResource) NewManagerInputResource(args []BmDataStorage.BmStorage) *NtmManagerInputResource {
-	var bis *NtmDataStorage.NtmManagerInputStorage
-	var pis *NtmDataStorage.NtmPaperInputStorage
+func (s NtmManagerinputResource) NewManagerinputResource(args []BmDataStorage.BmStorage) *NtmManagerinputResource {
+	var bis *NtmDataStorage.NtmManagerinputStorage
+	var pis *NtmDataStorage.NtmPaperinputStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
-		if tp.Name() == "NtmManagerInputStorage" {
-			bis = arg.(*NtmDataStorage.NtmManagerInputStorage)
-		} else if tp.Name() == "NtmPaperInputStorage" {
-			pis = arg.(*NtmDataStorage.NtmPaperInputStorage)
+		if tp.Name() == "NtmManagerinputStorage" {
+			bis = arg.(*NtmDataStorage.NtmManagerinputStorage)
+		} else if tp.Name() == "NtmPaperinputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
 		}
 	}
-	return &NtmManagerInputResource{
-		NtmManagerInputStorage: bis,
-		NtmPaperInputStorage:   pis,
+	return &NtmManagerinputResource{
+		NtmManagerinputStorage: bis,
+		NtmPaperinputStorage:   pis,
 	}
 }
 
-func (s NtmManagerInputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	paperInputsID, piok := r.QueryParams["paperInputsID"]
-	var result []*NtmModel.ManagerInput
+func (s NtmManagerinputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	PaperinputsID, piok := r.QueryParams["PaperinputsID"]
+	var result []*NtmModel.Managerinput
 
 	if piok {
-		modelRootID := paperInputsID[0]
+		modelRootID := PaperinputsID[0]
 
-		modelRoot, err := s.NtmPaperInputStorage.GetOne(modelRootID)
+		modelRoot, err := s.NtmPaperinputStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}
 
-		r.QueryParams["ids"] = modelRoot.ManagerInputIDs
-		result = s.NtmManagerInputStorage.GetAll(r, -1, -1)
+		r.QueryParams["ids"] = modelRoot.ManagerinputIDs
+		result = s.NtmManagerinputStorage.GetAll(r, -1, -1)
 		return &Response{Res: result}, nil
 	}
 
@@ -54,9 +54,9 @@ func (s NtmManagerInputResource) FindAll(r api2go.Request) (api2go.Responder, er
 }
 
 // PaginatedFindAll can be used to load models in chunks
-func (s NtmManagerInputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
+func (s NtmManagerinputResource) PaginatedFindAll(r api2go.Request) (uint, api2go.Responder, error) {
 	var (
-		result                      []NtmModel.ManagerInput
+		result                      []NtmModel.Managerinput
 		number, size, offset, limit string
 	)
 
@@ -89,7 +89,7 @@ func (s NtmManagerInputResource) PaginatedFindAll(r api2go.Request) (uint, api2g
 		}
 
 		start := sizeI * (numberI - 1)
-		for _, iter := range s.NtmManagerInputStorage.GetAll(r, int(start), int(sizeI)) {
+		for _, iter := range s.NtmManagerinputStorage.GetAll(r, int(start), int(sizeI)) {
 			result = append(result, *iter)
 		}
 
@@ -104,21 +104,21 @@ func (s NtmManagerInputResource) PaginatedFindAll(r api2go.Request) (uint, api2g
 			return 0, &Response{}, err
 		}
 
-		for _, iter := range s.NtmManagerInputStorage.GetAll(r, int(offsetI), int(limitI)) {
+		for _, iter := range s.NtmManagerinputStorage.GetAll(r, int(offsetI), int(limitI)) {
 			result = append(result, *iter)
 		}
 	}
 
-	in := NtmModel.ManagerInput{}
-	count := s.NtmManagerInputStorage.Count(r, in)
+	in := NtmModel.Managerinput{}
+	count := s.NtmManagerinputStorage.Count(r, in)
 
 	return uint(count), &Response{Res: result}, nil
 }
 
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
-func (s NtmManagerInputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmManagerInputStorage.GetOne(ID)
+func (s NtmManagerinputResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
+	model, err := s.NtmManagerinputStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
@@ -126,31 +126,31 @@ func (s NtmManagerInputResource) FindOne(ID string, r api2go.Request) (api2go.Re
 }
 
 // Create method to satisfy `api2go.DataSource` interface
-func (s NtmManagerInputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.ManagerInput)
+func (s NtmManagerinputResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Managerinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	id := s.NtmManagerInputStorage.Insert(model)
+	id := s.NtmManagerinputStorage.Insert(model)
 	model.ID = id
 
 	return &Response{Res: model, Code: http.StatusCreated}, nil
 }
 
 // Delete to satisfy `api2go.DataSource` interface
-func (s NtmManagerInputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
-	err := s.NtmManagerInputStorage.Delete(id)
+func (s NtmManagerinputResource) Delete(id string, r api2go.Request) (api2go.Responder, error) {
+	err := s.NtmManagerinputStorage.Delete(id)
 	return &Response{Code: http.StatusNoContent}, err
 }
 
 //Update stores all changes on the model
-func (s NtmManagerInputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	model, ok := obj.(NtmModel.ManagerInput)
+func (s NtmManagerinputResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
+	model, ok := obj.(NtmModel.Managerinput)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(errors.New("Invalid instance given"), "Invalid instance given", http.StatusBadRequest)
 	}
 
-	err := s.NtmManagerInputStorage.Update(model)
+	err := s.NtmManagerinputStorage.Update(model)
 	return &Response{Res: model, Code: http.StatusNoContent}, err
 }
