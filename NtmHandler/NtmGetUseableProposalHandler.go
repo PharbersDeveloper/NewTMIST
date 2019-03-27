@@ -59,21 +59,18 @@ func (h NtmGetUseableProposalsHandler) NewGetUseableProposalsHandler(args ...int
 
 func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 
-	_, err := NtmMiddleware.CheckTokenFormFunction(w, r)
+	token, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
 	if err != nil {
 		panic(fmt.Sprintf(err.Error()))
 		return 1
 	}
-
-	// TODO: @Alex 逻辑还没写完 暂定写死
-	uid := "5c7e3e02d23dc2be2df26694"
 
 	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-	toUrl := strings.Replace(r.URL.Path, "GetUseableProposals", h.Args[0], -1) + "?account-id=" + uid
+	toUrl := strings.Replace(r.URL.Path, "GetUseableProposals", h.Args[0], -1) + "?account-id=" + token.UserID
 	useableProposalURL := strings.Join([]string{scheme, r.Host, toUrl}, "")
 
 	// 转发

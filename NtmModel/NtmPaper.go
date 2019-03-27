@@ -7,19 +7,21 @@ import (
 )
 
 type Paper struct {
+	ID         string        `json:"-"`
+	Id_        bson.ObjectId `json:"-" bson:"_id"`
+	AccountID  string        `json:"account-id" bson:"account-id"`
+	ProposalID string        `json:"proposal-id" bson:"proposal-id"`
+	Name       string        `json:"name" bson:"name"`
+	Describe   string        `json:"describe" bson:"describe"`
+	StartTime  int64         `json:"start-time" bson:"start-time"`
+	EndTime    int64         `json:"end-time" bson:"end-time"`
+	InputState string        `json:"state" bson:"input-state"`
 
-	ID					string			`json:"-"`
-	Id_					bson.ObjectId 	`json:"-" bson:"_id"`
-	AccountID			string		  	`json:"account-id" bson:"account-id"`
-	ProposalID 			string			`json:"proposal-id" bson:"proposal-id"`
-	Name 				string			`json:"name" bson:"name"`
-	Describe			string			`json:"describe" bson:"describe"`
-	StartTime			float64			`json:"start-time" bson:"start-time"`
-	EndTime				float64			`json:"end-time" bson:"end-time"`
-	InputState			string			`json:"state" bson:"input-state"`
+	InputIDs    []string      `json:"-" bson:"input-ids"`
+	PaperInputs []*PaperInput `json:"-"`
 
-	InputIDs			[]string 		`json:"-" bson:"input-ids"`
-	PaperInputs			[]*PaperInput	`json:"-"`
+	ReportIDs    []string       `json:"-" bson:"report-ids"`
+	PaperReports []*PaperReport `json:"-"`
 }
 
 func (c Paper) GetID() string {
@@ -45,7 +47,7 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 
 	for _, kID := range c.InputIDs {
 		result = append(result, jsonapi.ReferenceID{
-			ID: kID,
+			ID:   kID,
 			Type: "paperInputs",
 			Name: "paperInputs",
 		})
@@ -61,7 +63,6 @@ func (c Paper) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	}
 	return result
 }
-
 
 func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "PaperInput" {

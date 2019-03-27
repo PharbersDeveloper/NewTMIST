@@ -12,22 +12,44 @@ import (
 )
 
 type NtmProposalResource struct {
-	NtmProposalStorage *NtmDataStorage.NtmProposalStorage
+	NtmProposalStorage        *NtmDataStorage.NtmProposalStorage
+	NtmUseableProposalStorage *NtmDataStorage.NtmUseableProposalStorage
 }
 
 func (c NtmProposalResource) NewProposalResource(args []BmDataStorage.BmStorage) *NtmProposalResource {
-	var cs *NtmDataStorage.NtmProposalStorage
+	var ps *NtmDataStorage.NtmProposalStorage
+	var ups *NtmDataStorage.NtmUseableProposalStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmProposalStorage" {
-			cs = arg.(*NtmDataStorage.NtmProposalStorage)
+			ps = arg.(*NtmDataStorage.NtmProposalStorage)
+		} else if tp.Name() == "NtmUseableProposalStorage" {
+			ups = arg.(*NtmDataStorage.NtmUseableProposalStorage)
 		}
 	}
-	return &NtmProposalResource{NtmProposalStorage: cs}
+	return &NtmProposalResource{
+		NtmProposalStorage:        ps,
+		NtmUseableProposalStorage: ups,
+	}
 }
 
 // FindAll Proposals
 func (c NtmProposalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	useableProposalsID, upiok := r.QueryParams["useableProposalsID"]
+
+	if upiok {
+		modelRootID := useableProposalsID[0]
+		modelRoot, err := c.NtmUseableProposalStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := c.NtmProposalStorage.GetOne(modelRoot.ProposalID)
+		if err != nil {
+			return &Response{}, err
+		}
+		return &Response{Res: model}, nil
+	}
+
 	result := c.NtmProposalStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }

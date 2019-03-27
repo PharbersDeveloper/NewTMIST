@@ -37,18 +37,9 @@ func (s NtmUseableProposalResource) NewUseableProposalResource(args []BmDataStor
 func (s NtmUseableProposalResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	var result []NtmModel.UseableProposal
 	models := s.NtmUseableProposalStorage.GetAll(r, -1, -1)
-
 	for _, model := range models {
-		if model.ProposalID != "" {
-			response, err := s.NtmProposalStorage.GetOne(model.ProposalID)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Proposal = &response
-		}
 		result = append(result, *model)
 	}
-
 	return &Response{Res: result}, nil
 }
 
