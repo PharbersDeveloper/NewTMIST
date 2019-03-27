@@ -65,7 +65,7 @@ func (c Paper) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 }
 
 func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
-	if name == "paperinput" {
+	if name == "paperinputs" {
 		c.InputIDs = IDs
 		return nil
 	}
@@ -73,7 +73,7 @@ func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 }
 
 func (c *Paper) AddToManyIDs(name string, IDs []string) error {
-	if name == "paperinput" {
+	if name == "paperinputs" {
 		c.InputIDs = append(c.InputIDs, IDs...)
 		return nil
 	}
@@ -82,7 +82,7 @@ func (c *Paper) AddToManyIDs(name string, IDs []string) error {
 }
 
 func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
-	if name == "paperinput" {
+	if name == "paperinputs" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.InputIDs {
 				if ID == oldID {
