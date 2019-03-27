@@ -1,18 +1,19 @@
 package NtmMiddleware
 
 import (
-	"encoding/json"
 	"fmt"
 	"errors"
-	"encoding/json"
-	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
-	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"github.com/manyminds/api2go"
 	"io/ioutil"
 	"net/http"
 	"reflect"
 	"strings"
+	"encoding/json"
+	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
+	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
+	"github.com/manyminds/api2go"
 )
+
+var NtmCheckToken NtmCheckTokenMiddleware
 
 type NtmCheckTokenMiddleware struct {
 	Args []string
@@ -20,14 +21,14 @@ type NtmCheckTokenMiddleware struct {
 }
 
 type result struct {
-	AllScope	string	`json:"all_scope"`
-	ClientID	string	`json:"client_id"`
-	Expires		float64	`json:"expires_in"`
-	RefreshExpires float64 `json:"refresh_expires_in"`
-	Scope 		string 	`json:"scope"`
-	UserID 		string 	`json:"user_id"`
-	Error       string  `json:"error"`
-	ErrorDescription 	string 	`json:"error_description"`
+	AllScope         string  `json:"all_scope"`
+	AuthScope        string  `json:"auth_scope"`
+	UserID           string  `json:"user_id"`
+	ClientID         string  `json:"client_id"`
+	Expires          float64 `json:"expires_in"`
+	RefreshExpires   float64 `json:"refresh_expires_in"`
+	Error            string  `json:"error"`
+	ErrorDescription string  `json:"error_description"`
 }
 
 func (ctm NtmCheckTokenMiddleware) NewCheckTokenMiddleware(args ...interface{}) NtmCheckTokenMiddleware {
@@ -52,18 +53,19 @@ func (ctm NtmCheckTokenMiddleware) NewCheckTokenMiddleware(args ...interface{}) 
 		}
 	}
 
-	return NtmCheckTokenMiddleware{Args: ag, rd: r}
+	NtmCheckToken = NtmCheckTokenMiddleware{Args: ag, rd: r}
+	return NtmCheckToken
 }
 
 func (ctm NtmCheckTokenMiddleware) DoMiddleware(c api2go.APIContexter, w http.ResponseWriter, r *http.Request) {
-
-	if _, err := CheckTokenFormFunction(w, r); err != nil {
-		panic(err.Error())
-	}
+	// TODO 调试之后，解注
+	//if _, err := ctm.CheckTokenFormFunction(w, r); err != nil {
+	//	panic(err.Error())
+	//}
 }
 
 // TODO @Alex这块需要重构
-func CheckTokenFormFunction(w http.ResponseWriter, r *http.Request) (result, error) {
+func (ctm NtmCheckTokenMiddleware) CheckTokenFormFunction(w http.ResponseWriter, r *http.Request) (rst *result, err error) {
 	w.Header().Add("Content-Type", "application/json")
 
 	// 拼接转发的URL
@@ -71,29 +73,36 @@ func CheckTokenFormFunction(w http.ResponseWriter, r *http.Request) (result, err
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-
-	resource := fmt.Sprint("localhost:9096/", "v0/", "TokenValidation")
-
+	version := strings.Split(r.URL.Path, "/")[1]
+	resource := fmt.Sprint(ctm.Args[0], "/"+version+"/", "TokenValidation")
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", mergeURL, nil)
-
 	for k, v := range r.Header {
 		req.Header.Add(k, v[0])
 	}
 	response, err := client.Do(req)
+	if err != nil {
+		return
+	}
 
 	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
 
 	temp := result{}
 	err = json.Unmarshal(body, &temp)
+	if err != nil {
+		return
+	}
 
 	if temp.Error != "" {
 		err = errors.New(temp.ErrorDescription)
+		return
 	}
 
-	return temp, err
-
+	return &temp, err
 }

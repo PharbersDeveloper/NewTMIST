@@ -4,12 +4,13 @@ import "gopkg.in/mgo.v2/bson"
 
 // Proposal Info
 type Proposal struct {
-	ID   		string        `json:"-"`
-	Id_  		bson.ObjectId `json:"-" bson:"_id"`
-	Name		string        `json:"name" bson:"name"`
-	Describe 	string        `json:"describe" bson:"describe"`
-	TotalPhase	int			  `json:"total-phase" bson:"total-phase"`
-	InputIDs	[]string	  `json:"input-ids" bson:"input-ids"`
+	ID         string        `json:"-"`
+	Id_        bson.ObjectId `json:"-" bson:"_id"`
+	Name       string        `json:"name" bson:"name"`
+	Describe   string        `json:"describe" bson:"describe"`
+	TotalPhase int           `json:"total-phase" bson:"total-phase"`
+	InputIDs   []string      `json:"input-ids" bson:"input-ids"`
+	ReportIDs  []string      `json:"report-ids" bson:"report-ids"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

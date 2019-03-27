@@ -1,8 +1,7 @@
 package NtmHandler
 
 import (
-	"encoding/json"
-	"fmt"
+		"fmt"
 	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
 	"github.com/PharbersDeveloper/NtmPods/NtmModel"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
@@ -10,10 +9,11 @@ import (
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
-	"log"
-	"net/http"
+		"net/http"
 	"reflect"
 	"strings"
+	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
+	"time"
 )
 
 type NtmGeneratePaperHandler struct {
@@ -60,48 +60,40 @@ func (h NtmGeneratePaperHandler) NewGeneratePaperHandler(args ...interface{}) Nt
 }
 
 func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
+	mdb := []BmDaemons.BmDaemon{h.db}
 	w.Header().Add("Content-Type", "application/json")
 
-	_, err := NtmMiddleware.CheckTokenFormFunction(w, r)
+	token, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
 	if err != nil {
 		panic(fmt.Sprintf(err.Error()))
-		return 1
 	}
 
-	// TODO: @Alex 逻辑还没写完 暂定写死
-	uid := "5c7e3e02d23dc2be2df26694"
-
-	body, err := ioutil.ReadAll(r.Body)
-
+	proposalId := r.FormValue("proposal-id")
+	proposalModel, err := NtmDataStorage.NtmProposalStorage{}.NewProposalStorage(mdb).GetOne(proposalId)
 	if err != nil {
-		log.Printf("Error reading body: %v", err)
-		http.Error(w, "can't read body", http.StatusBadRequest)
-		return 1
+		panic(fmt.Sprintf(err.Error()))
 	}
 
-	// 临时存储post穿过来的json
-	var temp map[string]interface{}
-	var inputIds []string
-	json.Unmarshal(body, &temp)
-
-	for _, v := range temp["input-ids"].([]interface{}) {
-		value := v.(string)
-		inputIds = append(inputIds, value)
+	paperModel := NtmModel.Paper{
+		AccountID: token.UserID,
+		ProposalID: proposalModel.ID,
+		Name: proposalModel.Name,
+		Describe: proposalModel.Describe,
+		StartTime: time.Now().Unix(),
+		EndTime: 0,
+		InputState: "未开始",
+		InputIDs: proposalModel.InputIDs,
+		ReportIDs: proposalModel.ReportIDs,
 	}
 
-	res := NtmModel.Paper{}
-	json.Unmarshal(body, &res)
-	res.AccountID = uid
-	res.InputIDs = inputIds // 由于Paper实体中配制的json:"-"所以要手动设置，这块儿会改的
-
-	oid, _ := h.db.InsertBmObject(&res)
+	paperId := NtmDataStorage.NtmPaperStorage{}.NewPaperStorage(mdb).Insert(paperModel)
 
 	//拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-	toUrl := strings.Replace(r.URL.Path, "GeneratePaper", h.Args[0], -1) + "/" + oid
+	toUrl := strings.Replace(r.URL.Path, "GeneratePaper", h.Args[0], -1) + "/" + paperId
 	paperURL := strings.Join([]string{scheme, r.Host, toUrl}, "")
 
 	// 转发
