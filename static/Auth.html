@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+</head>
+<body>
+    <h1>NTM内嵌页面</h1>
+    <button id="test">内嵌测试</button>
+</body>
+<script type="text/javascript">
+    $(function () {
+        $("#test").click(function () {
+            alert(123)
+        });
+        window.console.info("fuck");
+        window.localStorage.setItem("test", "test");
+    })
+</script>
+</html>

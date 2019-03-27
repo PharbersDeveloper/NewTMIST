@@ -2,6 +2,8 @@ package NtmHandler
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
 	"github.com/PharbersDeveloper/NtmPods/NtmModel"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
@@ -60,22 +62,14 @@ func (h NtmGeneratePaperHandler) NewGeneratePaperHandler(args ...interface{}) Nt
 func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 	w.Header().Add("Content-Type", "application/json")
 
-	// 验证token
-	auth := r.Header.Get("Authorization")
-	arr := strings.Split(auth, " ")
-	if len(arr) < 2 || arr[0] != "bearer" {
-		panic("Auth Failed!")
-	}
-	token := arr[1]
-	err := h.rd.CheckToken(token)
+	_, err := NtmMiddleware.CheckTokenFormFunction(w, r)
 	if err != nil {
-		panic(err.Error())
+		panic(fmt.Sprintf(err.Error()))
+		return 1
 	}
 
-	// 取出uid
-	redisDriver := h.rd.GetRedisClient()
-	defer redisDriver.Close()
-	uid, _ := redisDriver.HGet(token+"_info", "uid").Result()
+	// TODO: @Alex 逻辑还没写完 暂定写死
+	uid := "5c7e3e02d23dc2be2df26694"
 
 	body, err := ioutil.ReadAll(r.Body)
 
@@ -119,6 +113,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	response, _ := client.Do(req)
 
 	responseBody, err := ioutil.ReadAll(response.Body)
+
 	w.Header().Add("Content-Type", "application/json")
 	w.Write(responseBody)
 
