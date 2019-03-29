@@ -14,26 +14,49 @@ import (
 type NtmGoodsConfigResource struct {
 	NtmGoodsConfigStorage   *NtmDataStorage.NtmGoodsConfigStorage
 	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
+	NtmProductSalesReportStorage   *NtmDataStorage.NtmProductSalesReportStorage
 }
 
 func (s NtmGoodsConfigResource) NewGoodsConfigResource(args []BmDataStorage.BmStorage) *NtmGoodsConfigResource {
 	var gcs *NtmDataStorage.NtmGoodsConfigStorage
 	var pcs *NtmDataStorage.NtmProductConfigStorage
+	var psr *NtmDataStorage.NtmProductSalesReportStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmGoodsConfigStorage" {
 			gcs = arg.(*NtmDataStorage.NtmGoodsConfigStorage)
 		} else if tp.Name() == "NtmProductConfigStorage" {
 			pcs = arg.(interface{}).(*NtmDataStorage.NtmProductConfigStorage)
+		} else if tp.Name() == "NtmProductSalesReportStorage" {
+			psr = arg.(*NtmDataStorage.NtmProductSalesReportStorage)
 		}
 	}
 	return &NtmGoodsConfigResource{
 		NtmGoodsConfigStorage:   gcs,
 		NtmProductConfigStorage: pcs,
+		NtmProductSalesReportStorage: psr,
 	}
 }
 
 func (s NtmGoodsConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+
+	salesreportID, dcok := r.QueryParams["productsalesreportsID"]
+
+	if dcok {
+		modelRootID := salesreportID[0]
+		modelRoot, err := s.NtmProductSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		model, err:= s.NtmGoodsConfigStorage.GetOne(modelRoot.GoodsConfigID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
 	var result []*NtmModel.GoodsConfig
 	models := s.NtmGoodsConfigStorage.GetAll(r, -1, -1)
 
