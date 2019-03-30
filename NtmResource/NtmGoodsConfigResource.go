@@ -12,15 +12,21 @@ import (
 )
 
 type NtmGoodsConfigResource struct {
-	NtmGoodsConfigStorage   *NtmDataStorage.NtmGoodsConfigStorage
-	NtmProductConfigStorage *NtmDataStorage.NtmProductConfigStorage
-	NtmProductSalesReportStorage   *NtmDataStorage.NtmProductSalesReportStorage
+	NtmGoodsConfigStorage   			*NtmDataStorage.NtmGoodsConfigStorage
+	NtmProductConfigStorage 			*NtmDataStorage.NtmProductConfigStorage
+	NtmProductSalesReportStorage   		*NtmDataStorage.NtmProductSalesReportStorage
+	NtmHospitalSalesReportStorage		*NtmDataStorage.NtmHospitalSalesReportStorage
+	NtmRepresentativeSalesReportStorage	*NtmDataStorage.NtmRepresentativeSalesReportStorage
+	NtmSalesConfigStorage 				*NtmDataStorage.NtmSalesConfigStorage
 }
 
 func (s NtmGoodsConfigResource) NewGoodsConfigResource(args []BmDataStorage.BmStorage) *NtmGoodsConfigResource {
 	var gcs *NtmDataStorage.NtmGoodsConfigStorage
 	var pcs *NtmDataStorage.NtmProductConfigStorage
 	var psr *NtmDataStorage.NtmProductSalesReportStorage
+	var hsr *NtmDataStorage.NtmHospitalSalesReportStorage
+	var rsr *NtmDataStorage.NtmRepresentativeSalesReportStorage
+	var sc *NtmDataStorage.NtmSalesConfigStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -30,22 +36,79 @@ func (s NtmGoodsConfigResource) NewGoodsConfigResource(args []BmDataStorage.BmSt
 			pcs = arg.(interface{}).(*NtmDataStorage.NtmProductConfigStorage)
 		} else if tp.Name() == "NtmProductSalesReportStorage" {
 			psr = arg.(*NtmDataStorage.NtmProductSalesReportStorage)
+		} else if tp.Name() == "NtmHospitalSalesReportStorage" {
+			hsr = arg.(*NtmDataStorage.NtmHospitalSalesReportStorage)
+		} else if tp.Name() == "NtmRepresentativeSalesReportStorage" {
+			rsr = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
+		} else if tp.Name() == "NtmSalesConfigStorage" {
+			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
 		}
 	}
 	return &NtmGoodsConfigResource{
 		NtmGoodsConfigStorage:   gcs,
 		NtmProductConfigStorage: pcs,
 		NtmProductSalesReportStorage: psr,
+		NtmHospitalSalesReportStorage : hsr,
+		NtmRepresentativeSalesReportStorage: rsr,
+		NtmSalesConfigStorage: sc,
 	}
 }
 
 func (s NtmGoodsConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 
-	salesreportID, dcok := r.QueryParams["productsalesreportsID"]
+	productsalesreportsID, psrok := r.QueryParams["productsalesreportsID"]
 
-	if dcok {
-		modelRootID := salesreportID[0]
+	hospitalsalesreportsID, hsrok := r.QueryParams["hospitalsalesreportsID"]
+
+	representativesalesreportsID, rsrok := r.QueryParams["representativesalesreportsID"]
+
+	salesConfigsID, scok := r.QueryParams["salesConfigsID"]
+
+	if psrok {
+		modelRootID := productsalesreportsID[0]
 		modelRoot, err := s.NtmProductSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		model, err:= s.NtmGoodsConfigStorage.GetOne(modelRoot.GoodsConfigID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if hsrok {
+		modelRootID := hospitalsalesreportsID[0]
+		modelRoot, err := s.NtmHospitalSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		model, err:= s.NtmGoodsConfigStorage.GetOne(modelRoot.GoodsConfigID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if rsrok {
+		modelRootID := representativesalesreportsID[0]
+		modelRoot, err := s.NtmRepresentativeSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+		model, err:= s.NtmGoodsConfigStorage.GetOne(modelRoot.GoodsConfigID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if scok {
+		modelRootID := salesConfigsID[0]
+		modelRoot, err := s.NtmSalesConfigStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
 		}

@@ -12,15 +12,22 @@ import (
 )
 
 type NtmDestConfigResource struct {
-	NtmDestConfigStorage    		*NtmDataStorage.NtmDestConfigStorage
-	NtmRegionConfigStorage			*NtmDataStorage.NtmRegionConfigStorage
-	NtmHospitalConfigStorage 		*NtmDataStorage.NtmHospitalConfigStorage
+	NtmDestConfigStorage    			*NtmDataStorage.NtmDestConfigStorage
+	NtmRegionConfigStorage				*NtmDataStorage.NtmRegionConfigStorage
+	NtmHospitalConfigStorage 			*NtmDataStorage.NtmHospitalConfigStorage
+	NtmHospitalSalesReportStorage		*NtmDataStorage.NtmHospitalSalesReportStorage
+	NtmRepresentativeSalesReportStorage	*NtmDataStorage.NtmRepresentativeSalesReportStorage
+	NtmSalesConfigStorage 				*NtmDataStorage.NtmSalesConfigStorage
 }
 
 func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStorage) *NtmDestConfigResource {
 	var dcs *NtmDataStorage.NtmDestConfigStorage
 	var rcs *NtmDataStorage.NtmRegionConfigStorage
 	var hcs *NtmDataStorage.NtmHospitalConfigStorage
+	var hsr *NtmDataStorage.NtmHospitalSalesReportStorage
+	var rsr *NtmDataStorage.NtmRepresentativeSalesReportStorage
+	var sc *NtmDataStorage.NtmSalesConfigStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmDestConfigStorage" {
@@ -29,16 +36,80 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 			rcs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
 		} else if tp.Name() == "NtmHospitalConfigStorage" {
 			hcs = arg.(*NtmDataStorage.NtmHospitalConfigStorage)
+		} else if tp.Name() == "NtmHospitalSalesReportStorage" {
+			hsr = arg.(*NtmDataStorage.NtmHospitalSalesReportStorage)
+		} else if tp.Name() == "NtmRepresentativeSalesReportStorage" {
+			rsr = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
+		} else if tp.Name() == "NtmSalesConfigStorage" {
+			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
 		}
 	}
 	return &NtmDestConfigResource{
 		NtmDestConfigStorage:    	dcs,
 		NtmRegionConfigStorage: 	rcs,
 		NtmHospitalConfigStorage: 	hcs,
+		NtmHospitalSalesReportStorage : hsr,
+		NtmRepresentativeSalesReportStorage: rsr,
+		NtmSalesConfigStorage: sc,
 	}
 }
 
 func (s NtmDestConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	hospitalsalesreportsID, hsrok := r.QueryParams["hospitalsalesreportsID"]
+
+	representativesalesreportsID, rsrok := r.QueryParams["representativesalesreportsID"]
+
+	salesConfigsID, scok := r.QueryParams["salesConfigsID"]
+
+	if hsrok {
+		modelRootID := hospitalsalesreportsID[0]
+		modelRoot, err := s.NtmHospitalSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		model, err:= s.NtmDestConfigStorage.GetOne(modelRoot.DestConfigID)
+
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if rsrok {
+		modelRootID := representativesalesreportsID[0]
+		modelRoot, err := s.NtmRepresentativeSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		model, err:= s.NtmDestConfigStorage.GetOne(modelRoot.DestConfigID)
+
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if scok {
+		modelRootID := salesConfigsID[0]
+		modelRoot, err := s.NtmSalesConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		model, err:= s.NtmDestConfigStorage.GetOne(modelRoot.DestConfigID)
+
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+
 	var result []NtmModel.DestConfig
 	models := s.NtmDestConfigStorage.GetAll(r, -1, -1)
 
