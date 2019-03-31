@@ -16,6 +16,7 @@ type NtmSalesReportResource struct {
 	NtmHospitalSalesReportStorage       *NtmDataStorage.NtmHospitalSalesReportStorage
 	NtmRepresentativeSalesReportStorage *NtmDataStorage.NtmRepresentativeSalesReportStorage
 	NtmProductSalesReportStorage        *NtmDataStorage.NtmProductSalesReportStorage
+	NtmPaperStorage						*NtmDataStorage.NtmPaperStorage
 }
 
 func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmStorage) *NtmSalesReportResource {
@@ -23,6 +24,7 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 	var hsr *NtmDataStorage.NtmHospitalSalesReportStorage
 	var rsp *NtmDataStorage.NtmRepresentativeSalesReportStorage
 	var psr *NtmDataStorage.NtmProductSalesReportStorage
+	var ps	*NtmDataStorage.NtmPaperStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -34,6 +36,8 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 			rsp = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
 		} else if tp.Name() == "NtmProductSalesReportStorage" {
 			psr = arg.(*NtmDataStorage.NtmProductSalesReportStorage)
+		} else if tp.Name() == "NtmPaperStorage" {
+			ps = arg.(*NtmDataStorage.NtmPaperStorage)
 		}
 	}
 	return &NtmSalesReportResource{
@@ -41,13 +45,29 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 		NtmHospitalSalesReportStorage: hsr,
 		NtmRepresentativeSalesReportStorage: rsp,
 		NtmProductSalesReportStorage: psr,
+		NtmPaperStorage: ps,
 	}
 }
 
 // FindAll SalesConfigs
 func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	papersID, dcok := r.QueryParams["papersID"]
 	var result []NtmModel.Salesreport
 
+
+	if dcok {
+		modelRootID := papersID[0]
+		modelRoot, err := c.NtmPaperStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		r.QueryParams["ids"] = modelRoot.SalesReportIDs
+
+		result := c.NtmSalesReportStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
 
 	models := c.NtmSalesReportStorage.GetAll(r, -1, -1)
 

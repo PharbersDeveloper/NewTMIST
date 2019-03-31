@@ -51,6 +51,7 @@ func (s NtmRepresentativeinputResource) FindAll(r api2go.Request) (api2go.Respon
 		return &Response{Res: result}, nil
 	}
 
+	result = s.NtmRepresentativeinputStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
 

@@ -95,7 +95,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 			EndTime: 0,
 			InputState: "未开始",
 			InputIDs: proposalModel.InputIDs,
-			ReportIDs: proposalModel.ReportIDs,
+			SalesReportIDs: proposalModel.SalesReportIDs,
 		}
 
 		paperId = NtmDataStorage.NtmPaperStorage{}.NewPaperStorage(mdb).Insert(paperModel)

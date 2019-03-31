@@ -10,7 +10,7 @@ type Proposal struct {
 	Describe   string        `json:"describe" bson:"describe"`
 	TotalPhase int           `json:"total-phase" bson:"total-phase"`
 	InputIDs   []string      `json:"input-ids" bson:"input-ids"`
-	ReportIDs  []string      `json:"report-ids" bson:"report-ids"`
+	SalesReportIDs  []string  `json:"sales-report-ids" bson:"sales-report-ids"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
