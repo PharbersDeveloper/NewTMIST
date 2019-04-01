@@ -6,8 +6,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Salesreport Info
-type Salesreport struct {
+// SalesReport Info
+type SalesReport struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
 	ScenarioId 		string        `json:"-" bson:"scenario-id"`
@@ -15,52 +15,52 @@ type Salesreport struct {
 	RepresentativeSalesReportIDs	[]string  	`json:"-" bson:"representative-sales-report-ids"`
 	ProductSalesReportIDs			[]string	`json:"-" bson:"product-sales-report-ids"`
 
-	HospitalSalesReport 		[]*Hospitalsalesreport			`json:"-"`
-	RepresentativeSalesReport	[]*Representativesalesreport	`json:"-"`
+	HospitalSalesReport 		[]*HospitalSalesReport			`json:"-"`
+	RepresentativeSalesReport	[]*RepresentativeSalesReport	`json:"-"`
 	ProductSalesReport			[]*Productsalesreport			`json:"-"`
 
 	Time 						float64 `json:"time" bson:"time"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c Salesreport) GetID() string {
+func (c SalesReport) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *Salesreport) SetID(id string) error {
+func (c *SalesReport) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
 
 // GetReferences to satisfy the jsonapi.MarshalReferences interface
-func (u Salesreport) GetReferences() []jsonapi.Reference {
+func (u SalesReport) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
-			Type: "hospitalsalesreports",
-			Name: "hospitalsalesreports",
+			Type: "hospitalSalesReports",
+			Name: "hospitalSalesReports",
 		},
 		{
-			Type: "representativesalesreports",
-			Name: "representativesalesreports",
+			Type: "representativeSalesReports",
+			Name: "representativeSalesReports",
 		},
 		{
-			Type: "productsalesreports",
-			Name: "productsalesreports",
+			Type: "productSalesReports",
+			Name: "productSalesReports",
 		},
 	}
 }
 
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
-func (u Salesreport) GetReferencedIDs() []jsonapi.ReferenceID {
+func (u SalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 
 	for _, kID := range u.HospitalSalesReportIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "hospitalsalesreports",
-			Name: "hospitalsalesreports",
+			Type: "hospitalSalesReports",
+			Name: "hospitalSalesReports",
 		})
 	}
 
@@ -68,23 +68,23 @@ func (u Salesreport) GetReferencedIDs() []jsonapi.ReferenceID {
 	for _, kID := range u.RepresentativeSalesReportIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "representativesalesreports",
-			Name: "representativesalesreports",
+			Type: "representativeSalesReports",
+			Name: "representativeSalesReports",
 		})
 	}
 
 	for _, kID := range u.ProductSalesReportIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "productsalesreports",
-			Name: "productsalesreports",
+			Type: "productSalesReports",
+			Name: "productSalesReports",
 		})
 	}
 	return result
 }
 
 // GetReferencedStructs to satisfy the jsonapi.MarhsalIncludedRelations interface
-func (u Salesreport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (u SalesReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	for key := range u.HospitalSalesReport {
@@ -102,28 +102,28 @@ func (u Salesreport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	return result
 }
 
-func (u *Salesreport) SetToManyReferenceIDs(name string, IDs []string) error {
-	if name == "hospitalsalesreports" {
+func (u *SalesReport) SetToManyReferenceIDs(name string, IDs []string) error {
+	if name == "hospitalSalesReports" {
 		u.HospitalSalesReportIDs = IDs
 		return nil
-	} else if name == "representativesalesreports" {
+	} else if name == "representativeSalesReports" {
 		u.RepresentativeSalesReportIDs = IDs
 		return nil
-	} else if name == "productsalesreports" {
+	} else if name == "productSalesReports" {
 		u.ProductSalesReportIDs = IDs
 		return nil
 	}
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (u *Salesreport) AddToManyIDs(name string, IDs []string) error {
-	if name == "hospitalsalesreports" {
+func (u *SalesReport) AddToManyIDs(name string, IDs []string) error {
+	if name == "hospitalSalesReports" {
 		u.HospitalSalesReportIDs = append(u.HospitalSalesReportIDs, IDs...)
 		return nil
-	} else if name == "representativesalesreports" {
+	} else if name == "representativeSalesReports" {
 		u.RepresentativeSalesReportIDs = append(u.RepresentativeSalesReportIDs, IDs...)
 		return nil
-	} else if name == "productsalesreports" {
+	} else if name == "productSalesReports" {
 		u.ProductSalesReportIDs = append(u.ProductSalesReportIDs, IDs...)
 		return nil
 	}
@@ -132,7 +132,7 @@ func (u *Salesreport) AddToManyIDs(name string, IDs []string) error {
 }
 
 
-func (u *Salesreport) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *SalesReport) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {

@@ -12,9 +12,9 @@ import (
 )
 
 // NtmRepresentativeSalesReportStorage stores all of the tasty modelleaf, needs to be injected into
-// Representativesalesreport and Representativesalesreport Resource. In the real world, you would use a database for that.
+// RepresentativeSalesReport and RepresentativeSalesReport Resource. In the real world, you would use a database for that.
 type NtmRepresentativeSalesReportStorage struct {
-	SalesConfigs  map[string]*NtmModel.Representativesalesreport
+	SalesConfigs  map[string]*NtmModel.RepresentativeSalesReport
 	idCount int
 
 	db *BmMongodb.BmMongodb
@@ -22,13 +22,13 @@ type NtmRepresentativeSalesReportStorage struct {
 
 func (s NtmRepresentativeSalesReportStorage) NewRepresentativeSalesReportStorage(args []BmDaemons.BmDaemon) *NtmRepresentativeSalesReportStorage {
 	mdb := args[0].(*BmMongodb.BmMongodb)
-	return &NtmRepresentativeSalesReportStorage{make(map[string]*NtmModel.Representativesalesreport), 1, mdb}
+	return &NtmRepresentativeSalesReportStorage{make(map[string]*NtmModel.RepresentativeSalesReport), 1, mdb}
 }
 
 // GetAll of the modelleaf
-func (s NtmRepresentativeSalesReportStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.Representativesalesreport {
-	in := NtmModel.Representativesalesreport{}
-	var out []NtmModel.Representativesalesreport
+func (s NtmRepresentativeSalesReportStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.RepresentativeSalesReport {
+	in := NtmModel.RepresentativeSalesReport{}
+	var out []NtmModel.RepresentativeSalesReport
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
@@ -42,19 +42,19 @@ func (s NtmRepresentativeSalesReportStorage) GetAll(r api2go.Request, skip int, 
 }
 
 // GetOne tasty modelleaf
-func (s NtmRepresentativeSalesReportStorage) GetOne(id string) (NtmModel.Representativesalesreport, error) {
-	in := NtmModel.Representativesalesreport{ID: id}
-	out := NtmModel.Representativesalesreport{ID: id}
+func (s NtmRepresentativeSalesReportStorage) GetOne(id string) (NtmModel.RepresentativeSalesReport, error) {
+	in := NtmModel.RepresentativeSalesReport{ID: id}
+	out := NtmModel.RepresentativeSalesReport{ID: id}
 	err := s.db.FindOne(&in, &out)
 	if err == nil {
 		return out, nil
 	}
-	errMessage := fmt.Sprintf("Representativesalesreport for id %s not found", id)
-	return NtmModel.Representativesalesreport{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
+	errMessage := fmt.Sprintf("RepresentativeSalesReport for id %s not found", id)
+	return NtmModel.RepresentativeSalesReport{}, api2go.NewHTTPError(errors.New(errMessage), errMessage, http.StatusNotFound)
 }
 
 // Insert a fresh one
-func (s *NtmRepresentativeSalesReportStorage) Insert(c NtmModel.Representativesalesreport) string {
+func (s *NtmRepresentativeSalesReportStorage) Insert(c NtmModel.RepresentativeSalesReport) string {
 	tmp, err := s.db.InsertBmObject(&c)
 	if err != nil {
 		fmt.Println(err)
@@ -65,20 +65,20 @@ func (s *NtmRepresentativeSalesReportStorage) Insert(c NtmModel.Representativesa
 
 // Delete one :(
 func (s *NtmRepresentativeSalesReportStorage) Delete(id string) error {
-	in := NtmModel.Representativesalesreport{ID: id}
+	in := NtmModel.RepresentativeSalesReport{ID: id}
 	err := s.db.Delete(&in)
 	if err != nil {
-		return fmt.Errorf("Representativesalesreport with id %s does not exist", id)
+		return fmt.Errorf("RepresentativeSalesReport with id %s does not exist", id)
 	}
 
 	return nil
 }
 
 // Update updates an existing modelleaf
-func (s *NtmRepresentativeSalesReportStorage) Update(c NtmModel.Representativesalesreport) error {
+func (s *NtmRepresentativeSalesReportStorage) Update(c NtmModel.RepresentativeSalesReport) error {
 	err := s.db.Update(&c)
 	if err != nil {
-		return fmt.Errorf("Representativesalesreport with id does not exist")
+		return fmt.Errorf("RepresentativeSalesReport with id does not exist")
 	}
 
 	return nil

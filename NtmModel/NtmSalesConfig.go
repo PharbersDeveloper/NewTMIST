@@ -11,14 +11,17 @@ type SalesConfig struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
 	ScenarioId 		string        `json:"-" bson:"scenario-id"`
-	DestConfigID     		string        `json:"-" bson:"dest-config-id"`
-	GoodsConfigID			string 	  	  `json:"-" bson:"goods-config-id"`
+
+	AccessStatus   	string  `json:"access-status" bson:"access-status"`
+	LastSales 		float64 `json:"last-sales"`
+	Potential     	float64 `json:"potential"`
+
+	DestConfigID    string   `json:"-" bson:"dest-config-id"`
+	GoodsConfigID	string 	 `json:"-" bson:"goods-config-id"`
+	SalesReportID 	string 	 `json:"-" bson:"sales-report-id"`
 	DestConfig 		*DestConfig   `json:"-"`
 	GoodsConfig 	*GoodsConfig  `json:"-"`
-	AccessStatus   	string  `json:"access-status" bson:"access-status"`
-	LastYearSales 	float64 `json:"last-year-sales" bson:"last-year-sales"`
-	Potential     	float64 `json:"potential" bson:"potential"`
-	//ReportID		string	`json"-" bson:"report-id"` //预留字段
+	SalesReport		*SalesConfig  `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -44,6 +47,10 @@ func (u SalesConfig) GetReferences() []jsonapi.Reference {
 			Type: "goodsConfigs",
 			Name: "goodsConfig",
 		},
+		{
+			Type: "salesReports",
+			Name: "salesReport",
+		},
 	}
 }
 
@@ -66,6 +73,14 @@ func (u SalesConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
+	if u.SalesReportID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   u.SalesReportID,
+			Type: "salesReports",
+			Name: "salesReport",
+		})
+	}
+
 	return result
 }
 
@@ -81,7 +96,10 @@ func (u SalesConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 		result = append(result, u.GoodsConfig)
 	}
 
-	return result
+	if u.SalesReportID != "" && u.SalesReport != nil {
+		result = append(result, u.SalesReport)
+	}
+return result
 }
 
 func (u *SalesConfig) SetToOneReferenceID(name, ID string) error {
@@ -91,6 +109,10 @@ func (u *SalesConfig) SetToOneReferenceID(name, ID string) error {
 	}
 	if name == "goodsConfig" {
 		u.GoodsConfigID = ID
+		return nil
+	}
+	if name == "salesReports" {
+		u.SalesReportID = ID
 		return nil
 	}
 

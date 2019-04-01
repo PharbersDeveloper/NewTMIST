@@ -21,7 +21,7 @@ type Paper struct {
 	Paperinputs []*Paperinput `json:"-"`
 
 	SalesReportIDs    	[]string       `json:"-" bson:"sales-report-ids"`
-	Salesreports 		[]*Salesreport `json:"-"`
+	SalesReports 		[]*SalesReport `json:"-"`
 }
 
 func (c Paper) GetID() string {
@@ -40,8 +40,8 @@ func (c Paper) GetReferences() []jsonapi.Reference {
 			Name: "paperinputs",
 		},
 		{
-			Type: "salesreports",
-			Name: "salesreports",
+			Type: "salesReports",
+			Name: "salesReports",
 		},
 	}
 }
@@ -60,8 +60,8 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 	for _, kID := range c.SalesReportIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "salesreports",
-			Name: "salesreports",
+			Type: "salesReports",
+			Name: "salesReports",
 		})
 	}
 	return result
@@ -82,7 +82,7 @@ func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 		return nil
 	}
 
-	if name == "salesreports" {
+	if name == "salesReports" {
 		c.SalesReportIDs = IDs
 		return nil
 	}
@@ -95,7 +95,7 @@ func (c *Paper) AddToManyIDs(name string, IDs []string) error {
 		return nil
 	}
 
-	if name == "salesreports" {
+	if name == "salesReports" {
 		c.SalesReportIDs = append(c.SalesReportIDs, IDs...)
 		return nil
 	}
@@ -114,7 +114,7 @@ func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
 		}
 	}
 
-	if name == "salesreports" {
+	if name == "salesReports" {
 		for _, ID := range IDs {
 			for pos, oldID := range c.SalesReportIDs {
 				if ID == oldID {

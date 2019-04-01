@@ -6,8 +6,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Hospitalsalesreport Info
-type Hospitalsalesreport struct {
+// HospitalSalesReport Info
+type HospitalSalesReport struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
 	DestConfigID	string	`json:"-" bson:"dest-config-id"`
@@ -22,19 +22,19 @@ type Hospitalsalesreport struct {
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c Hospitalsalesreport) GetID() string {
+func (c HospitalSalesReport) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *Hospitalsalesreport) SetID(id string) error {
+func (c *HospitalSalesReport) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
 
 // GetReferences to satisfy the jsonapi.MarshalReferences interface
-func (u Hospitalsalesreport) GetReferences() []jsonapi.Reference {
+func (u HospitalSalesReport) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "destConfigs",
@@ -48,7 +48,7 @@ func (u Hospitalsalesreport) GetReferences() []jsonapi.Reference {
 }
 
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
-func (u Hospitalsalesreport) GetReferencedIDs() []jsonapi.ReferenceID {
+func (u HospitalSalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 	if u.DestConfigID != "" {
 		result = append(result, jsonapi.ReferenceID{
@@ -70,7 +70,7 @@ func (u Hospitalsalesreport) GetReferencedIDs() []jsonapi.ReferenceID {
 }
 
 // GetReferencedStructs to satisfy the jsonapi.MarhsalIncludedRelations interface
-func (u Hospitalsalesreport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (u HospitalSalesReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	if u.DestConfigID != "" && u.DestConfig != nil {
@@ -84,7 +84,7 @@ func (u Hospitalsalesreport) GetReferencedStructs() []jsonapi.MarshalIdentifier 
 	return result
 }
 
-func (u *Hospitalsalesreport) SetToOneReferenceID(name, ID string) error {
+func (u *HospitalSalesReport) SetToOneReferenceID(name, ID string) error {
 	if name == "DestConfig" {
 		u.DestConfigID = ID
 		return nil
@@ -97,7 +97,7 @@ func (u *Hospitalsalesreport) SetToOneReferenceID(name, ID string) error {
 	return errors.New("There is no to-one relationship with the name " + name)
 }
 
-func (u *Hospitalsalesreport) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *HospitalSalesReport) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {

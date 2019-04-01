@@ -38,10 +38,10 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmUseableProposal":      NtmModel.UseableProposal{},
 	"NtmPaper":                NtmModel.Paper{},
 	"NtmSalesConfig":		   NtmModel.SalesConfig{},
-	"NtmSalesreport":		   NtmModel.Salesreport{},
-	"NtmHospitalsalesreport":  NtmModel.Hospitalsalesreport{},
+	"NtmSalesReport":		   NtmModel.SalesReport{},
+	"NtmHospitalSalesReport":  NtmModel.HospitalSalesReport{},
 	"NtmProductsalesreport":   NtmModel.Productsalesreport{},
-	"NtmRepresentativesalesreport":	NtmModel.Representativesalesreport{},
+	"NtmRepresentativeSalesReport":	NtmModel.RepresentativeSalesReport{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{

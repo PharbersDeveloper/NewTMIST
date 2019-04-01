@@ -46,10 +46,10 @@ func (c NtmHospitalSalesReportResource) NewHospitalSalesReportResource(args []Bm
 
 // FindAll SalesConfigs
 func (c NtmHospitalSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	salesreportID, dcok := r.QueryParams["salesreportsID"]
+	salesReportsID, dcok := r.QueryParams["salesReportsID"]
 
 	if dcok {
-		modelRootID := salesreportID[0]
+		modelRootID := salesReportsID[0]
 		modelRoot, err := c.NtmSalesReportStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
@@ -65,7 +65,7 @@ func (c NtmHospitalSalesReportResource) FindAll(r api2go.Request) (api2go.Respon
 		return &Response{Res: model}, nil
 	}
 
-	var result []NtmModel.Hospitalsalesreport
+	var result []NtmModel.HospitalSalesReport
 
 	models := c.NtmHospitalSalesReportStorage.GetAll(r, -1, -1)
 
@@ -84,7 +84,7 @@ func (c NtmHospitalSalesReportResource) FindOne(ID string, r api2go.Request) (ap
 
 // Create a new choc
 func (c NtmHospitalSalesReportResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Hospitalsalesreport)
+	choc, ok := obj.(NtmModel.HospitalSalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),
@@ -106,7 +106,7 @@ func (c NtmHospitalSalesReportResource) Delete(id string, r api2go.Request) (api
 
 // Update a choc
 func (c NtmHospitalSalesReportResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Hospitalsalesreport)
+	choc, ok := obj.(NtmModel.HospitalSalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),

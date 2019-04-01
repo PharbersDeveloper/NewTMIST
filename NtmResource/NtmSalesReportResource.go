@@ -17,6 +17,7 @@ type NtmSalesReportResource struct {
 	NtmRepresentativeSalesReportStorage *NtmDataStorage.NtmRepresentativeSalesReportStorage
 	NtmProductSalesReportStorage        *NtmDataStorage.NtmProductSalesReportStorage
 	NtmPaperStorage						*NtmDataStorage.NtmPaperStorage
+	NtmSalesConfigStorage				*NtmDataStorage.NtmSalesConfigStorage
 }
 
 func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmStorage) *NtmSalesReportResource {
@@ -25,6 +26,7 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 	var rsp *NtmDataStorage.NtmRepresentativeSalesReportStorage
 	var psr *NtmDataStorage.NtmProductSalesReportStorage
 	var ps	*NtmDataStorage.NtmPaperStorage
+	var sc	*NtmDataStorage.NtmSalesConfigStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -38,6 +40,8 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 			psr = arg.(*NtmDataStorage.NtmProductSalesReportStorage)
 		} else if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
+		} else if tp.Name() == "NtmSalesConfigStorage" {
+			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
 		}
 	}
 	return &NtmSalesReportResource{
@@ -46,13 +50,17 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 		NtmRepresentativeSalesReportStorage: rsp,
 		NtmProductSalesReportStorage: psr,
 		NtmPaperStorage: ps,
+		NtmSalesConfigStorage: sc,
 	}
 }
 
 // FindAll SalesConfigs
 func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	papersID, dcok := r.QueryParams["papersID"]
-	var result []NtmModel.Salesreport
+
+	salesConfigsID, scok := r.QueryParams["salesConfigsID"]
+
+	var result []NtmModel.SalesReport
 
 
 	if dcok {
@@ -65,6 +73,23 @@ func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, err
 		r.QueryParams["ids"] = modelRoot.SalesReportIDs
 
 		result := c.NtmSalesReportStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
+
+	if scok {
+		modelRootID := salesConfigsID[0]
+		modelRoot, err := c.NtmSalesConfigStorage.GetOne(modelRootID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		result, err := c.NtmSalesReportStorage.GetOne(modelRoot.SalesReportID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
 
 		return &Response{Res: result}, nil
 	}
@@ -85,7 +110,7 @@ func (c NtmSalesReportResource) FindOne(ID string, r api2go.Request) (api2go.Res
 
 // Create a new choc
 func (c NtmSalesReportResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Salesreport)
+	choc, ok := obj.(NtmModel.SalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),
@@ -107,7 +132,7 @@ func (c NtmSalesReportResource) Delete(id string, r api2go.Request) (api2go.Resp
 
 // Update a choc
 func (c NtmSalesReportResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Salesreport)
+	choc, ok := obj.(NtmModel.SalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),

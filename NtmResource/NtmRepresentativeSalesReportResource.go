@@ -47,10 +47,10 @@ func (c NtmRepresentativeSalesReportResource) NewRepresentativeSalesReportResour
 // FindAll SalesConfigs
 func (c NtmRepresentativeSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 
-	salesreportID, dcok := r.QueryParams["salesreportsID"]
+	salesReportsID, dcok := r.QueryParams["salesReportsID"]
 
 	if dcok {
-		modelRootID := salesreportID[0]
+		modelRootID := salesReportsID[0]
 		modelRoot, err := c.NtmSalesReportStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
@@ -59,14 +59,13 @@ func (c NtmRepresentativeSalesReportResource) FindAll(r api2go.Request) (api2go.
 
 		model := c.NtmRepresentativeSalesReportStorage.GetAll(r, -1,-1)
 
-
 		if err != nil {
 			return &Response{}, nil
 		}
 		return &Response{Res: model}, nil
 	}
 
-	var result []NtmModel.Representativesalesreport
+	var result []NtmModel.RepresentativeSalesReport
 	result = c.NtmRepresentativeSalesReportStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
@@ -79,7 +78,7 @@ func (c NtmRepresentativeSalesReportResource) FindOne(ID string, r api2go.Reques
 
 // Create a new choc
 func (c NtmRepresentativeSalesReportResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Representativesalesreport)
+	choc, ok := obj.(NtmModel.RepresentativeSalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),
@@ -101,7 +100,7 @@ func (c NtmRepresentativeSalesReportResource) Delete(id string, r api2go.Request
 
 // Update a choc
 func (c NtmRepresentativeSalesReportResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Representativesalesreport)
+	choc, ok := obj.(NtmModel.RepresentativeSalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),

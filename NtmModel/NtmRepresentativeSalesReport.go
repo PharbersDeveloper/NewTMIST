@@ -6,8 +6,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// Representativesalesreport Info
-type Representativesalesreport struct {
+// RepresentativeSalesReport Info
+type RepresentativeSalesReport struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
 	DestConfigID	string	`json:"-" bson:"dest-config-id"`
@@ -22,19 +22,19 @@ type Representativesalesreport struct {
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
-func (c Representativesalesreport) GetID() string {
+func (c RepresentativeSalesReport) GetID() string {
 	return c.ID
 }
 
 // SetID to satisfy jsonapi.UnmarshalIdentifier interface
-func (c *Representativesalesreport) SetID(id string) error {
+func (c *RepresentativeSalesReport) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
 
 // GetReferences to satisfy the jsonapi.MarshalReferences interface
-func (u Representativesalesreport) GetReferences() []jsonapi.Reference {
+func (u RepresentativeSalesReport) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "destConfigs",
@@ -48,7 +48,7 @@ func (u Representativesalesreport) GetReferences() []jsonapi.Reference {
 }
 
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
-func (u Representativesalesreport) GetReferencedIDs() []jsonapi.ReferenceID {
+func (u RepresentativeSalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 	if u.DestConfigID != "" {
 		result = append(result, jsonapi.ReferenceID{
@@ -70,7 +70,7 @@ func (u Representativesalesreport) GetReferencedIDs() []jsonapi.ReferenceID {
 }
 
 // GetReferencedStructs to satisfy the jsonapi.MarhsalIncludedRelations interface
-func (u Representativesalesreport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (u RepresentativeSalesReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	if u.DestConfigID != "" && u.DestConfig != nil {
@@ -84,7 +84,7 @@ func (u Representativesalesreport) GetReferencedStructs() []jsonapi.MarshalIdent
 	return result
 }
 
-func (u *Representativesalesreport) SetToOneReferenceID(name, ID string) error {
+func (u *RepresentativeSalesReport) SetToOneReferenceID(name, ID string) error {
 	if name == "DestConfig" {
 		u.DestConfigID = ID
 		return nil
@@ -97,7 +97,7 @@ func (u *Representativesalesreport) SetToOneReferenceID(name, ID string) error {
 	return errors.New("There is no to-one relationship with the name " + name)
 }
 
-func (u *Representativesalesreport) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (u *RepresentativeSalesReport) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {

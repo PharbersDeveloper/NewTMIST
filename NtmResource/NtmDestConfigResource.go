@@ -55,14 +55,14 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 }
 
 func (s NtmDestConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	hospitalsalesreportsID, hsrok := r.QueryParams["hospitalsalesreportsID"]
+	hospitalSalesReportsID, hsrok := r.QueryParams["hospitalSalesReportsID"]
 
-	representativesalesreportsID, rsrok := r.QueryParams["representativesalesreportsID"]
+	representativeSalesReportsID, rsrok := r.QueryParams["representativeSalesReportsID"]
 
 	salesConfigsID, scok := r.QueryParams["salesConfigsID"]
 
 	if hsrok {
-		modelRootID := hospitalsalesreportsID[0]
+		modelRootID := hospitalSalesReportsID[0]
 		modelRoot, err := s.NtmHospitalSalesReportStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
@@ -78,7 +78,7 @@ func (s NtmDestConfigResource) FindAll(r api2go.Request) (api2go.Responder, erro
 	}
 
 	if rsrok {
-		modelRootID := representativesalesreportsID[0]
+		modelRootID := representativeSalesReportsID[0]
 		modelRoot, err := s.NtmRepresentativeSalesReportStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil

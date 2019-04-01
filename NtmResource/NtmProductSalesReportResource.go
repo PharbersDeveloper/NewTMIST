@@ -42,10 +42,10 @@ func (c NtmProductSalesReportResource) NewProductSalesReportResource(args []BmDa
 // FindAll SalesConfigs
 func (c NtmProductSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 
-	salesreportID, dcok := r.QueryParams["salesreportsID"]
+	salesReportsID, dcok := r.QueryParams["salesReportsID"]
 
 	if dcok {
-		modelRootID := salesreportID[0]
+		modelRootID := salesReportsID[0]
 		modelRoot, err := c.NtmSalesReportStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
