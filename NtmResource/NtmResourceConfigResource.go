@@ -12,34 +12,58 @@ import (
 )
 
 type NtmResourceConfigResource struct {
-	NtmResourceConfigStorage       *NtmDataStorage.NtmResourceConfigStorage
-	NtmManagerConfigStorage        *NtmDataStorage.NtmManagerConfigStorage
-	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
+	NtmResourceConfigStorage       	*NtmDataStorage.NtmResourceConfigStorage
+	NtmManagerConfigStorage        	*NtmDataStorage.NtmManagerConfigStorage
+	NtmRepresentativeConfigStorage 	*NtmDataStorage.NtmRepresentativeConfigStorage
+	NtmTeamConfigStorage		   	*NtmDataStorage.NtmTeamConfigStorage
 }
 
 func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) *NtmResourceConfigResource {
 	var rcs *NtmDataStorage.NtmResourceConfigStorage
 	var mcs *NtmDataStorage.NtmManagerConfigStorage
 	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
+	var tcs *NtmDataStorage.NtmTeamConfigStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmResourceConfigStorage" {
 			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
 		} else if tp.Name() == "NtmManagerConfigStorage" {
-			mcs = arg.(interface{}).(*NtmDataStorage.NtmManagerConfigStorage)
+			//mcs = arg.(interface{}).(*NtmDataStorage.NtmManagerConfigStorage)
+			mcs = arg.(*NtmDataStorage.NtmManagerConfigStorage)
 		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
-			repcs = arg.(interface{}).(*NtmDataStorage.NtmRepresentativeConfigStorage)
+			//repcs = arg.(interface{}).(*NtmDataStorage.NtmRepresentativeConfigStorage)
+			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
+		} else if tp.Name() == "NtmTeamConfigStorage" {
+			tcs = arg.(*NtmDataStorage.NtmTeamConfigStorage)
 		}
 	}
 	return &NtmResourceConfigResource{
 		NtmResourceConfigStorage:       rcs,
 		NtmManagerConfigStorage:        mcs,
 		NtmRepresentativeConfigStorage: repcs,
+		NtmTeamConfigStorage: tcs,
 	}
 }
 
 func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
+	teamConfigsID, tcok := r.QueryParams["teamConfigsID"]
 	var result []NtmModel.ResourceConfig
+
+	if tcok {
+		modelRootID := teamConfigsID[0]
+		modelRoot, err := s.NtmTeamConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		r.QueryParams["ids"] = modelRoot.ResourceConfigIDs
+
+		result := s.NtmResourceConfigStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
+
 	models := s.NtmResourceConfigStorage.GetAll(r, -1, -1)
 
 	for _, model := range models {

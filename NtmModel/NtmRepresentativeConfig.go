@@ -21,8 +21,12 @@ type RepresentativeConfig struct {
 	BehaviorValidity          float64 `json:"behavior-validity" bson:"behavior-validity"`
 	TotalTime 				  float64 `json:"total-time" bson:"total-time"`
 
-	RepresentativeID string          `json:"-" bson:"representative-id"`
-	Representative   *Representative `json:"-"`
+	Advantage				  string  `json:"advantage" bson:"advantage"`
+	ManagerEvaluation		  string  `json:"manager-evaluation" bson:"manager-evaluation"`
+	EntryTime				  float64 `json:"entry-time" bson:"entry-time"`
+
+	RepresentativeID 	string          `json:"-" bson:"representative-id"`
+	Representative   	*Representative `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -77,7 +81,6 @@ func (u *RepresentativeConfig) SetToOneReferenceID(name, ID string) error {
 		u.RepresentativeID = ID
 		return nil
 	}
-
 	return errors.New("There is no to-one relationship with the name " + name)
 }
 

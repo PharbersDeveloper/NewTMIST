@@ -61,7 +61,7 @@ func (c NtmProductSalesReportResource) FindAll(r api2go.Request) (api2go.Respond
 		return &Response{Res: model}, nil
 	}
 
-	var result []NtmModel.Productsalesreport
+	var result []NtmModel.ProductSalesReport
 	result = c.NtmProductSalesReportStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
@@ -74,7 +74,7 @@ func (c NtmProductSalesReportResource) FindOne(ID string, r api2go.Request) (api
 
 // Create a new choc
 func (c NtmProductSalesReportResource) Create(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Productsalesreport)
+	choc, ok := obj.(NtmModel.ProductSalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),
@@ -96,7 +96,7 @@ func (c NtmProductSalesReportResource) Delete(id string, r api2go.Request) (api2
 
 // Update a choc
 func (c NtmProductSalesReportResource) Update(obj interface{}, r api2go.Request) (api2go.Responder, error) {
-	choc, ok := obj.(NtmModel.Productsalesreport)
+	choc, ok := obj.(NtmModel.ProductSalesReport)
 	if !ok {
 		return &Response{}, api2go.NewHTTPError(
 			errors.New("Invalid instance given"),

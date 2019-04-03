@@ -22,6 +22,9 @@ type Paper struct {
 
 	SalesReportIDs    	[]string       `json:"-" bson:"sales-report-ids"`
 	SalesReports 		[]*SalesReport `json:"-"`
+
+	ActionKpiIDs		[]string			`json:"-" bson:"action-kpi-id"`
+	ActionKpi 			[]*ActionKpi		`json:"-"`
 }
 
 func (c Paper) GetID() string {
@@ -42,6 +45,10 @@ func (c Paper) GetReferences() []jsonapi.Reference {
 		{
 			Type: "salesReports",
 			Name: "salesReports",
+		},
+		{
+			Type: "actionKpis",
+			Name: "actionKpis",
 		},
 	}
 }
@@ -64,6 +71,15 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 			Name: "salesReports",
 		})
 	}
+
+	for _, kID := range  c.ActionKpiIDs {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   kID,
+			Type: "actionKpis",
+			Name: "actionKpis",
+		})
+	}
+
 	return result
 }
 
@@ -86,6 +102,11 @@ func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 		c.SalesReportIDs = IDs
 		return nil
 	}
+
+	if name == "actionKpis" {
+		c. ActionKpiIDs= IDs
+		return nil
+	}
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
@@ -97,6 +118,11 @@ func (c *Paper) AddToManyIDs(name string, IDs []string) error {
 
 	if name == "salesReports" {
 		c.SalesReportIDs = append(c.SalesReportIDs, IDs...)
+		return nil
+	}
+
+	if name == "actionKpis" {
+		c.ActionKpiIDs = append(c.ActionKpiIDs, IDs...)
 		return nil
 	}
 
@@ -119,6 +145,17 @@ func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
 			for pos, oldID := range c.SalesReportIDs {
 				if ID == oldID {
 					c.SalesReportIDs = append(c.SalesReportIDs[:pos], c.SalesReportIDs[pos+1:]...)
+				}
+			}
+		}
+	}
+
+
+	if name == "actionKpis" {
+		for _, ID := range IDs {
+			for pos, oldID := range c.ActionKpiIDs {
+				if ID == oldID {
+					c.ActionKpiIDs = append(c.ActionKpiIDs[:pos], c.ActionKpiIDs[pos+1:]...)
 				}
 			}
 		}

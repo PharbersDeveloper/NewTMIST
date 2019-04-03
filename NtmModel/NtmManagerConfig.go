@@ -13,6 +13,8 @@ type ManagerConfig struct {
 	ManagerKPI              int32 `json:"manager-kpi" bson:"manager-kpi"`
 	ManagerTime             int32 `json:"manager-time" bson:"manager-time"`
 	VisitTotalTime          int32 `json:"visit-total-time" bson:"visit-total-time"`
+	TeamBusinessExperience 	string `json:"team-business-experience" bson:"team-business-experience"`
+	TeamDescribe 			string `json:"team-describe" bson:"team-describe"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

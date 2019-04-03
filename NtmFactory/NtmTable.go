@@ -40,8 +40,10 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmSalesConfig":		   NtmModel.SalesConfig{},
 	"NtmSalesReport":		   NtmModel.SalesReport{},
 	"NtmHospitalSalesReport":  NtmModel.HospitalSalesReport{},
-	"NtmProductsalesreport":   NtmModel.Productsalesreport{},
+	"NtmProductSalesReport":   NtmModel.ProductSalesReport{},
 	"NtmRepresentativeSalesReport":	NtmModel.RepresentativeSalesReport{},
+	"NtmTeamConfig":			NtmModel.TeamConfig{},
+	"NtmActionKpi":				NtmModel.ActionKpi{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -74,6 +76,8 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmHospitalSalesReportStorage":  NtmDataStorage.NtmHospitalSalesReportStorage{},
 	"NtmProductSalesReportStorage":   NtmDataStorage.NtmProductSalesReportStorage{},
 	"NtmRepresentativeSalesReportStorage":	NtmDataStorage.NtmRepresentativeSalesReportStorage{},
+	"NtmTeamConfigStorage":			  NtmDataStorage.NtmTeamConfigStorage{},
+	"NtmActionKpiStorage":			  NtmDataStorage.NtmActionKpiStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -106,6 +110,8 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmHospitalSalesReportResource":  NtmResource.NtmHospitalSalesReportResource{},
 	"NtmProductSalesReportResource":   NtmResource.NtmProductSalesReportResource{},
 	"NtmRepresentativeSalesReportResource":	NtmResource.NtmRepresentativeSalesReportResource{},
+	"NtmTeamConfigResource":		   NtmResource.NtmTeamConfigResource{},
+	"NtmActionKpiResource":		   	   NtmResource.NtmActionKpiResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{

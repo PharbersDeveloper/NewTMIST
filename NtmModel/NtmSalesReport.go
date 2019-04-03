@@ -17,7 +17,7 @@ type SalesReport struct {
 
 	HospitalSalesReport 		[]*HospitalSalesReport			`json:"-"`
 	RepresentativeSalesReport	[]*RepresentativeSalesReport	`json:"-"`
-	ProductSalesReport			[]*Productsalesreport			`json:"-"`
+	ProductSalesReport			[]*ProductSalesReport			`json:"-"`
 
 	Time 						float64 `json:"time" bson:"time"`
 }

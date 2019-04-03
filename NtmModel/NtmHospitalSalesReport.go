@@ -16,6 +16,9 @@ type HospitalSalesReport struct {
 	DestConfig		*DestConfig	`json:"-"`
 	GoodsConfig 	*GoodsConfig `json:"-"`
 
+	HospitalName 	string `json:"hospital-name" bson:"hospital-name"`
+	ProductName		string `json:"product-name" bson:"product-name"`
+
 	Potential		float64	`json:"potential" bson:"potential"`
 	Sales			float64 `json:"sales" bson:"sales"`
 	SalesQuota 		float64	`json:"sales-quota" bson:"sales-quota"`
