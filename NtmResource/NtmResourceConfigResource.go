@@ -16,6 +16,8 @@ type NtmResourceConfigResource struct {
 	NtmManagerConfigStorage        	*NtmDataStorage.NtmManagerConfigStorage
 	NtmRepresentativeConfigStorage 	*NtmDataStorage.NtmRepresentativeConfigStorage
 	NtmTeamConfigStorage		   	*NtmDataStorage.NtmTeamConfigStorage
+	NtmRepresentativeinputStorage	*NtmDataStorage.NtmRepresentativeinputStorage
+	NtmBusinessinputStorage			*NtmDataStorage.NtmBusinessinputStorage
 }
 
 func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) *NtmResourceConfigResource {
@@ -23,19 +25,23 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 	var mcs *NtmDataStorage.NtmManagerConfigStorage
 	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
 	var tcs *NtmDataStorage.NtmTeamConfigStorage
+	var ris *NtmDataStorage.NtmRepresentativeinputStorage
+	var bis *NtmDataStorage.NtmBusinessinputStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmResourceConfigStorage" {
 			rcs = arg.(*NtmDataStorage.NtmResourceConfigStorage)
 		} else if tp.Name() == "NtmManagerConfigStorage" {
-			//mcs = arg.(interface{}).(*NtmDataStorage.NtmManagerConfigStorage)
 			mcs = arg.(*NtmDataStorage.NtmManagerConfigStorage)
 		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
-			//repcs = arg.(interface{}).(*NtmDataStorage.NtmRepresentativeConfigStorage)
 			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
 		} else if tp.Name() == "NtmTeamConfigStorage" {
 			tcs = arg.(*NtmDataStorage.NtmTeamConfigStorage)
+		} else if tp.Name() == "NtmRepresentativeinputStorage" {
+			ris = arg.(*NtmDataStorage.NtmRepresentativeinputStorage)
+		} else if tp.Name() == "NtmBusinessinputStorage" {
+			bis = arg.(*NtmDataStorage.NtmBusinessinputStorage)
 		}
 	}
 	return &NtmResourceConfigResource{
@@ -43,12 +49,16 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 		NtmManagerConfigStorage:        mcs,
 		NtmRepresentativeConfigStorage: repcs,
 		NtmTeamConfigStorage: tcs,
+		NtmRepresentativeinputStorage: ris,
+		NtmBusinessinputStorage: bis,
 	}
 }
 
 func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	teamConfigsID, tcok := r.QueryParams["teamConfigsID"]
 	var result []NtmModel.ResourceConfig
+	teamConfigsID, tcok := r.QueryParams["teamConfigsID"]
+	representativeinputsID, tok := r.QueryParams["representativeinputsID"]
+	businessinputsID, bok := r.QueryParams["businessinputsID"]
 
 	if tcok {
 		modelRootID := teamConfigsID[0]
@@ -60,6 +70,38 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 		r.QueryParams["ids"] = modelRoot.ResourceConfigIDs
 
 		result := s.NtmResourceConfigStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
+
+	if tok {
+		modelRootID := representativeinputsID[0]
+		modelRoot, err := s.NtmRepresentativeinputStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		result, err := s.NtmResourceConfigStorage.GetOne(modelRoot.ResourceConfigId)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		return &Response{Res: result}, nil
+	}
+
+	if bok {
+		modelRootID := businessinputsID[0]
+		modelRoot, err := s.NtmBusinessinputStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		result, err := s.NtmResourceConfigStorage.GetOne(modelRoot.ResourceConfigId)
+
+		if err != nil {
+			return &Response{}, nil
+		}
 
 		return &Response{Res: result}, nil
 	}

@@ -18,6 +18,7 @@ type NtmDestConfigResource struct {
 	NtmHospitalSalesReportStorage		*NtmDataStorage.NtmHospitalSalesReportStorage
 	NtmRepresentativeSalesReportStorage	*NtmDataStorage.NtmRepresentativeSalesReportStorage
 	NtmSalesConfigStorage 				*NtmDataStorage.NtmSalesConfigStorage
+	NtmBusinessinputStorage				*NtmDataStorage.NtmBusinessinputStorage
 }
 
 func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStorage) *NtmDestConfigResource {
@@ -27,6 +28,7 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 	var hsr *NtmDataStorage.NtmHospitalSalesReportStorage
 	var rsr *NtmDataStorage.NtmRepresentativeSalesReportStorage
 	var sc *NtmDataStorage.NtmSalesConfigStorage
+	var bis *NtmDataStorage.NtmBusinessinputStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -42,6 +44,8 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 			rsr = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
 		} else if tp.Name() == "NtmSalesConfigStorage" {
 			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
+		} else if tp.Name() == "NtmBusinessinputStorage" {
+			bis = arg.(*NtmDataStorage.NtmBusinessinputStorage)
 		}
 	}
 	return &NtmDestConfigResource{
@@ -51,15 +55,15 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 		NtmHospitalSalesReportStorage : hsr,
 		NtmRepresentativeSalesReportStorage: rsr,
 		NtmSalesConfigStorage: sc,
+		NtmBusinessinputStorage: bis,
 	}
 }
 
 func (s NtmDestConfigResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	hospitalSalesReportsID, hsrok := r.QueryParams["hospitalSalesReportsID"]
-
 	representativeSalesReportsID, rsrok := r.QueryParams["representativeSalesReportsID"]
-
 	salesConfigsID, scok := r.QueryParams["salesConfigsID"]
+	businessinputsID, bok := r.QueryParams["businessinputsID"]
 
 	if hsrok {
 		modelRootID := hospitalSalesReportsID[0]
@@ -109,6 +113,21 @@ func (s NtmDestConfigResource) FindAll(r api2go.Request) (api2go.Responder, erro
 		return &Response{Res: model}, nil
 	}
 
+	if bok {
+		modelRootID := businessinputsID[0]
+		modelRoot, err := s.NtmBusinessinputStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		result, err := s.NtmDestConfigStorage.GetOne(modelRoot.DestConfigId)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		return &Response{Res: result}, nil
+	}
 
 	var result []NtmModel.DestConfig
 	models := s.NtmDestConfigStorage.GetAll(r, -1, -1)

@@ -20,6 +20,7 @@ type Paperinput struct {
 
 	ManagerinputIDs []string        `json:"-" bson:"manager-input-ids"`
 	Managerinputs   []*Managerinput `json:"-"`
+	Time 			float64			`json:"time" bson:"time"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -168,6 +169,8 @@ func (u *Paperinput) GetConditionsBsonM(parameters map[string][]string) bson.M {
 			}
 			r["$in"] = ids
 			rst["_id"] = r
+		case "paper-id":
+			rst[k] = v[0]
 		}
 	}
 	return rst

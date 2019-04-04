@@ -11,6 +11,7 @@ type Scenario struct {
 	Id_        bson.ObjectId `json:"-" bson:"_id"`
 	ProposalID string        `json:"proposal-id" bson:"proposal-id"`
 	Phase      int           `json:"phase" bson:"phase"`
+	Name	   string		 `json:"name" bson:"name"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
