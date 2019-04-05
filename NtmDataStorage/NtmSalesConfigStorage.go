@@ -26,13 +26,13 @@ func (s NtmSalesConfigStorage) NewSalesConfigStorage(args []BmDaemons.BmDaemon) 
 }
 
 // GetAll of the modelleaf
-func (s NtmSalesConfigStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.SalesConfig {
+func (s NtmSalesConfigStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.SalesConfig {
 	in := NtmModel.SalesConfig{}
-	var out []NtmModel.SalesConfig
+	var out []*NtmModel.SalesConfig
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
-			s.db.ResetIdWithId_(&iter)
+			s.db.ResetIdWithId_(iter)
 			out[i] = iter
 		}
 		return out

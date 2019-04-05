@@ -112,8 +112,6 @@ func (u *RepresentativeSalesReport) GetConditionsBsonM(parameters map[string][]s
 			}
 			r["$in"] = ids
 			rst["_id"] = r
-		case "scenario-id":
-			rst[k] = v[0]
 		}
 	}
 

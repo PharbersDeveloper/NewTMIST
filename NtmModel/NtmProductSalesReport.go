@@ -89,8 +89,6 @@ func (u *ProductSalesReport) GetConditionsBsonM(parameters map[string][]string) 
 			}
 			r["$in"] = ids
 			rst["_id"] = r
-		case "scenario-id":
-			rst[k] = v[0]
 		}
 	}
 
