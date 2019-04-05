@@ -23,8 +23,8 @@ type Paper struct {
 	SalesReportIDs    	[]string       `json:"-" bson:"sales-report-ids"`
 	SalesReports 		[]*SalesReport `json:"-"`
 
-	ActionKpiIDs		[]string			`json:"-" bson:"action-kpi-id"`
-	ActionKpi 			[]*ActionKpi		`json:"-"`
+	PersonnelAssessmentIDs		[]string					`json:"-" bson:"personnel-assessment-ids"`
+	PersonnelAssessment 		[]*PersonnelAssessment		`json:"-"`
 }
 
 func (c Paper) GetID() string {
@@ -47,8 +47,8 @@ func (c Paper) GetReferences() []jsonapi.Reference {
 			Name: "salesReports",
 		},
 		{
-			Type: "actionKpis",
-			Name: "actionKpis",
+			Type: "personnelAssessments",
+			Name: "personnelAssessments",
 		},
 	}
 }
@@ -72,11 +72,11 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
-	for _, kID := range  c.ActionKpiIDs {
+	for _, kID := range  c.PersonnelAssessmentIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "actionKpis",
-			Name: "actionKpis",
+			Type: "personnelAssessments",
+			Name: "personnelAssessments",
 		})
 	}
 
@@ -103,8 +103,8 @@ func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 		return nil
 	}
 
-	if name == "actionKpis" {
-		c. ActionKpiIDs= IDs
+	if name == "personnelAssessments" {
+		c. PersonnelAssessmentIDs= IDs
 		return nil
 	}
 	return errors.New("There is no to-many relationship with the name " + name)
@@ -121,8 +121,8 @@ func (c *Paper) AddToManyIDs(name string, IDs []string) error {
 		return nil
 	}
 
-	if name == "actionKpis" {
-		c.ActionKpiIDs = append(c.ActionKpiIDs, IDs...)
+	if name == "personnelAssessments" {
+		c.PersonnelAssessmentIDs = append(c.PersonnelAssessmentIDs, IDs...)
 		return nil
 	}
 
@@ -151,11 +151,11 @@ func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
 	}
 
 
-	if name == "actionKpis" {
+	if name == "personnelAssessments" {
 		for _, ID := range IDs {
-			for pos, oldID := range c.ActionKpiIDs {
+			for pos, oldID := range c.PersonnelAssessmentIDs {
 				if ID == oldID {
-					c.ActionKpiIDs = append(c.ActionKpiIDs[:pos], c.ActionKpiIDs[pos+1:]...)
+					c.PersonnelAssessmentIDs = append(c.PersonnelAssessmentIDs[:pos], c.PersonnelAssessmentIDs[pos+1:]...)
 				}
 			}
 		}
@@ -176,6 +176,8 @@ func (c *Paper) GetConditionsBsonM(parameters map[string][]string) bson.M {
 			r["$in"] = ids
 			rst["_id"] = r
 		case "proposal-id":
+			rst[k] = v[0]
+		case "account-id":
 			rst[k] = v[0]
 		}
 	}

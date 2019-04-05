@@ -13,28 +13,23 @@ import (
 
 type NtmProductSalesReportResource struct {
 	NtmProductSalesReportStorage       *NtmDataStorage.NtmProductSalesReportStorage
-	NtmGoodsConfigStorage 		        *NtmDataStorage.NtmGoodsConfigStorage
 	NtmSalesReportStorage               *NtmDataStorage.NtmSalesReportStorage
 }
 
 func (c NtmProductSalesReportResource) NewProductSalesReportResource(args []BmDataStorage.BmStorage) *NtmProductSalesReportResource {
 	var psr  *NtmDataStorage.NtmProductSalesReportStorage
-	var gc *NtmDataStorage.NtmGoodsConfigStorage
 	var sr *NtmDataStorage.NtmSalesReportStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmProductSalesReportStorage" {
 			psr = arg.(*NtmDataStorage.NtmProductSalesReportStorage)
-		} else if tp.Name() == "NtmGoodsConfigStorage" {
-			gc = arg.(*NtmDataStorage.NtmGoodsConfigStorage)
 		} else if tp.Name() == "NtmSalesReportStorage" {
 			sr = arg.(*NtmDataStorage.NtmSalesReportStorage)
 		}
 	}
 	return &NtmProductSalesReportResource{
 		NtmProductSalesReportStorage: psr,
-		NtmGoodsConfigStorage: gc,
 		NtmSalesReportStorage: sr,
 	}
 }

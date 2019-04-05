@@ -14,15 +14,12 @@ import (
 // NtmPolicyStorage stores all of the tasty modelleaf, needs to be injected into
 // Policy and Policy Resource. In the real world, you would use a database for that.
 type NtmPolicyStorage struct {
-	Policies map[string]*NtmModel.Policy
-	idCount  int
-
 	db *BmMongodb.BmMongodb
 }
 
 func (s NtmPolicyStorage) NewPolicyStorage(args []BmDaemons.BmDaemon) *NtmPolicyStorage {
 	mdb := args[0].(*BmMongodb.BmMongodb)
-	return &NtmPolicyStorage{make(map[string]*NtmModel.Policy), 1, mdb}
+	return &NtmPolicyStorage{mdb}
 }
 
 // GetAll of the modelleaf

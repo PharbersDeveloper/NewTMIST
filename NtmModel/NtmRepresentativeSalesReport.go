@@ -10,11 +10,11 @@ import (
 type RepresentativeSalesReport struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
-	DestConfigID	string	`json:"-" bson:"dest-config-id"`
+	ResourceConfigID	string	`json:"-" bson:"resource-config-id"`
 	GoodsConfigID	string  `json:"-" bson:"goods-config-id"`
 
-	DestConfig		*DestConfig	`json:"-"`
-	GoodsConfig 	*GoodsConfig `json:"-"`
+	ResourceConfig		*DestConfig	`json:"-"`
+	GoodsConfig 		*GoodsConfig `json:"-"`
 
 	RepresentativeName string `json:"representative-name" bson:"representative-name"`
 	ProductName		string `json:"product-name" bson:"product-name"`
@@ -40,8 +40,8 @@ func (c *RepresentativeSalesReport) SetID(id string) error {
 func (u RepresentativeSalesReport) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
-			Type: "destConfigs",
-			Name: "destConfig",
+			Type: "resourceConfigs",
+			Name: "resourceConfig",
 		},
 		{
 			Type: "goodsConfigs",
@@ -53,11 +53,11 @@ func (u RepresentativeSalesReport) GetReferences() []jsonapi.Reference {
 // GetReferencedIDs to satisfy the jsonapi.MarshalLinkedRelations interface
 func (u RepresentativeSalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
-	if u.DestConfigID != "" {
+	if u.ResourceConfigID != "" {
 		result = append(result, jsonapi.ReferenceID{
-			ID:   u.DestConfigID,
-			Type: "destConfigs",
-			Name: "destConfig",
+			ID:   u.ResourceConfigID,
+			Type: "resourceConfigs",
+			Name: "resourceConfig",
 		})
 	}
 
@@ -76,8 +76,8 @@ func (u RepresentativeSalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 func (u RepresentativeSalesReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
-	if u.DestConfigID != "" && u.DestConfig != nil {
-		result = append(result, u.DestConfig)
+	if u.ResourceConfigID != "" && u.ResourceConfig != nil {
+		result = append(result, u.ResourceConfig)
 	}
 
 	if u.GoodsConfigID != "" && u.GoodsConfig != nil {
@@ -88,8 +88,8 @@ func (u RepresentativeSalesReport) GetReferencedStructs() []jsonapi.MarshalIdent
 }
 
 func (u *RepresentativeSalesReport) SetToOneReferenceID(name, ID string) error {
-	if name == "DestConfig" {
-		u.DestConfigID = ID
+	if name == "resourceConfig" {
+		u.ResourceConfigID = ID
 		return nil
 	}
 	if name == "goodsConfig" {

@@ -44,6 +44,8 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmRepresentativeSalesReport":	NtmModel.RepresentativeSalesReport{},
 	"NtmTeamConfig":			NtmModel.TeamConfig{},
 	"NtmActionKpi":				NtmModel.ActionKpi{},
+	"NtmPersonnelAssessment":	NtmModel.PersonnelAssessment{},
+	"NtmRepresentativeAbility":	NtmModel.RepresentativeAbility{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -78,6 +80,8 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmRepresentativeSalesReportStorage":	NtmDataStorage.NtmRepresentativeSalesReportStorage{},
 	"NtmTeamConfigStorage":			  NtmDataStorage.NtmTeamConfigStorage{},
 	"NtmActionKpiStorage":			  NtmDataStorage.NtmActionKpiStorage{},
+	"NtmPersonnelAssessmentStorage":  NtmDataStorage.NtmPersonnelAssessmentStorage{},
+	"NtmRepresentativeAbilityStorage":  NtmDataStorage.NtmRepresentativeAbilityStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -112,6 +116,8 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmRepresentativeSalesReportResource":	NtmResource.NtmRepresentativeSalesReportResource{},
 	"NtmTeamConfigResource":		   NtmResource.NtmTeamConfigResource{},
 	"NtmActionKpiResource":		   	   NtmResource.NtmActionKpiResource{},
+	"NtmPersonnelAssessmentResource":  NtmResource.NtmPersonnelAssessmentResource{},
+	"NtmRepresentativeAbilityResource":  NtmResource.NtmRepresentativeAbilityResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{

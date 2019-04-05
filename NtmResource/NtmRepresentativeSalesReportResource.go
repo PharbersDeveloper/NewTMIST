@@ -13,33 +13,23 @@ import (
 
 type NtmRepresentativeSalesReportResource struct {
 	NtmRepresentativeSalesReportStorage *NtmDataStorage.NtmRepresentativeSalesReportStorage
-	NtmDestConfigStorage 				*NtmDataStorage.NtmDestConfigStorage
-	NtmGoodsConfigStorage 		        *NtmDataStorage.NtmGoodsConfigStorage
 	NtmSalesReportStorage               *NtmDataStorage.NtmSalesReportStorage
 }
 
 func (c NtmRepresentativeSalesReportResource) NewRepresentativeSalesReportResource(args []BmDataStorage.BmStorage) *NtmRepresentativeSalesReportResource {
 	var psr  *NtmDataStorage.NtmRepresentativeSalesReportStorage
-	var dc *NtmDataStorage.NtmDestConfigStorage
-	var gc *NtmDataStorage.NtmGoodsConfigStorage
 	var sr *NtmDataStorage.NtmSalesReportStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmRepresentativeSalesReportStorage" {
 			psr = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
-		} else if tp.Name() == "NtmDestConfigStorage" {
-			dc = arg.(*NtmDataStorage.NtmDestConfigStorage)
-		} else if tp.Name() == "NtmGoodsConfigStorage" {
-			gc = arg.(*NtmDataStorage.NtmGoodsConfigStorage)
 		} else if tp.Name() == "NtmSalesReportStorage" {
 			sr = arg.(*NtmDataStorage.NtmSalesReportStorage)
 		}
 	}
 	return &NtmRepresentativeSalesReportResource{
 		NtmRepresentativeSalesReportStorage: psr,
-		NtmDestConfigStorage: dc,
-		NtmGoodsConfigStorage: gc,
 		NtmSalesReportStorage: sr,
 	}
 }

@@ -18,6 +18,7 @@ type NtmResourceConfigResource struct {
 	NtmTeamConfigStorage		   	*NtmDataStorage.NtmTeamConfigStorage
 	NtmRepresentativeinputStorage	*NtmDataStorage.NtmRepresentativeinputStorage
 	NtmBusinessinputStorage			*NtmDataStorage.NtmBusinessinputStorage
+	NtmRepresentativeSalesReportStorage	*NtmDataStorage.NtmRepresentativeSalesReportStorage
 }
 
 func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) *NtmResourceConfigResource {
@@ -27,6 +28,7 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 	var tcs *NtmDataStorage.NtmTeamConfigStorage
 	var ris *NtmDataStorage.NtmRepresentativeinputStorage
 	var bis *NtmDataStorage.NtmBusinessinputStorage
+	var rsr *NtmDataStorage.NtmRepresentativeSalesReportStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -42,6 +44,8 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 			ris = arg.(*NtmDataStorage.NtmRepresentativeinputStorage)
 		} else if tp.Name() == "NtmBusinessinputStorage" {
 			bis = arg.(*NtmDataStorage.NtmBusinessinputStorage)
+		} else if tp.Name() == "NtmRepresentativeSalesReportStorage" {
+			rsr = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
 		}
 	}
 	return &NtmResourceConfigResource{
@@ -51,6 +55,7 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 		NtmTeamConfigStorage: tcs,
 		NtmRepresentativeinputStorage: ris,
 		NtmBusinessinputStorage: bis,
+		NtmRepresentativeSalesReportStorage: rsr,
 	}
 }
 
@@ -59,6 +64,7 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 	teamConfigsID, tcok := r.QueryParams["teamConfigsID"]
 	representativeinputsID, tok := r.QueryParams["representativeinputsID"]
 	businessinputsID, bok := r.QueryParams["businessinputsID"]
+	representativeSalesReportsID, rsrok := r.QueryParams["representativeSalesReportsID"]
 
 	if tcok {
 		modelRootID := teamConfigsID[0]
@@ -98,6 +104,22 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 		}
 
 		result, err := s.NtmResourceConfigStorage.GetOne(modelRoot.ResourceConfigId)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		return &Response{Res: result}, nil
+	}
+
+	if rsrok {
+		modelRootID := representativeSalesReportsID[0]
+		modelRoot, err := s.NtmRepresentativeSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		result, err := s.NtmResourceConfigStorage.GetOne(modelRoot.ResourceConfigID)
 
 		if err != nil {
 			return &Response{}, nil

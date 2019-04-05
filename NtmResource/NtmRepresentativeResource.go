@@ -15,12 +15,16 @@ type NtmRepresentativeResource struct {
 	NtmRepresentativeStorage       *NtmDataStorage.NtmRepresentativeStorage
 	NtmRepresentativeConfigStorage *NtmDataStorage.NtmRepresentativeConfigStorage
 	NtmImageStorage                *NtmDataStorage.NtmImageStorage
+	NtmActionKpiStorage			   *NtmDataStorage.NtmActionKpiStorage
+	NtmRepresentativeAbilityStorage *NtmDataStorage.NtmRepresentativeAbilityStorage
 }
 
 func (s NtmRepresentativeResource) NewRepresentativeResource(args []BmDataStorage.BmStorage) *NtmRepresentativeResource {
 	var is *NtmDataStorage.NtmImageStorage
 	var reps *NtmDataStorage.NtmRepresentativeStorage
 	var repcs *NtmDataStorage.NtmRepresentativeConfigStorage
+	var aks	*NtmDataStorage.NtmActionKpiStorage
+	var ras *NtmDataStorage.NtmRepresentativeAbilityStorage
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmImageStorage" {
@@ -29,23 +33,59 @@ func (s NtmRepresentativeResource) NewRepresentativeResource(args []BmDataStorag
 			reps = arg.(*NtmDataStorage.NtmRepresentativeStorage)
 		} else if tp.Name() == "NtmRepresentativeConfigStorage" {
 			repcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
+		} else if tp.Name() == "NtmActionKpiStorage" {
+			aks = arg.(*NtmDataStorage.NtmActionKpiStorage)
+		} else if tp.Name() == "NtmRepresentativeAbilityStorage" {
+			ras = arg.(*NtmDataStorage.NtmRepresentativeAbilityStorage)
 		}
 	}
 	return &NtmRepresentativeResource{
 		NtmImageStorage:                is,
 		NtmRepresentativeStorage:       reps,
 		NtmRepresentativeConfigStorage: repcs,
+		NtmActionKpiStorage: 			aks,
+		NtmRepresentativeAbilityStorage: ras,
 	}
 }
 
 func (s NtmRepresentativeResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 
 	representativeConfigsID, rcok := r.QueryParams["representativeConfigsID"]
+	actionKpisID, akok := r.QueryParams["actionKpisID"]
+	representativeAbilitiesID, raok := r.QueryParams["representativeAbilitiesID"]
 	var result []NtmModel.Representative
 
 	if rcok {
 		modelRootID := representativeConfigsID[0]
 		modelRoot, err := s.NtmRepresentativeConfigStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := s.NtmRepresentativeStorage.GetOne(modelRoot.RepresentativeID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+		return &Response{Res: result}, nil
+	}
+
+	if akok {
+		modelRootID := actionKpisID[0]
+		modelRoot, err := s.NtmActionKpiStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := s.NtmRepresentativeStorage.GetOne(modelRoot.RepresentativeID)
+		if err != nil {
+			return &Response{}, err
+		}
+		result = append(result, model)
+		return &Response{Res: result}, nil
+	}
+
+	if raok {
+		modelRootID := representativeAbilitiesID[0]
+		modelRoot, err := s.NtmRepresentativeAbilityStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}

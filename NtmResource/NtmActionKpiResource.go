@@ -13,50 +13,46 @@ import (
 
 type NtmActionKpiResource struct {
 	NtmActionKpiStorage 			*NtmDataStorage.NtmActionKpiStorage
-	//NtmRepresentativeConfigStorage	*NtmDataStorage.NtmRepresentativeConfigStorage
-	//NtmPaperStorage					*NtmDataStorage.NtmPaperStorage
+	NtmPersonnelAssessmentStorage	*NtmDataStorage.NtmPersonnelAssessmentStorage
 }
 
 func (c NtmActionKpiResource) NewActionKpiResource(args []BmDataStorage.BmStorage) *NtmActionKpiResource {
 	var cs *NtmDataStorage.NtmActionKpiStorage
-	//var rcs *NtmDataStorage.NtmRepresentativeConfigStorage
-	//var ps *NtmDataStorage.NtmPaperStorage
+	var pas *NtmDataStorage.NtmPersonnelAssessmentStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmActionKpiStorage" {
 			cs = arg.(*NtmDataStorage.NtmActionKpiStorage)
+		} else if tp.Name() == "NtmPersonnelAssessmentStorage" {
+			pas = arg.(*NtmDataStorage.NtmPersonnelAssessmentStorage)
 		}
-		//else if tp.Name() == "NtmRepresentativeConfigStorage" {
-		//	rcs = arg.(*NtmDataStorage.NtmRepresentativeConfigStorage)
-		//} else if tp.Name() == "NtmPaperStorage" {
-		//	ps = arg.(*NtmDataStorage.NtmPaperStorage)
-		//}
 	}
 	return &NtmActionKpiResource{
 		NtmActionKpiStorage: cs,
+		NtmPersonnelAssessmentStorage: pas,
 	}
 }
 
 // FindAll ActionKpis
 func (c NtmActionKpiResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	var result []*NtmModel.ActionKpi
-	//papersID, rciok := r.QueryParams["papersID"]
-	//
-	//if rciok {
-	//	modelRootID := papersID[0]
-	//
-	//	modelRoot, err := c.NtmPaperStorage.GetOne(modelRootID)
-	//	if err != nil {
-	//		return &Response{}, err
-	//	}
-	//
-	//	r.QueryParams["ids"] = modelRoot.ActionKpiIDs
-	//
-	//	result = c.NtmActionKpiStorage.GetAll(r, -1,-1)
-	//
-	//	return &Response{Res: result}, nil
-	//}
+	personnelAssessmentsID, pasok := r.QueryParams["personnelAssessmentsID"]
+
+	if pasok {
+		modelRootID := personnelAssessmentsID[0]
+
+		modelRoot, err := c.NtmPersonnelAssessmentStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+
+		r.QueryParams["ids"] = modelRoot.ActionKpiIDs
+
+		result = c.NtmActionKpiStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
 
 	result = c.NtmActionKpiStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil

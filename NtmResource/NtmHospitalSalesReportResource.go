@@ -13,33 +13,23 @@ import (
 
 type NtmHospitalSalesReportResource struct {
 	NtmHospitalSalesReportStorage       *NtmDataStorage.NtmHospitalSalesReportStorage
-	NtmDestConfigStorage 				*NtmDataStorage.NtmDestConfigStorage
-	NtmGoodsConfigStorage 		        *NtmDataStorage.NtmGoodsConfigStorage
 	NtmSalesReportStorage               *NtmDataStorage.NtmSalesReportStorage
 }
 
 func (c NtmHospitalSalesReportResource) NewHospitalSalesReportResource(args []BmDataStorage.BmStorage) *NtmHospitalSalesReportResource {
 	var hsr  *NtmDataStorage.NtmHospitalSalesReportStorage
-	var dc *NtmDataStorage.NtmDestConfigStorage
-	var gc *NtmDataStorage.NtmGoodsConfigStorage
 	var sr *NtmDataStorage.NtmSalesReportStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmHospitalSalesReportStorage" {
 			hsr = arg.(*NtmDataStorage.NtmHospitalSalesReportStorage)
-		} else if tp.Name() == "NtmDestConfigStorage" {
-			dc = arg.(*NtmDataStorage.NtmDestConfigStorage)
-		} else if tp.Name() == "NtmGoodsConfigStorage" {
-			gc = arg.(*NtmDataStorage.NtmGoodsConfigStorage)
 		} else if tp.Name() == "NtmSalesReportStorage" {
 			sr = arg.(*NtmDataStorage.NtmSalesReportStorage)
 		}
 	}
 	return &NtmHospitalSalesReportResource{
 		NtmHospitalSalesReportStorage: hsr,
-		NtmDestConfigStorage: dc,
-		NtmGoodsConfigStorage: gc,
 		NtmSalesReportStorage: sr,
 	}
 }
