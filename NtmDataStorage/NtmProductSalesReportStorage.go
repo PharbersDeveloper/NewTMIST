@@ -26,13 +26,13 @@ func (s NtmProductSalesReportStorage) NewProductSalesReportStorage(args []BmDaem
 }
 
 // GetAll of the modelleaf
-func (s NtmProductSalesReportStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.ProductSalesReport {
+func (s NtmProductSalesReportStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.ProductSalesReport {
 	in := NtmModel.ProductSalesReport{}
-	var out []NtmModel.ProductSalesReport
+	var out []*NtmModel.ProductSalesReport
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
-			s.db.ResetIdWithId_(&iter)
+			s.db.ResetIdWithId_(iter)
 			out[i] = iter
 		}
 		return out

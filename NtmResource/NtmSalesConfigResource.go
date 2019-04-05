@@ -16,13 +16,17 @@ type NtmSalesConfigResource struct {
 	NtmPaperStorage				*NtmDataStorage.NtmPaperStorage
 	NtmSalesReportStorage 		*NtmDataStorage.NtmSalesReportStorage
 	NtmHospitalSalesReportStorage *NtmDataStorage.NtmHospitalSalesReportStorage
+	NtmSalesReportResource 			*NtmSalesReportResource
+	NtmDestConfigStorage 		*NtmDataStorage.NtmDestConfigStorage
+	NtmHospitalConfigStorage 	*NtmDataStorage.NtmHospitalConfigStorage
+	NtmGoodsConfigStorage 		*NtmDataStorage.NtmGoodsConfigStorage
 }
 
 func (c NtmSalesConfigResource) NewSalesConfigResource(args []BmDataStorage.BmStorage) *NtmSalesConfigResource {
 	var sc *NtmDataStorage.NtmSalesConfigStorage
 	var ps *NtmDataStorage.NtmPaperStorage
-	var srs *NtmDataStorage.NtmSalesReportStorage
-	var hsrs *NtmDataStorage.NtmHospitalSalesReportStorage
+	var srr	*NtmSalesReportResource
+
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -30,17 +34,14 @@ func (c NtmSalesConfigResource) NewSalesConfigResource(args []BmDataStorage.BmSt
 			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
 		} else if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
-		} else if tp.Name() == "NtmSalesReportStorage" {
-			srs = arg.(*NtmDataStorage.NtmSalesReportStorage)
-		} else if tp.Name() == "NtmHospitalSalesReportStorage" {
-			hsrs = arg.(*NtmDataStorage.NtmHospitalSalesReportStorage)
+		} else if tp.Name() == "NtmSalesReportResource" {
+			srr = arg.(interface{}).(*NtmSalesReportResource)
 		}
 	}
 	return &NtmSalesConfigResource{
 		NtmSalesConfigStorage:	sc,
 		NtmPaperStorage: ps,
-		NtmSalesReportStorage: srs,
-		NtmHospitalSalesReportStorage: hsrs,
+		NtmSalesReportResource: srr,
 	}
 }
 
@@ -56,26 +57,20 @@ func (c NtmSalesConfigResource) FindAll(r api2go.Request) (api2go.Responder, err
 
 
 		if len(paperModel) > 0 {
+			// 获取这个用户在关卡下最新的报告
 			SalesReportIDs := paperModel[0].SalesReportIDs
 			LastSalesReportID := SalesReportIDs[len(SalesReportIDs)-1:][0]
-			SalesReport, _ := c.NtmSalesReportStorage.GetOne(LastSalesReportID)
-			r.QueryParams["ids"] = SalesReport.HospitalSalesReportIDs
-			HospitalSalesReports := c.NtmHospitalSalesReportStorage.GetAll(r, -1,-1)
-			for _, salesConfigModel := range result {
-				for _,  hospitalSalesReport:= range HospitalSalesReports {
-					if salesConfigModel.DestConfigID == hospitalSalesReport.DestConfigID &&
-						salesConfigModel.GoodsConfigID == hospitalSalesReport.GoodsConfigID {
-						salesConfigModel.Sales = hospitalSalesReport.Sales
-						salesConfigModel.Potential = hospitalSalesReport.Potential
-					}
-				}
+			SalesReportResponse, err := c.NtmSalesReportResource.FindOne(LastSalesReportID, r)
+			if err != nil {
+				return &Response{}, err
 			}
-			//SalesReport.HospitalSalesReport = append(SalesReport.HospitalSalesReport, HospitalSalesReports...)
-			//
-			//for _, model := range result {
-			//	model.SalesReportID = SalesReport.ID
-			//	model.SalesReport = &SalesReport
-			//}
+			response := SalesReportResponse.Result()
+			item := response.(NtmModel.SalesReport)
+
+			for _, salesConfigModel := range result {
+				salesConfigModel.SalesReportID = item.ID
+				salesConfigModel.SalesReport = &item
+			}
 		}
 		return &Response{Res: result}, nil
 	}

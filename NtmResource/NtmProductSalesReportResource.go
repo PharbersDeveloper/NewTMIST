@@ -56,7 +56,7 @@ func (c NtmProductSalesReportResource) FindAll(r api2go.Request) (api2go.Respond
 		return &Response{Res: model}, nil
 	}
 
-	var result []NtmModel.ProductSalesReport
+	var result []*NtmModel.ProductSalesReport
 	result = c.NtmProductSalesReportStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }

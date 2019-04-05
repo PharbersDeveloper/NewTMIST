@@ -13,6 +13,9 @@ import (
 
 type NtmDestConfigResource struct {
 	NtmDestConfigStorage    			*NtmDataStorage.NtmDestConfigStorage
+	NtmHospitalConfigStorage			*NtmDataStorage.NtmHospitalConfigStorage
+	NtmRegionConfigStorage				*NtmDataStorage.NtmRegionConfigStorage
+
 	NtmHospitalSalesReportStorage		*NtmDataStorage.NtmHospitalSalesReportStorage
 	NtmSalesConfigStorage 				*NtmDataStorage.NtmSalesConfigStorage
 	NtmBusinessinputStorage				*NtmDataStorage.NtmBusinessinputStorage
@@ -20,6 +23,8 @@ type NtmDestConfigResource struct {
 
 func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStorage) *NtmDestConfigResource {
 	var dcs *NtmDataStorage.NtmDestConfigStorage
+	var hcs *NtmDataStorage.NtmHospitalConfigStorage
+	var rcs *NtmDataStorage.NtmRegionConfigStorage
 	var hsr *NtmDataStorage.NtmHospitalSalesReportStorage
 	var sc *NtmDataStorage.NtmSalesConfigStorage
 	var bis *NtmDataStorage.NtmBusinessinputStorage
@@ -28,6 +33,10 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmDestConfigStorage" {
 			dcs = arg.(*NtmDataStorage.NtmDestConfigStorage)
+		} else if tp.Name() == "NtmHospitalConfigStorage" {
+			hcs = arg.(*NtmDataStorage.NtmHospitalConfigStorage)
+		} else if tp.Name() == "NtmRegionConfigStorage" {
+			rcs = arg.(*NtmDataStorage.NtmRegionConfigStorage)
 		} else if tp.Name() == "NtmHospitalSalesReportStorage" {
 			hsr = arg.(*NtmDataStorage.NtmHospitalSalesReportStorage)
 		} else if tp.Name() == "NtmSalesConfigStorage" {
@@ -38,6 +47,8 @@ func (s NtmDestConfigResource) NewDestConfigResource(args []BmDataStorage.BmStor
 	}
 	return &NtmDestConfigResource{
 		NtmDestConfigStorage:    	dcs,
+		NtmHospitalConfigStorage: hcs,
+		NtmRegionConfigStorage: rcs,
 		NtmHospitalSalesReportStorage : hsr,
 		NtmSalesConfigStorage: sc,
 		NtmBusinessinputStorage: bis,
@@ -172,11 +183,28 @@ func (s NtmDestConfigResource) PaginatedFindAll(r api2go.Request) (uint, api2go.
 // FindOne to satisfy `api2go.DataSource` interface
 // this method should return the model with the given ID, otherwise an error
 func (s NtmDestConfigResource) FindOne(ID string, r api2go.Request) (api2go.Responder, error) {
-	model, err := s.NtmDestConfigStorage.GetOne(ID)
+	modelRoot, err := s.NtmDestConfigStorage.GetOne(ID)
 	if err != nil {
 		return &Response{}, api2go.NewHTTPError(err, err.Error(), http.StatusNotFound)
 	}
-	return &Response{Res: model}, nil
+
+	if modelRoot.DestType == 0 {
+		model, err := s.NtmRegionConfigStorage.GetOne(modelRoot.DestID)
+		if err != nil {
+			return &Response{}, err
+		}
+		modelRoot.RegionConfig = &model
+	}
+
+	if modelRoot.DestType == 1 {
+		model, err := s.NtmHospitalConfigStorage.GetOne(modelRoot.DestID)
+		if err != nil {
+			return &Response{}, err
+		}
+		modelRoot.HospitalConfig = &model
+	}
+
+	return &Response{Res: modelRoot}, nil
 }
 
 // Create method to satisfy `api2go.DataSource` interface

@@ -26,13 +26,13 @@ func (s NtmRepresentativeSalesReportStorage) NewRepresentativeSalesReportStorage
 }
 
 // GetAll of the modelleaf
-func (s NtmRepresentativeSalesReportStorage) GetAll(r api2go.Request, skip int, take int) []NtmModel.RepresentativeSalesReport {
+func (s NtmRepresentativeSalesReportStorage) GetAll(r api2go.Request, skip int, take int) []*NtmModel.RepresentativeSalesReport {
 	in := NtmModel.RepresentativeSalesReport{}
-	var out []NtmModel.RepresentativeSalesReport
+	var out []*NtmModel.RepresentativeSalesReport
 	err := s.db.FindMulti(r, &in, &out, skip, take)
 	if err == nil {
 		for i, iter := range out {
-			s.db.ResetIdWithId_(&iter)
+			s.db.ResetIdWithId_(iter)
 			out[i] = iter
 		}
 		return out

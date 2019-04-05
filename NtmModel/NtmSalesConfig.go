@@ -13,15 +13,15 @@ type SalesConfig struct {
 	ScenarioId 		string        `json:"-" bson:"scenario-id"`
 
 	AccessStatus   	string  `json:"access-status" bson:"access-status"`
-	Sales 		float64 `json:"sales"`
-	Potential     	float64 `json:"potential"`
+	//Sales 		float64 `json:"sales"`
+	//Potential     	float64 `json:"potential"`
 
 	DestConfigID    string   `json:"-" bson:"dest-config-id"`
 	GoodsConfigID	string 	 `json:"-" bson:"goods-config-id"`
-	//SalesReportID 	string 	 `json:"-" `//bson:"sales-report-id"
+	SalesReportID 	string 	 `json:"-" `//bson:"sales-report-id"
 	DestConfig 		*DestConfig   `json:"-"`
 	GoodsConfig 	*GoodsConfig  `json:"-"`
-	//SalesReport		*SalesReport  `json:"-"`
+	SalesReport		*SalesReport  `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -73,13 +73,13 @@ func (u SalesConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
-	//if u.SalesReportID != "" {
-	//	result = append(result, jsonapi.ReferenceID{
-	//		ID:   u.SalesReportID,
-	//		Type: "salesReports",
-	//		Name: "salesReport",
-	//	})
-	//}
+	if u.SalesReportID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   u.SalesReportID,
+			Type: "salesReports",
+			Name: "salesReport",
+		})
+	}
 
 	return result
 }
@@ -96,9 +96,9 @@ func (u SalesConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 		result = append(result, u.GoodsConfig)
 	}
 
-	//if u.SalesReportID != "" && u.SalesReport != nil {
-	//	result = append(result, u.SalesReport)
-	//}
+	if u.SalesReportID != "" && u.SalesReport != nil {
+		result = append(result, u.SalesReport)
+	}
 return result
 }
 
@@ -111,10 +111,10 @@ func (u *SalesConfig) SetToOneReferenceID(name, ID string) error {
 		u.GoodsConfigID = ID
 		return nil
 	}
-	//if name == "salesReports" {
-	//	u.SalesReportID = ID
-	//	return nil
-	//}
+	if name == "salesReports" {
+		u.SalesReportID = ID
+		return nil
+	}
 
 	return errors.New("There is no to-one relationship with the name " + name)
 }

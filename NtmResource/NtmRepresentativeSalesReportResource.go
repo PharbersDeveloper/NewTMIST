@@ -55,7 +55,7 @@ func (c NtmRepresentativeSalesReportResource) FindAll(r api2go.Request) (api2go.
 		return &Response{Res: model}, nil
 	}
 
-	var result []NtmModel.RepresentativeSalesReport
+	var result []*NtmModel.RepresentativeSalesReport
 	result = c.NtmRepresentativeSalesReportStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
