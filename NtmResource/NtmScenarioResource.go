@@ -4,31 +4,79 @@ import (
 	"errors"
 	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
 	"github.com/PharbersDeveloper/NtmPods/NtmModel"
-	"reflect"
 	"net/http"
+	"reflect"
+	"strconv"
 
 	"github.com/alfredyang1986/BmServiceDef/BmDataStorage"
 	"github.com/manyminds/api2go"
 )
 
 type NtmScenarioResource struct {
-	NtmScenarioStorage *NtmDataStorage.NtmScenarioStorage
+	NtmScenarioStorage 		*NtmDataStorage.NtmScenarioStorage
+	NtmProposalStorage		*NtmDataStorage.NtmProposalStorage
+	NtmPaperStorage			*NtmDataStorage.NtmPaperStorage
+	NtmPaperinputStorage	*NtmDataStorage.NtmPaperinputStorage
 }
 
 func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage) *NtmScenarioResource {
 	var cs *NtmDataStorage.NtmScenarioStorage
+	var ps *NtmDataStorage.NtmProposalStorage
+	var pas *NtmDataStorage.NtmPaperStorage
+	var pis *NtmDataStorage.NtmPaperinputStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmScenarioStorage" {
 			cs = arg.(*NtmDataStorage.NtmScenarioStorage)
+		} else if tp.Name() == "NtmProposalStorage" {
+			ps = arg.(*NtmDataStorage.NtmProposalStorage)
+		} else if tp.Name() == "NtmPaperStorage" {
+			pas = arg.(*NtmDataStorage.NtmPaperStorage)
+		} else if tp.Name() == "NtmPaperinputStorage" {
+			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
 		}
 	}
-	return &NtmScenarioResource{NtmScenarioStorage: cs}
+	return &NtmScenarioResource{
+		NtmScenarioStorage: cs,
+		NtmProposalStorage: ps,
+		NtmPaperStorage: pas,
+		NtmPaperinputStorage: pis,
+	}
 }
 
 // FindAll Scenarios
+// TODO @Alex 这边后续必须重构，太难看了 自己留
 func (c NtmScenarioResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	result := c.NtmScenarioStorage.GetAll(r, -1, -1)
+	var result []NtmModel.Scenario
+	proposalsID, psok := r.QueryParams["proposal-id"]
+	_, acok := r.QueryParams["account-id"]
+
+	if psok && acok {
+
+		proposalModel, _ := c.NtmProposalStorage.GetOne(proposalsID[0])
+		paperModel := c.NtmPaperStorage.GetAll(r, -1,-1)[0]
+		r.QueryParams["ids"] = paperModel.InputIDs
+		r.QueryParams["orderby"] = []string{"time"}
+		paperInputModel := c.NtmPaperinputStorage.GetAll(r, -1,-1)
+		lastPaperInputModel := paperInputModel[len(paperInputModel)-1:][0]
+		lastPhase := lastPaperInputModel.Phase
+		totalPhase := proposalModel.TotalPhase
+
+		if paperModel.InputState == 1 {
+			r.QueryParams["phase"] = []string{strconv.Itoa(lastPhase)}
+			result = c.NtmScenarioStorage.GetAll(r, -1, -1)
+		} else if paperModel.InputState == 2 && lastPaperInputModel.Phase != totalPhase {
+			r.QueryParams["phase"] = []string{strconv.Itoa(lastPhase + 1)}
+			result = c.NtmScenarioStorage.GetAll(r, -1, -1)
+		} else {
+			r.QueryParams["phase"] = []string{"1"}
+			result = c.NtmScenarioStorage.GetAll(r, -1, -1)
+		}
+		return &Response{Res: result}, nil
+	}
+
+	result = c.NtmScenarioStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
 

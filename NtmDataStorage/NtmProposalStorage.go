@@ -14,7 +14,7 @@ import (
 // NtmProposalStorage stores all of the tasty modelleaf, needs to be injected into
 // Proposal and Proposal Resource. In the real world, you would use a database for that.
 type NtmProposalStorage struct {
-	Policies  map[string]*NtmModel.Proposal
+	Proposal  map[string]*NtmModel.Proposal
 	idCount int
 
 	db *BmMongodb.BmMongodb

@@ -93,7 +93,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 			Describe: proposalModel.Describe,
 			StartTime: time.Now().Unix(),
 			EndTime: 0,
-			InputState: "未开始",
+			InputState: 0,
 			InputIDs: proposalModel.InputIDs,
 			SalesReportIDs: proposalModel.SalesReportIDs,
 			PersonnelAssessmentIDs: proposalModel.PersonnelAssessmentIDs,

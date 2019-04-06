@@ -10,7 +10,7 @@ type Paperinput struct {
 	ID      string        `json:"-"`
 	Id_     bson.ObjectId `json:"-" bson:"_id"`
 	PaperId string        `json:"paper-id" bson:"paper-id"`
-	Phase   float64       `json:"phase" bson:"phase"`
+	Phase   int       `json:"phase" bson:"phase"`
 
 	BusinessinputIDs []string         `json:"-" bson:"business-input-ids"`
 	Businessinputs   []*Businessinput `json:"-"`

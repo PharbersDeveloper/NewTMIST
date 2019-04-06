@@ -15,7 +15,9 @@ type Paper struct {
 	Describe   string        `json:"describe" bson:"describe"`
 	StartTime  int64         `json:"start-time" bson:"start-time"`
 	EndTime    int64         `json:"end-time" bson:"end-time"`
-	InputState string        `json:"state" bson:"input-state"`
+
+	// 0 关卡未开始 1 关卡内正在做周期，未执最后行计算 2 关卡部分周期做完，新的周期未开始 3 关卡内的所有周期结束
+	InputState int       `json:"state" bson:"input-state"`
 
 	InputIDs    []string      `json:"-" bson:"input-ids"`
 	Paperinputs []*Paperinput `json:"-"`

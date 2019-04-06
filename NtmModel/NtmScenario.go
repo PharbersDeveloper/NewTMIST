@@ -31,6 +31,8 @@ func (u *Scenario) GetConditionsBsonM(parameters map[string][]string) bson.M {
 		switch k {
 		case "proposal-id":
 			rst[k] = v[0]
+		//case "account-id":
+		//	rst[k] = v[0]
 		case "phase":
 			val, err := strconv.ParseFloat(v[0], 64)
 			if err != nil {
