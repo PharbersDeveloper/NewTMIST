@@ -73,20 +73,29 @@ func (h RefreshTokenHandler) RefreshAccessToken(w http.ResponseWriter, r *http.R
 	}
 
 	config := h.au.ConfigFromURIParameter(r)
-	token, err := h.RdGetRefreshToken(refreshToken)
+
+
+	token := &oauth2.Token{}
+	tokenResult, err := h.RdGetValueByKey("RefreshToken_" + refreshToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
 	}
+	json.Unmarshal([]byte(*tokenResult), &token)
 
 	token.Expiry = time.Now()
 
 	token, err = config.TokenSource(context.Background(), token).Token()
 
-	scope := token.Extra("scope")
+	tokenUUID, _ := h.RdGetValueByKey(token.AccessToken)
+	result, _ := h.RdGetValueByKey(*tokenUUID)
+
+	var oauthObject map[string]interface{}
+	json.Unmarshal([]byte(*result), &oauthObject)
 
 	phToken := AuthDaemon.PhToken{
-		Scope: scope.(string),
+		Scope: token.Extra("scope").(string),
+		AccountID: oauthObject["UserID"].(string),
 	}
 	phToken.AccessToken = token.AccessToken
 	phToken.RefreshToken = token.RefreshToken
@@ -98,9 +107,9 @@ func (h RefreshTokenHandler) RefreshAccessToken(w http.ResponseWriter, r *http.R
 		return 1
 	}
 
-	h.RdPushToken(phToken.RefreshToken, &phToken)
+	h.RdPushToken("RefreshToken_" + phToken.RefreshToken, &phToken)
 
-	defer h.RdDeleteToken(refreshToken)
+	defer h.RdDeleteToken("RefreshToken_" + refreshToken)
 
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
@@ -117,15 +126,16 @@ func (h RefreshTokenHandler) GetHandlerMethod() string {
 	return h.Method
 }
 
-func (h RefreshTokenHandler) RdGetRefreshToken(key string) (*oauth2.Token, error) {
+func (h RefreshTokenHandler) RdGetValueByKey(key string) (*string, error){
 	client := h.rd.GetRedisClient()
 	defer client.Close()
 
-	result, _ := client.Get(key).Result()
-	token := oauth2.Token{}
-	err := json.Unmarshal([]byte(result), &token)
+	result, err := client.Get(key).Result()
 
-	return &token, err
+	if err != nil {
+		return nil ,err
+	}
+	return &result, nil
 }
 
 func (h RefreshTokenHandler) RdPushToken(key string, token *AuthDaemon.PhToken) error {
@@ -136,12 +146,10 @@ func (h RefreshTokenHandler) RdPushToken(key string, token *AuthDaemon.PhToken) 
 
 	pipe := client.Pipeline()
 
+	//pipe
 	pipe.Append(key, string(jsonToken))
 
-	//pipe.Expire(key, 0) //time.Until(token.Expiry)
-
 	_, err := pipe.Exec()
-
 	return err
 }
 

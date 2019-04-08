@@ -14,39 +14,39 @@ import (
 type NtmPaperResource struct {
 	NtmPaperStorage			*NtmDataStorage.NtmPaperStorage
 	NtmPaperinputStorage	*NtmDataStorage.NtmPaperinputStorage
+	NtmSalesReportStorage	*NtmDataStorage.NtmSalesReportStorage
+	NtmPersonnelAssessmentStorage	*NtmDataStorage.NtmPersonnelAssessmentStorage
 }
 
 func (s NtmPaperResource) NewPaperResource (args []BmDataStorage.BmStorage) *NtmPaperResource {
 	var ps *NtmDataStorage.NtmPaperStorage
 	var pis *NtmDataStorage.NtmPaperinputStorage
+	var srs *NtmDataStorage.NtmSalesReportStorage
+	var pas *NtmDataStorage.NtmPersonnelAssessmentStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
 		} else if tp.Name() == "NtmPaperinputStorage" {
 			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
+		} else if tp.Name() == "NtmSalesReportStorage" {
+			srs = arg.(*NtmDataStorage.NtmSalesReportStorage)
+		} else if tp.Name() == "NtmPersonnelAssessmentStorage" {
+			pas = arg.(*NtmDataStorage.NtmPersonnelAssessmentStorage)
 		}
 	}
-	return &NtmPaperResource{NtmPaperinputStorage: pis, NtmPaperStorage: ps}
+	return &NtmPaperResource{
+		NtmPaperinputStorage: pis,
+		NtmPaperStorage: ps,
+		NtmSalesReportStorage: srs,
+		NtmPersonnelAssessmentStorage: pas,
+	}
 }
 
 func (s NtmPaperResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	var result []NtmModel.Paper
-	models := s.NtmPaperStorage.GetAll(r, -1, -1)
-
-	for _, model := range models {
-		model.Paperinputs = []*NtmModel.Paperinput{}
-
-		for _, pid := range model.InputIDs {
-			Paperinput, err := s.NtmPaperinputStorage.GetOne(pid)
-			if err != nil {
-				return &Response{}, err
-			}
-			model.Paperinputs = append(model.Paperinputs, &Paperinput)
-		}
-		result = append(result, *model)
-	}
-
+	//var result []NtmModel.Paper
+	result := s.NtmPaperStorage.GetAll(r, -1, -1)
 	return &Response{Res: result}, nil
 }
 
@@ -121,13 +121,19 @@ func (s NtmPaperResource) FindOne(ID string, r api2go.Request) (api2go.Responder
 	}
 
 	model.Paperinputs = []*NtmModel.Paperinput{}
-	for _, pid := range model.InputIDs {
-		Paperinput, err := s.NtmPaperinputStorage.GetOne(pid)
-		if err != nil {
-			return &Response{}, nil
-		}
-		model.Paperinputs = append(model.Paperinputs, &Paperinput)
-	}
+	r.QueryParams["ids"] = model.InputIDs
+	paperInputModels := s.NtmPaperinputStorage.GetAll(r, -1,-1)
+	model.Paperinputs = paperInputModels
+
+	model.SalesReports = []*NtmModel.SalesReport{}
+	r.QueryParams["ids"] = model.SalesReportIDs
+	salesReportModels := s.NtmSalesReportStorage.GetAll(r, -1,-1)
+	model.SalesReports = salesReportModels
+
+	model.PersonnelAssessment = []*NtmModel.PersonnelAssessment{}
+	r.QueryParams["ids"] = model.PersonnelAssessmentIDs
+	personnelAssessmentModels := s.NtmPersonnelAssessmentStorage.GetAll(r, -1,-1)
+	model.PersonnelAssessment = personnelAssessmentModels
 
 	return &Response{Res: model}, nil
 }

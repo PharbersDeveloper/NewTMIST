@@ -98,10 +98,15 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 		return 1
 	}
 
-	scope := token.Extra("scope")
+	tokenUUID, _ := h.RdGetValueByKey(token.AccessToken)
+	result, _ := h.RdGetValueByKey(*tokenUUID)
+
+	var oauthObject map[string]interface{}
+	json.Unmarshal([]byte(*result), &oauthObject)
 
 	phToken := AuthDaemon.PhToken{
-		Scope: scope.(string),
+		Scope: token.Extra("scope").(string),
+		AccountID: oauthObject["UserID"].(string),
 	}
 	phToken.AccessToken = token.AccessToken
 	phToken.RefreshToken = token.RefreshToken
@@ -109,7 +114,7 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 	phToken.TokenType = token.TokenType
 
 	// 存入Redis RefreshToken
-	err = h.RdPushRefreshToken(token.RefreshToken, &phToken)
+	err = h.RdPushRefreshToken("RefreshToken_" + token.RefreshToken, &phToken)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return 1
@@ -140,10 +145,15 @@ func (h AuthHandler) PasswordLogin(w http.ResponseWriter, r *http.Request, _ htt
 		return 1
 	}
 
-	scope := token.Extra("scope")
+	tokenUUID, _ := h.RdGetValueByKey(token.AccessToken)
+	result, _ := h.RdGetValueByKey(*tokenUUID)
+
+	var oauthObject map[string]interface{}
+	json.Unmarshal([]byte(*result), &oauthObject)
 
 	phToken := AuthDaemon.PhToken{
-		Scope: scope.(string),
+		Scope: token.Extra("scope").(string),
+		AccountID: oauthObject["UserID"].(string),
 	}
 	phToken.AccessToken = token.AccessToken
 	phToken.RefreshToken = token.RefreshToken
@@ -183,9 +193,21 @@ func (h AuthHandler) RdPushRefreshToken(key string, token *AuthDaemon.PhToken) e
 
 	pipe := client.Pipeline()
 
+	//pipe
 	pipe.Append(key, string(jsonToken))
 
 	_, err := pipe.Exec()
 	return err
 }
 
+func (h AuthHandler) RdGetValueByKey(key string) (*string, error){
+	client := h.rd.GetRedisClient()
+	defer client.Close()
+
+	result, err := client.Get(key).Result()
+
+	if err != nil {
+		return nil ,err
+	}
+	return &result, nil
+}

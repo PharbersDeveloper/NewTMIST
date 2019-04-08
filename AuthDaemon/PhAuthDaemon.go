@@ -16,6 +16,7 @@ type AuthClient struct {
 type PhToken struct {
 	oauth2.Token
 	Scope 	string `json:"scope"`
+	AccountID string `json:"account_id"`
 }
 
 func (au AuthClient) NewAuthClientDaemon(args map[string]string) *AuthClient {
