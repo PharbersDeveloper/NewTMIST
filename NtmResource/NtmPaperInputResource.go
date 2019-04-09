@@ -17,6 +17,7 @@ type NtmPaperinputResource struct {
 	NtmRepresentativeinputStorage *NtmDataStorage.NtmRepresentativeinputStorage
 	NtmManagerinputStorage        *NtmDataStorage.NtmManagerinputStorage
 	NtmPaperStorage				  *NtmDataStorage.NtmPaperStorage
+	NtmScenarioStorage			  *NtmDataStorage.NtmScenarioStorage
 }
 
 func (s NtmPaperinputResource) NewPaperinputResource(args []BmDataStorage.BmStorage) *NtmPaperinputResource {
@@ -25,6 +26,8 @@ func (s NtmPaperinputResource) NewPaperinputResource(args []BmDataStorage.BmStor
 	var ris *NtmDataStorage.NtmRepresentativeinputStorage
 	var mis *NtmDataStorage.NtmManagerinputStorage
 	var ps *NtmDataStorage.NtmPaperStorage
+	var ss *NtmDataStorage.NtmScenarioStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmPaperinputStorage" {
@@ -37,14 +40,17 @@ func (s NtmPaperinputResource) NewPaperinputResource(args []BmDataStorage.BmStor
 			mis = arg.(*NtmDataStorage.NtmManagerinputStorage)
 		} else if tp.Name() == "NtmPaperStorage" {
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
+		} else if tp.Name() == "NtmScenarioStorage" {
+			ss = arg.(*NtmDataStorage.NtmScenarioStorage)
 		}
 	}
 	return &NtmPaperinputResource{
-		NtmPaperinputStorage:          pis,
-		NtmBusinessinputStorage:       bis,
-		NtmRepresentativeinputStorage: ris,
-		NtmManagerinputStorage:        mis,
-		NtmPaperStorage: ps,
+		NtmPaperinputStorage:          	pis,
+		NtmBusinessinputStorage:       	bis,
+		NtmRepresentativeinputStorage: 	ris,
+		NtmManagerinputStorage:        	mis,
+		NtmPaperStorage: 				ps,
+		NtmScenarioStorage: 			ss,
 	}
 }
 
@@ -200,6 +206,9 @@ func (s NtmPaperinputResource) ResetReferencedModel(model *NtmModel.Paperinput, 
 	for _, manageInput := range s.NtmManagerinputStorage.GetAll(*r, -1, -1) {
 		model.Managerinputs = append(model.Managerinputs, manageInput)
 	}
+
+	result, _ := s.NtmScenarioStorage.GetOne(model.ScenarioID)
+	model.Scenario = &result
 
 	return nil
 }

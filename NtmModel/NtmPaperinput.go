@@ -11,6 +11,8 @@ type Paperinput struct {
 	Id_     bson.ObjectId `json:"-" bson:"_id"`
 	PaperId string        `json:"paper-id" bson:"paper-id"`
 	Phase   int       `json:"phase" bson:"phase"`
+	ScenarioID	string `json:"-" bson:"scenario-id"`
+	Scenario	*Scenario `json:"-"`
 
 	BusinessinputIDs []string         `json:"-" bson:"business-input-ids"`
 	Businessinputs   []*Businessinput `json:"-"`
@@ -48,6 +50,10 @@ func (c Paperinput) GetReferences() []jsonapi.Reference {
 			Type: "managerinputs",
 			Name: "managerinputs",
 		},
+		{
+			Type: "scenarios",
+			Name: "scenario",
+		},
 	}
 }
 
@@ -78,6 +84,14 @@ func (c Paperinput) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
+	if c.ScenarioID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID: c.ScenarioID,
+			Type: "scenarios",
+			Name: "scenario",
+		})
+	}
+
 	return result
 }
 
@@ -96,7 +110,20 @@ func (c Paperinput) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 		result = append(result, c.Managerinputs[key])
 	}
 
+	if c.ScenarioID != "" && c.Scenario != nil {
+		result = append(result, c.Scenario)
+	}
+
 	return result
+}
+
+func (c *Paperinput) SetToOneReferenceID(name, ID string) error {
+	if name == "scenario" {
+		c.ScenarioID = ID
+		return nil
+	}
+
+	return errors.New("There is no to-one relationship with the name " + name)
 }
 
 func (c *Paperinput) SetToManyReferenceIDs(name string, IDs []string) error {

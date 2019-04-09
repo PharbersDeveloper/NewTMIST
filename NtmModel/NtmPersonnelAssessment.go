@@ -9,8 +9,10 @@ import (
 type PersonnelAssessment struct {
 	ID         string        `json:"-"`
 	Id_        bson.ObjectId `json:"-" bson:"_id"`
-	ScenarioID	string	`json:"scenario-id" bson:"scenario-id"`
 	Time		float64	`json:"time" bson:"time"`
+
+	ScenarioID	string	`json:"-" bson:"scenario-id"`
+	Scenario	*Scenario `json:"-"`
 
 	RepresentativeAbilityIDs    []string      `json:"-" bson:"representative-ability-ids"`
 	RepresentativeAbility 		[]*RepresentativeAbility `json:"-"`
@@ -38,6 +40,10 @@ func (c PersonnelAssessment) GetReferences() []jsonapi.Reference {
 			Type: "actionKpis",
 			Name: "actionKpis",
 		},
+		{
+			Type: "scenarios",
+			Name: "scenario",
+		},
 	}
 }
 
@@ -60,6 +66,14 @@ func (c PersonnelAssessment) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
+	if c.ScenarioID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID: c.ScenarioID,
+			Type: "scenarios",
+			Name: "scenario",
+		})
+	}
+
 	return result
 }
 
@@ -69,7 +83,26 @@ func (c PersonnelAssessment) GetReferencedStructs() []jsonapi.MarshalIdentifier 
 	for key := range c.RepresentativeAbility {
 		result = append(result, c.RepresentativeAbility[key])
 	}
+
+
+	for key := range c.ActionKpi {
+		result = append(result, c.ActionKpi[key])
+	}
+
+	if c.ScenarioID != "" && c.Scenario != nil {
+		result = append(result, c.Scenario)
+	}
+
 	return result
+}
+
+func (c *PersonnelAssessment) SetToOneReferenceID(name, ID string) error {
+	if name == "scenario" {
+		c.ScenarioID = ID
+		return nil
+	}
+
+	return errors.New("There is no to-one relationship with the name " + name)
 }
 
 func (c *PersonnelAssessment) SetToManyReferenceIDs(name string, IDs []string) error {

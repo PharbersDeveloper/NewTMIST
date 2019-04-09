@@ -17,6 +17,7 @@ type NtmScenarioResource struct {
 	NtmProposalStorage		*NtmDataStorage.NtmProposalStorage
 	NtmPaperStorage			*NtmDataStorage.NtmPaperStorage
 	NtmPaperinputStorage	*NtmDataStorage.NtmPaperinputStorage
+	NtmPersonnelAssessmentStorage *NtmDataStorage.NtmPersonnelAssessmentStorage
 }
 
 func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage) *NtmScenarioResource {
@@ -24,6 +25,7 @@ func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage)
 	var ps *NtmDataStorage.NtmProposalStorage
 	var pas *NtmDataStorage.NtmPaperStorage
 	var pis *NtmDataStorage.NtmPaperinputStorage
+	var pass *NtmDataStorage.NtmPersonnelAssessmentStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -35,6 +37,8 @@ func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage)
 			pas = arg.(*NtmDataStorage.NtmPaperStorage)
 		} else if tp.Name() == "NtmPaperinputStorage" {
 			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
+		} else if tp.Name() == "NtmPersonnelAssessmentStorage" {
+			pass = arg.(*NtmDataStorage.NtmPersonnelAssessmentStorage)
 		}
 	}
 	return &NtmScenarioResource{
@@ -42,6 +46,7 @@ func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage)
 		NtmProposalStorage: ps,
 		NtmPaperStorage: pas,
 		NtmPaperinputStorage: pis,
+		NtmPersonnelAssessmentStorage: pass,
 	}
 }
 
@@ -51,6 +56,10 @@ func (c NtmScenarioResource) FindAll(r api2go.Request) (api2go.Responder, error)
 	var result []NtmModel.Scenario
 	proposalsID, psok := r.QueryParams["proposal-id"]
 	_, acok := r.QueryParams["account-id"]
+
+	paperinputsID, piok := r.QueryParams["paperinputsID"]
+	personnelAssessmentsID, paok := r.QueryParams["personnelAssessmentsID"]
+
 
 	if psok && acok {
 
@@ -74,6 +83,32 @@ func (c NtmScenarioResource) FindAll(r api2go.Request) (api2go.Responder, error)
 			result = c.NtmScenarioStorage.GetAll(r, -1, -1)
 		}
 		return &Response{Res: result}, nil
+	}
+
+	if piok {
+		modelRootID := paperinputsID[0]
+		modelRoot, err := c.NtmPaperinputStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := c.NtmScenarioStorage.GetOne(modelRoot.ScenarioID)
+		if err != nil {
+			return &Response{}, err
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if paok {
+		modelRootID := personnelAssessmentsID[0]
+		modelRoot, err := c.NtmPersonnelAssessmentStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := c.NtmScenarioStorage.GetOne(modelRoot.ScenarioID)
+		if err != nil {
+			return &Response{}, err
+		}
+		return &Response{Res: model}, nil
 	}
 
 	result = c.NtmScenarioStorage.GetAll(r, -1, -1)
