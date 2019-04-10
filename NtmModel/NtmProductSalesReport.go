@@ -18,6 +18,7 @@ type ProductSalesReport struct {
 
 	Sales			float64 `json:"sales" bson:"sales"`
 	SalesQuota 		float64	`json:"sales-quota" bson:"sales-quota"`
+	Share 			float64 `json:"share" bson:"share"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interfac

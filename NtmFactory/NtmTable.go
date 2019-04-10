@@ -130,8 +130,8 @@ var NTM_FUNCTION_FACTORY = map[string]interface{}{
 
 	"NtmUserAgentHandler":				NtmHandler.NtmUserAgentHandler{},
 	"NtmAuthUserAgentHandler": 			NtmHandler.NtmUserAgentHandler{},
+	"RefreshAuthHandler":				NtmHandler.AuthHandler{},
 
-	"RefreshTokenHandler":				NtmHandler.RefreshTokenHandler{},
 	"NtmCallRHandler":					NtmHandler.NtmCallRHandler{},
 }
 var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{

@@ -3,7 +3,6 @@ package NtmHandler
 import (
 	"fmt"
 	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
-	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
 	"github.com/PharbersDeveloper/NtmPods/NtmModel"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
@@ -65,10 +64,10 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	w.Header().Add("Content-Type", "application/json")
 
 	// TODO @Alex 这块还要重新调试
-	_, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
-	if err != nil {
-		panic(fmt.Sprintf(err.Error()))
-	}
+	//_, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
+	//if err != nil {
+	//	panic(fmt.Sprintf(err.Error()))
+	//}
 
 	proposalId := r.FormValue("proposal-id")
 	proposalModel, err := NtmDataStorage.NtmProposalStorage{}.NewProposalStorage(mdb).GetOne(proposalId)

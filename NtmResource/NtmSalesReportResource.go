@@ -58,8 +58,6 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	papersID, dcok := r.QueryParams["papersID"]
 
-	//salesConfigsID, scok := r.QueryParams["salesConfigsID"]
-
 	var result []NtmModel.SalesReport
 
 
@@ -76,23 +74,6 @@ func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, err
 
 		return &Response{Res: result}, nil
 	}
-
-	//if scok {
-	//	modelRootID := salesConfigsID[0]
-	//	modelRoot, err := c.NtmSalesConfigStorage.GetOne(modelRootID)
-	//
-	//	if err != nil {
-	//		return &Response{}, nil
-	//	}
-	//
-	//	result, err := c.NtmSalesReportStorage.GetOne(modelRoot.SalesReportID)
-	//
-	//	if err != nil {
-	//		return &Response{}, nil
-	//	}
-	//
-	//	return &Response{Res: result}, nil
-	//}
 
 	models := c.NtmSalesReportStorage.GetAll(r, -1, -1)
 

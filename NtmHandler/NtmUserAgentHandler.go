@@ -1,15 +1,18 @@
 package NtmHandler
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/PharbersDeveloper/NtmPods/AuthDaemon"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
 	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
+	"strings"
 )
 
 type NtmUserAgentHandler struct {
@@ -62,13 +65,38 @@ func (h NtmUserAgentHandler) NewUserAgentHandler(args ...interface{}) NtmUserAge
 
 func (h NtmUserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 
-	config := h.au.ConfigFromURIParameter(r)
-	// 数据用ClientID生成State
-	hexStr := fmt.Sprintf("%x", config.ClientID)
-	fmt.Println(hexStr)
+	//config := h.au.ConfigFromURIParameter(r)
+	//// 数据用ClientID生成State
+	//hexStr := fmt.Sprintf("%x", config.ClientID)
+	//fmt.Println(hexStr)
+	//
+	//u := config.AuthCodeURL("xyz")
+	//http.Redirect(w, r, u, http.StatusFound)
 
-	u := config.AuthCodeURL("xyz")
-	http.Redirect(w, r, u, http.StatusFound)
+	// 拼接转发的URL
+	scheme := "http://"
+	if r.TLS != nil {
+		scheme = "https://"
+	}
+	version := strings.Split(r.URL.Path, "/")[1]
+	resource := fmt.Sprint("192.168.100.116:9096", "/"+version+"/", "ThirdParty", "?", r.URL.RawQuery)
+	mergeURL := strings.Join([]string{scheme, resource}, "")
+
+	// 转发
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", mergeURL, nil)
+	for k, v := range r.Header {
+		req.Header.Add(k, v[0])
+	}
+	response, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Fuck Error")
+	}
+	result, err := ioutil.ReadAll(response.Body)
+	data := map[string]string {}
+	json.Unmarshal(result, &data)
+	http.Redirect(w, r, data["redirect-uri"], http.StatusFound)
+
 	return 0
 }
 
