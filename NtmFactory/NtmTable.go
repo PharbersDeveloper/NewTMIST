@@ -1,7 +1,6 @@
 package NtmFactory
 
 import (
-	"github.com/PharbersDeveloper/NtmPods/AuthDaemon"
 	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
 	"github.com/PharbersDeveloper/NtmPods/NtmHandler"
 	"github.com/PharbersDeveloper/NtmPods/NtmModel"
@@ -141,7 +140,6 @@ var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{
 var NTM_DAEMON_FACTORY = map[string]interface{}{
 	"BmMongodbDaemon": BmMongodb.BmMongodb{},
 	"BmRedisDaemon":   BmRedis.BmRedis{},
-	"AuthClientDaemon": AuthDaemon.AuthClient{},
 }
 
 func (t NtmTable) GetModelByName(name string) interface{} {

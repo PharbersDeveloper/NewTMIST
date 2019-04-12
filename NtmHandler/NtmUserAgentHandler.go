@@ -3,7 +3,6 @@ package NtmHandler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PharbersDeveloper/NtmPods/AuthDaemon"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
@@ -21,13 +20,11 @@ type NtmUserAgentHandler struct {
 	Args       []string
 	db         *BmMongodb.BmMongodb
 	rd         *BmRedis.BmRedis
-	au         *AuthDaemon.AuthClient
 }
 
 func (h NtmUserAgentHandler) NewUserAgentHandler(args ...interface{}) NtmUserAgentHandler {
 	var m *BmMongodb.BmMongodb
 	var r *BmRedis.BmRedis
-	var a *AuthDaemon.AuthClient
 	var hm string
 	var md string
 	var ag []string
@@ -43,9 +40,6 @@ func (h NtmUserAgentHandler) NewUserAgentHandler(args ...interface{}) NtmUserAge
 				if tm.Name() == "BmRedis" {
 					r = dm.(*BmRedis.BmRedis)
 				}
-				if tm.Name() == "AuthClient" {
-					a = dm.(*AuthDaemon.AuthClient)
-				}
 			}
 		} else if i == 1 {
 			md = arg.(string)
@@ -60,18 +54,10 @@ func (h NtmUserAgentHandler) NewUserAgentHandler(args ...interface{}) NtmUserAge
 		}
 	}
 
-	return NtmUserAgentHandler{Method: md, HttpMethod: hm, Args: ag, db: m, rd: r, au: a}
+	return NtmUserAgentHandler{Method: md, HttpMethod: hm, Args: ag, db: m, rd: r }
 }
 
 func (h NtmUserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
-
-	//config := h.au.ConfigFromURIParameter(r)
-	//// 数据用ClientID生成State
-	//hexStr := fmt.Sprintf("%x", config.ClientID)
-	//fmt.Println(hexStr)
-	//
-	//u := config.AuthCodeURL("xyz")
-	//http.Redirect(w, r, u, http.StatusFound)
 
 	// 拼接转发的URL
 	scheme := "http://"
@@ -79,7 +65,7 @@ func (h NtmUserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Re
 		scheme = "https://"
 	}
 	version := strings.Split(r.URL.Path, "/")[1]
-	resource := fmt.Sprint("192.168.100.116:9096", "/"+version+"/", "ThirdParty", "?", r.URL.RawQuery)
+	resource := fmt.Sprint(h.Args[0], "/"+version+"/", "ThirdParty", "?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发

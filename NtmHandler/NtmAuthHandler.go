@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/PharbersDeveloper/NtmPods/AuthDaemon"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
@@ -21,13 +20,11 @@ type AuthHandler struct {
 	Args       []string
 	db         *BmMongodb.BmMongodb
 	rd         *BmRedis.BmRedis
-	au		   *AuthDaemon.AuthClient
 }
 
 func (h AuthHandler) NewAuthHandler(args ...interface{}) AuthHandler {
 	var m *BmMongodb.BmMongodb
 	var r *BmRedis.BmRedis
-	var a *AuthDaemon.AuthClient
 	var hm string
 	var md string
 	var ag []string
@@ -43,9 +40,6 @@ func (h AuthHandler) NewAuthHandler(args ...interface{}) AuthHandler {
 				if tm.Name() == "BmRedis" {
 					r = dm.(*BmRedis.BmRedis)
 				}
-				if tm.Name() == "AuthClient" {
-					a = dm.(*AuthDaemon.AuthClient)
-				}
 			}
 		} else if i == 1 {
 			md = arg.(string)
@@ -60,7 +54,7 @@ func (h AuthHandler) NewAuthHandler(args ...interface{}) AuthHandler {
 		}
 	}
 
-	return AuthHandler{Method: md, HttpMethod: hm, Args: ag, db: m, rd: r, au: a}
+	return AuthHandler{Method: md, HttpMethod: hm, Args: ag, db: m, rd: r}
 }
 
 func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
@@ -71,7 +65,7 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 		scheme = "https://"
 	}
 	version := strings.Split(r.URL.Path, "/")[1]
-	resource := fmt.Sprint("192.168.100.116:9096", "/"+version+"/", "GenerateAccessToken", "?", r.URL.RawQuery)
+	resource := fmt.Sprint(h.Args[0], "/"+version+"/", "GenerateAccessToken", "?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发
@@ -96,16 +90,13 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 }
 
 func (h AuthHandler) PasswordLogin(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
-	//body, err := ioutil.ReadAll(r.Body)
-	//return 0
-
 	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
 	version := strings.Split(r.URL.Path, "/")[1]
-	resource := fmt.Sprint("192.168.100.116:9096", "/"+version+"/", "PasswordLogin", "?", r.URL.RawQuery)
+	resource := fmt.Sprint(h.Args[0], "/"+version+"/", "PasswordLogin", "?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -138,7 +129,7 @@ func (h AuthHandler) RefreshAccessToken(w http.ResponseWriter, r *http.Request, 
 		scheme = "https://"
 	}
 	version := strings.Split(r.URL.Path, "/")[1]
-	resource := fmt.Sprint("192.168.100.116:9096", "/"+version+"/", "RefreshAccessToken", "?", r.URL.RawQuery)
+	resource := fmt.Sprint(h.Args[0], "/"+version+"/", "RefreshAccessToken", "?", r.URL.RawQuery)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发
@@ -168,31 +159,4 @@ func (h AuthHandler) GetHttpMethod() string {
 
 func (h AuthHandler) GetHandlerMethod() string {
 	return h.Method
-}
-
-func (h AuthHandler) RdPushRefreshToken(key string, token *AuthDaemon.PhToken) error {
-	jsonToken, _ := json.Marshal(token)
-
-	client := h.rd.GetRedisClient()
-	defer client.Close()
-
-	pipe := client.Pipeline()
-
-	//pipe
-	pipe.Append(key, string(jsonToken))
-
-	_, err := pipe.Exec()
-	return err
-}
-
-func (h AuthHandler) RdGetValueByKey(key string) (*string, error){
-	client := h.rd.GetRedisClient()
-	defer client.Close()
-
-	result, err := client.Get(key).Result()
-
-	if err != nil {
-		return nil ,err
-	}
-	return &result, nil
 }
