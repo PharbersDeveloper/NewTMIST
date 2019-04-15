@@ -10,7 +10,7 @@ import (
 type SalesReport struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
-	ScenarioId 		string        `json:"-" bson:"scenario-id"`
+	ScenarioID	string `json:"-" bson:"scenario-id"`
 	HospitalSalesReportIDs			[]string	`json:"-" bson:"hospital-sales-report-ids"`
 	RepresentativeSalesReportIDs	[]string  	`json:"-" bson:"representative-sales-report-ids"`
 	ProductSalesReportIDs			[]string	`json:"-" bson:"product-sales-report-ids"`
@@ -18,6 +18,7 @@ type SalesReport struct {
 	HospitalSalesReport 		[]*HospitalSalesReport			`json:"-"`
 	RepresentativeSalesReport	[]*RepresentativeSalesReport	`json:"-"`
 	ProductSalesReport			[]*ProductSalesReport			`json:"-"`
+	Scenario	*Scenario `json:"-"`
 
 	Time 						float64 `json:"time" bson:"time"`
 }
@@ -48,6 +49,10 @@ func (u SalesReport) GetReferences() []jsonapi.Reference {
 		{
 			Type: "productSalesReports",
 			Name: "productSalesReports",
+		},
+		{
+			Type: "scenarios",
+			Name: "scenario",
 		},
 	}
 }
@@ -80,6 +85,16 @@ func (u SalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 			Name: "productSalesReports",
 		})
 	}
+
+	if u.ScenarioID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID: u.ScenarioID,
+			Type: "scenarios",
+			Name: "scenario",
+		})
+	}
+
+
 	return result
 }
 
@@ -99,7 +114,20 @@ func (u SalesReport) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 		result = append(result, u.ProductSalesReport[key])
 	}
 
+	if u.ScenarioID != "" && u.Scenario != nil {
+		result = append(result, u.Scenario)
+	}
+
 	return result
+}
+
+func (c *SalesReport) SetToOneReferenceID(name, ID string) error {
+	if name == "scenario" {
+		c.ScenarioID = ID
+		return nil
+	}
+
+	return errors.New("There is no to-one relationship with the name " + name)
 }
 
 func (u *SalesReport) SetToManyReferenceIDs(name string, IDs []string) error {
@@ -113,6 +141,7 @@ func (u *SalesReport) SetToManyReferenceIDs(name string, IDs []string) error {
 		u.ProductSalesReportIDs = IDs
 		return nil
 	}
+
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 

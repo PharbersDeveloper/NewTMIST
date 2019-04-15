@@ -18,6 +18,7 @@ type NtmScenarioResource struct {
 	NtmPaperStorage			*NtmDataStorage.NtmPaperStorage
 	NtmPaperinputStorage	*NtmDataStorage.NtmPaperinputStorage
 	NtmPersonnelAssessmentStorage *NtmDataStorage.NtmPersonnelAssessmentStorage
+	NtmSalesReportStorage		*NtmDataStorage.NtmSalesReportStorage
 }
 
 func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage) *NtmScenarioResource {
@@ -26,6 +27,7 @@ func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage)
 	var pas *NtmDataStorage.NtmPaperStorage
 	var pis *NtmDataStorage.NtmPaperinputStorage
 	var pass *NtmDataStorage.NtmPersonnelAssessmentStorage
+	var srs *NtmDataStorage.NtmSalesReportStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -39,6 +41,8 @@ func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage)
 			pis = arg.(*NtmDataStorage.NtmPaperinputStorage)
 		} else if tp.Name() == "NtmPersonnelAssessmentStorage" {
 			pass = arg.(*NtmDataStorage.NtmPersonnelAssessmentStorage)
+		} else if tp.Name() == "NtmSalesReportStorage" {
+			srs = arg.(*NtmDataStorage.NtmSalesReportStorage)
 		}
 	}
 	return &NtmScenarioResource{
@@ -47,6 +51,7 @@ func (c NtmScenarioResource) NewScenarioResource(args []BmDataStorage.BmStorage)
 		NtmPaperStorage: pas,
 		NtmPaperinputStorage: pis,
 		NtmPersonnelAssessmentStorage: pass,
+		NtmSalesReportStorage: srs,
 	}
 }
 
@@ -59,6 +64,7 @@ func (c NtmScenarioResource) FindAll(r api2go.Request) (api2go.Responder, error)
 
 	paperinputsID, piok := r.QueryParams["paperinputsID"]
 	personnelAssessmentsID, paok := r.QueryParams["personnelAssessmentsID"]
+	salesReportsID, srok := r.QueryParams["salesReportsID"]
 
 
 	if psok && acok {
@@ -101,6 +107,19 @@ func (c NtmScenarioResource) FindAll(r api2go.Request) (api2go.Responder, error)
 	if paok {
 		modelRootID := personnelAssessmentsID[0]
 		modelRoot, err := c.NtmPersonnelAssessmentStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := c.NtmScenarioStorage.GetOne(modelRoot.ScenarioID)
+		if err != nil {
+			return &Response{}, err
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if srok {
+		modelRootID := salesReportsID[0]
+		modelRoot, err := c.NtmSalesReportStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, err
 		}

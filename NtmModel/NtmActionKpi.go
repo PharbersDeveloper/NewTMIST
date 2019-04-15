@@ -9,7 +9,6 @@ import (
 type ActionKpi struct {
 	ID						string        `json:"-"`
 	Id_						bson.ObjectId `json:"-" bson:"_id"`
-	ScenarioID				string	`json:"-" bson:"scenario-id"`
 	TargetNumber			float64	`json:"target-number" bson:"target-number"`
 	TargetCoverage			float64	`json:"target-coverage" bson:"target-coverage"`
 	HighLevelFrequency		float64	`json:"high-level-frequency" bson:"high-level-frequency"`

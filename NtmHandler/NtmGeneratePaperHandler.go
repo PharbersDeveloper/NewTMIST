@@ -70,6 +70,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	//}
 
 	proposalId := r.FormValue("proposal-id")
+	accountID := r.FormValue("account-id")
 	proposalModel, err := NtmDataStorage.NtmProposalStorage{}.NewProposalStorage(mdb).GetOne(proposalId)
 
 
@@ -77,7 +78,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 		out NtmModel.Paper
 		paperId string
 		)
-	cond := bson.M{"proposal-id": proposalId}
+	cond := bson.M{"proposal-id": proposalId, "account-id": accountID}
 
 	err = h.db.FindOneByCondition(&NtmModel.Paper{}, &out, cond)
 

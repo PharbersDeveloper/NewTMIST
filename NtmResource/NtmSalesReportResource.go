@@ -18,6 +18,7 @@ type NtmSalesReportResource struct {
 	NtmProductSalesReportStorage        *NtmDataStorage.NtmProductSalesReportStorage
 	NtmPaperStorage						*NtmDataStorage.NtmPaperStorage
 	NtmSalesConfigStorage				*NtmDataStorage.NtmSalesConfigStorage
+	NtmScenarioStorage					*NtmDataStorage.NtmScenarioStorage
 }
 
 func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmStorage) *NtmSalesReportResource {
@@ -27,6 +28,7 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 	var psr *NtmDataStorage.NtmProductSalesReportStorage
 	var ps	*NtmDataStorage.NtmPaperStorage
 	var sc	*NtmDataStorage.NtmSalesConfigStorage
+	var ss	*NtmDataStorage.NtmScenarioStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -42,6 +44,8 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 			ps = arg.(*NtmDataStorage.NtmPaperStorage)
 		} else if tp.Name() == "NtmSalesConfigStorage" {
 			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
+		} else if tp.Name() == "NtmScenarioStorage" {
+			ss =arg.(*NtmDataStorage.NtmScenarioStorage)
 		}
 	}
 	return &NtmSalesReportResource{
@@ -51,6 +55,7 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 		NtmProductSalesReportStorage: psr,
 		NtmPaperStorage: ps,
 		NtmSalesConfigStorage: sc,
+		NtmScenarioStorage: ss,
 	}
 }
 
@@ -108,6 +113,10 @@ func (c NtmSalesReportResource) FindOne(ID string, r api2go.Request) (api2go.Res
 		modelRoot.ProductSalesReport = append(modelRoot.ProductSalesReport, productSalesReport)
 	}
 
+	if modelRoot.ScenarioID != "" {
+		ScenarioResult, _ := c.NtmScenarioStorage.GetOne(modelRoot.ScenarioID)
+		modelRoot.Scenario = &ScenarioResult
+	}
 	return &Response{Res: modelRoot}, err
 }
 
