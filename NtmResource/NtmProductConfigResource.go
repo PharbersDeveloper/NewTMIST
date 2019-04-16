@@ -52,8 +52,7 @@ func (s NtmProductConfigResource) FindAll(r api2go.Request) (api2go.Responder, e
 		if err != nil {
 			return &Response{}, err
 		}
-		result = append(result, model)
-		return &Response{Res: result}, nil
+		return &Response{Res: model}, nil
 	}
 
 	models := s.NtmProductConfigStorage.GetAll(r, -1, -1)

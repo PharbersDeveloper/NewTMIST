@@ -130,6 +130,10 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 
 	models := s.NtmResourceConfigStorage.GetAll(r, -1, -1)
 
+	if len(models) == 1 {
+		return &Response{Res: models[0]}, nil
+	}
+
 	for _, model := range models {
 		result = append(result, *model)
 	}
