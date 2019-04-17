@@ -1,8 +1,6 @@
 package NtmHandler
 
 import (
-	"fmt"
-	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -59,18 +57,18 @@ func (h NtmGetUseableProposalsHandler) NewGetUseableProposalsHandler(args ...int
 
 func (h NtmGetUseableProposalsHandler) GetUseableProposals(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
 
-	token, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
-	if err != nil {
-		panic(fmt.Sprintf(err.Error()))
-		return 1
-	}
+	//token, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
+	//if err != nil {
+	//	panic(fmt.Sprintf(err.Error()))
+	//	return 1
+	//}
 
 	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-	toUrl := strings.Replace(r.URL.Path, "GetUseableProposals", h.Args[0], -1) + "?account-id=" + token.UserID
+	toUrl := strings.Replace(r.URL.Path, "GetUseableProposals", h.Args[0], -1) + "?account-id=5c4552455ee2dd7c36a94a9e" //+ token.UserID
 	useableProposalURL := strings.Join([]string{scheme, r.Host, toUrl}, "")
 
 	// 转发
