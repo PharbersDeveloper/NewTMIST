@@ -10,7 +10,7 @@ type ProductConfig struct {
 	ID  string        `json:"-"`
 	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	ProductType      string  `json:"product-type" bson:"product-type"`
+	ProductType      int `json:"product-type" bson:"product-type"`
 	PriceType        string  `json:"price-type" bson:"price-type"`
 	ReferencePrice   float64 `json:"reference-price" bson:"reference-price"`
 	CostPrice        float64 `json:"cost-price" bson:"cost-price"`

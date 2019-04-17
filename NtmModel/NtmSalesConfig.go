@@ -15,6 +15,7 @@ type SalesConfig struct {
 	AccessStatus   	string  `json:"access-status" bson:"access-status"`
 	//Sales 		float64 `json:"sales"`
 	//Potential     	float64 `json:"potential"`
+	SalesTarget		float64	`json:"sales-target" bson:"sales-target"`
 
 	DestConfigID    string   `json:"-" bson:"dest-config-id"`
 	GoodsConfigID	string 	 `json:"-" bson:"goods-config-id"`

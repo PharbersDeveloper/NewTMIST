@@ -52,8 +52,7 @@ func (s NtmRepresentativeConfigResource) FindAll(r api2go.Request) (api2go.Respo
 		if err != nil {
 			return &Response{}, err
 		}
-		result = append(result, model)
-		return &Response{Res: result}, nil
+		return &Response{Res: model}, nil
 	}
 
 	models := s.NtmRepresentativeConfigStorage.GetAll(r, -1, -1)

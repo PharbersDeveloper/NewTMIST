@@ -65,8 +65,7 @@ func (s NtmRepresentativeResource) FindAll(r api2go.Request) (api2go.Responder, 
 		if err != nil {
 			return &Response{}, err
 		}
-		result = append(result, model)
-		return &Response{Res: result}, nil
+		return &Response{Res: model}, nil
 	}
 
 	if akok {
