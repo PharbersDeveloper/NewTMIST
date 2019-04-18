@@ -58,9 +58,9 @@ func (ctm NtmCheckTokenMiddleware) NewCheckTokenMiddleware(args ...interface{}) 
 }
 
 func (ctm NtmCheckTokenMiddleware) DoMiddleware(c api2go.APIContexter, w http.ResponseWriter, r *http.Request) {
-	//if _, err := ctm.CheckTokenFormFunction(w, r); err != nil {
-	//	panic(err.Error())
-	//}
+	if _, err := ctm.CheckTokenFormFunction(w, r); err != nil {
+		panic(err.Error())
+	}
 }
 
 // TODO @Alex这块需要重构
