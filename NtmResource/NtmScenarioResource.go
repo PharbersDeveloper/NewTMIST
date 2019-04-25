@@ -74,14 +74,22 @@ func (c NtmScenarioResource) FindAll(r api2go.Request) (api2go.Responder, error)
 		r.QueryParams["ids"] = paperModel.InputIDs
 		r.QueryParams["orderby"] = []string{"time"}
 		paperInputModel := c.NtmPaperinputStorage.GetAll(r, -1,-1)
-		lastPaperInputModel := paperInputModel[len(paperInputModel)-1:][0]
-		lastPhase := lastPaperInputModel.Phase
+		var (
+			lastPhase int
+
+		)
+		if paperInputModel != nil {
+			lastPaperInputModel := paperInputModel[len(paperInputModel)-1:][0]
+			lastPhase = lastPaperInputModel.Phase
+		} else {
+			lastPhase = 1
+		}
 		totalPhase := proposalModel.TotalPhase
 
 		if paperModel.InputState == 1 {
 			r.QueryParams["phase"] = []string{strconv.Itoa(lastPhase)}
 			result = c.NtmScenarioStorage.GetAll(r, -1, -1)
-		} else if paperModel.InputState == 2 && lastPaperInputModel.Phase != totalPhase {
+		} else if paperModel.InputState == 2 && lastPhase != totalPhase {
 			r.QueryParams["phase"] = []string{strconv.Itoa(lastPhase + 1)}
 			result = c.NtmScenarioStorage.GetAll(r, -1, -1)
 		} else {

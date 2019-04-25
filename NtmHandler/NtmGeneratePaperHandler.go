@@ -71,8 +71,12 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 
 	proposalId := r.FormValue("proposal-id")
 	accountID := r.FormValue("account-id")
-	proposalModel, err := NtmDataStorage.NtmProposalStorage{}.NewProposalStorage(mdb).GetOne(proposalId)
 
+	if len(proposalId) == 0 || len(accountID) == 0 {
+		panic("生成Paper的参数不完整")
+		return 1
+	}
+	proposalModel, err := NtmDataStorage.NtmProposalStorage{}.NewProposalStorage(mdb).GetOne(proposalId)
 
 	var (
 		out NtmModel.Paper
