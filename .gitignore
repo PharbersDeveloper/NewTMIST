@@ -6,3 +6,5 @@ NtmPods
 tmp/*
 resource/*
 dev-config/
+
+Ntm\.go
