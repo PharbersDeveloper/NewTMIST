@@ -1,6 +1,7 @@
 package NtmHandler
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
@@ -56,16 +57,17 @@ func (h NtmCallRHandler) NewCallRHandler(args ...interface{}) NtmCallRHandler {
 }
 
 func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, _ httprouter.Params) int {
-	//url.ParseQuery(r.URL.RawQuery)
-
 	w.Header().Add("Content-Type", "application/json")
+	params := map[string]string{}
+	res, _ := ioutil.ReadAll(r.Body)
+	json.Unmarshal(res, &params)
 
 	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-	resource := fmt.Sprint(h.Args[0], "/", h.Args[1], "/", "000000000000")
+	resource := fmt.Sprint(h.Args[0], "/", h.Args[1], "/", params["proposal-id"], "/", params["account-id"])
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发
@@ -80,11 +82,26 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
+
 	if err != nil {
 		return 1
 	}
 
-	fmt.Println(body)
+	resultBody := string(body)
+
+	result := map[string]interface{}{}
+
+	enc := json.NewEncoder(w)
+
+	if strings.Contains(resultBody, "Done") {
+		result["status"] = "success"
+		result["msg"] = "计算成功"
+		enc.Encode(result)
+	} else {
+		result["status"] = "error"
+		result["msg"] = "计算失败"
+		enc.Encode(result)
+	}
 
 	return 0
 }

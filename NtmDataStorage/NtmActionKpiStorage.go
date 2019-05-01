@@ -1,9 +1,10 @@
 package NtmDataStorage
 
 import (
+	"Ntm/NtmModel"
 	"fmt"
 	"errors"
-	"github.com/PharbersDeveloper/NtmPods/NtmModel"
+
 	"net/http"
 
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"

@@ -76,7 +76,7 @@ func (h AuthHandler) GenerateAccessToken(w http.ResponseWriter, r *http.Request,
 	}
 	response, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Fuck Error")
+		fmt.Println("Error")
 	}
 	result, err := ioutil.ReadAll(response.Body)
 	data := map[string]interface{}{}

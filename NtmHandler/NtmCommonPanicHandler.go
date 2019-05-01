@@ -1,8 +1,8 @@
 package NtmHandler
 
 import (
+	"Ntm/NtmPanic"
 	"fmt"
-	"github.com/PharbersDeveloper/NtmPods/NtmPanic"
 	"net/http"
 )
 

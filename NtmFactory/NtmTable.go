@@ -1,13 +1,13 @@
 package NtmFactory
 
 import (
-	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
-	"github.com/PharbersDeveloper/NtmPods/NtmHandler"
-	"github.com/PharbersDeveloper/NtmPods/NtmModel"
-	"github.com/PharbersDeveloper/NtmPods/NtmResource"
+	"Ntm/NtmDataStorage"
+	"Ntm/NtmHandler"
+	"Ntm/NtmMiddleware"
+	"Ntm/NtmResource"
+	"Ntm/NtmModel"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmRedis"
-	"github.com/PharbersDeveloper/NtmPods/NtmMiddleware"
 )
 
 type NtmTable struct{}

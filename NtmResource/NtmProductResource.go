@@ -2,8 +2,8 @@ package NtmResource
 
 import (
 	"errors"
-	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
-	"github.com/PharbersDeveloper/NtmPods/NtmModel"
+	"Ntm/NtmDataStorage"
+	"Ntm/NtmModel"
 	"github.com/alfredyang1986/BmServiceDef/BmDataStorage"
 	"github.com/manyminds/api2go"
 	"net/http"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons/BmMongodb"
-	"github.com/PharbersDeveloper/NtmPods/NtmModel"
+	"Ntm/NtmModel"
 	"github.com/manyminds/api2go"
 	"net/http"
 )

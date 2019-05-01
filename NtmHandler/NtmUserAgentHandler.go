@@ -81,7 +81,15 @@ func (h NtmUserAgentHandler) GenerateUserAgent(w http.ResponseWriter, r *http.Re
 	result, err := ioutil.ReadAll(response.Body)
 	data := map[string]string {}
 	json.Unmarshal(result, &data)
-	http.Redirect(w, r, data["redirect-uri"], http.StatusFound)
+
+	res, tok := data["type"]
+	if tok && res == "url" {
+		http.Redirect(w, r, data["redirect-uri"], http.StatusFound)
+	} else {
+
+	}
+
+	//http.Redirect(w, r, data["redirect-uri"], http.StatusFound)
 
 	return 0
 }

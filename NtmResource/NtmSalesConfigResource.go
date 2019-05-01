@@ -2,8 +2,8 @@ package NtmResource
 
 import (
 	"errors"
-	"github.com/PharbersDeveloper/NtmPods/NtmDataStorage"
-	"github.com/PharbersDeveloper/NtmPods/NtmModel"
+	"Ntm/NtmDataStorage"
+	"Ntm/NtmModel"
 	"net/http"
 	"reflect"
 
