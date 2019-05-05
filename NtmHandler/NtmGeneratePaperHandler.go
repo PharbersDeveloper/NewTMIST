@@ -94,10 +94,11 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 		paperId = out.ID
 	} else {
 		paperModel := NtmModel.Paper{
-			AccountID: "5c4552455ee2dd7c36a94a9e", //token.UserID,
+			AccountID: accountID, //token.UserID,
 			ProposalID: proposalModel.ID,
 			Name: proposalModel.Name,
 			Describe: proposalModel.Describe,
+			TotalPhase: proposalModel.TotalPhase,
 			StartTime: time.Now().Unix(),
 			EndTime: 0,
 			InputState: 0,

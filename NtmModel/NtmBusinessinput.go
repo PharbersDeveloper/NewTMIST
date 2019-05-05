@@ -107,6 +107,17 @@ func (u *Businessinput) SetToOneReferenceID(name, ID string) error {
 		u.ResourceConfigId = ID
 		return nil
 	}
+
+	if name == "destConfig" {
+		u.DestConfigId = ID
+		return nil
+	}
+
+	if name == "goodsConfig" {
+		u.GoodsConfigId = ID
+		return nil
+	}
+
 	return errors.New("There is no to-one relationship with the name " + name)
 }
 

@@ -34,7 +34,7 @@ func (s NtmRepresentativeinputResource) NewRepresentativeinputResource(args []Bm
 }
 
 func (s NtmRepresentativeinputResource) FindAll(r api2go.Request) (api2go.Responder, error) {
-	PaperinputsID, piok := r.QueryParams["PaperinputsID"]
+	PaperinputsID, piok := r.QueryParams["paperinputsID"]
 	var result []*NtmModel.Representativeinput
 
 	if piok {
