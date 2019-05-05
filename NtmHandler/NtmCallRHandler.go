@@ -60,14 +60,34 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 	w.Header().Add("Content-Type", "application/json")
 	params := map[string]string{}
 	res, _ := ioutil.ReadAll(r.Body)
+	result := map[string]interface{}{}
+	enc := json.NewEncoder(w)
 	json.Unmarshal(res, &params)
+
+	proposalId, pok := params["proposal-id"]
+	accountId, aok := params["account-id"]
+
+	if !pok {
+		result["status"] = "error"
+		result["msg"] = "计算失败，proposal-id参数缺失"
+		enc.Encode(result)
+		return 1
+	}
+
+	if !aok {
+		result["status"] = "error"
+		result["msg"] = "计算失败，account-id参数缺失"
+		enc.Encode(result)
+		return 1
+	}
+
 
 	// 拼接转发的URL
 	scheme := "http://"
 	if r.TLS != nil {
 		scheme = "https://"
 	}
-	resource := fmt.Sprint(h.Args[0], "/", h.Args[1], "/", params["proposal-id"], "/", params["account-id"])
+	resource := fmt.Sprint(h.Args[0], "/", h.Args[1], "/",proposalId, "/", accountId)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
 	// 转发
@@ -88,10 +108,6 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 	}
 
 	resultBody := string(body)
-
-	result := map[string]interface{}{}
-
-	enc := json.NewEncoder(w)
 
 	if strings.Contains(resultBody, "Done") {
 		result["status"] = "success"
