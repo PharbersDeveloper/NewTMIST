@@ -19,7 +19,7 @@ type Businessinput struct {
 	ResourceConfigId string        `json:"resource-config-id" bson:"resource-config-id"`
 	ResourceConfig   *ResourceConfig `json:"-"`
 	GoodsConfigId 	 string		   `json:"goods-config-id" bson:"goods-config-id"`
-	GoodsConfig 	*GoodsConfig	`json:"-"`
+	GoodsConfig 	 *GoodsConfig	`json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

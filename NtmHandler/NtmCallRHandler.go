@@ -107,18 +107,21 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 		return 1
 	}
 
-	resultBody := string(body)
+	rCalcResultBody := map[string]string{}
+	json.Unmarshal(body, &rCalcResultBody)
 
-	if strings.Contains(resultBody, "Done") {
-		result["status"] = "success"
+	resultBody, sok := rCalcResultBody["status"]
+
+	if sok && resultBody == "Success" {
+		result["status"] = "Success"
 		result["msg"] = "计算成功"
 		enc.Encode(result)
 	} else {
-		result["status"] = "error"
-		result["msg"] = "计算失败"
-		enc.Encode(result)
+		//result["status"] = "Error"
+		//result["msg"] = "计算失败"
+		//enc.Encode(result)
+		panic("计算失败")
 	}
-
 	return 0
 }
 
