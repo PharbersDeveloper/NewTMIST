@@ -82,8 +82,6 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 		out NtmModel.Paper
 		paperId string
 		)
-	// TODO @Alex 现在没对接整体系统，所以先写死
-	accountID = "5c4552455ee2dd7c36a94a9e"
 	cond := bson.M{"proposal-id": proposalId, "account-id": accountID}
 
 	err = h.db.FindOneByCondition(&NtmModel.Paper{}, &out, cond)
