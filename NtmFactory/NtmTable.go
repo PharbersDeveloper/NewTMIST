@@ -121,16 +121,7 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
 	"NtmCommonPanicHandle":         	NtmHandler.CommonPanicHandle{},
-	"NtmGetUseableProposalsHandler": 	NtmHandler.NtmGetUseableProposalsHandler{},
 	"NtmGeneratePaperHandler": 			NtmHandler.NtmGeneratePaperHandler{},
-
-	"AuthHandler":						NtmHandler.AuthHandler{},
-	"PasswordAuthHandler":				NtmHandler.AuthHandler{},
-
-	"NtmUserAgentHandler":				NtmHandler.NtmUserAgentHandler{},
-	"NtmAuthUserAgentHandler": 			NtmHandler.NtmUserAgentHandler{},
-	"RefreshAuthHandler":				NtmHandler.AuthHandler{},
-
 	"NtmCallRHandler":					NtmHandler.NtmCallRHandler{},
 }
 var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{
