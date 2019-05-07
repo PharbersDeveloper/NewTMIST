@@ -16,11 +16,6 @@ type HospitalConfig struct {
 	SpaceBelongs  string  `json:"space-belongs" bson:"space-belongs"`
 	Ability2Pay   string  `json:"ability-to-pay" bson:"ability-to-pay"`
 
-	// 这三个字段需要提出来
-	AccessStatus   	string  `json:"access-status" bson:"access-status"`
-	LastYearSales 	float64 `json:"last-year-sales" bson:"last-year-sales"`
-	Potential     	float64 `json:"potential" bson:"potential"`
-
 	Hospital   *Hospital `json:"-"`
 	HospitalID string    `json:"-" bson:"hospital-id"`
 

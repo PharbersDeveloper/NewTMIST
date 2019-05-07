@@ -15,7 +15,6 @@ type Representativeinput struct {
 	PerformanceTraining      float64       `json:"performance-training" bson:"performance-training"`
 	VocationalDevelopment    float64       `json:"vocational-development" bson:"vocational-development"`
 	AssistAccessTime         float64       `json:"assist-access-time" bson:"assist-access-time"`
-	TeamMeeting              float64       `json:"team-meeting" bson:"team-meeting"`
 	AbilityCoach             float64       `json:"ability-coach" bson:"ability-coach"`
 	ResourceConfigId         string        `json:"resource-config-id" bson:"resource-config-id"`
 	ResourceConfig 			 *ResourceConfig `json:"-"`

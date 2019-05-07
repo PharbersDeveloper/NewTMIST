@@ -24,6 +24,7 @@ type HospitalSalesReport struct {
 	SalesQuota 		float64	`json:"sales-quota" bson:"sales-quota"`
 	Share 			float64 `json:"share" bson:"share"`
 	QuotaAchievement float64 `json:"quota-achievement" bson:"quota-achievement"`
+	SalesGrowth		float64	`json:"sales-growth" bson:"sales-growth"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
