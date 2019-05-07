@@ -72,7 +72,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	proposalId := r.FormValue("proposal-id")
 	accountID := r.FormValue("account-id")
 
-	if len(proposalId) == 0 || len(accountID) == 0 {
+	if len(proposalId) == 0 && proposalId != "undefined" || len(accountID) == 0 && accountID != "undefined" {
 		panic("生成Paper的参数不完整")
 		return 1
 	}
@@ -97,7 +97,7 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 			Name: proposalModel.Name,
 			Describe: proposalModel.Describe,
 			TotalPhase: proposalModel.TotalPhase,
-			StartTime: time.Now().Unix(),
+			StartTime: time.Now().UnixNano(),
 			EndTime: 0,
 			InputState: 0,
 			InputIDs: proposalModel.InputIDs,
