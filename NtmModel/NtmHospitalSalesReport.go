@@ -11,10 +11,12 @@ type HospitalSalesReport struct {
 	ID         		string        `json:"-"`
 	Id_        		bson.ObjectId `json:"-" bson:"_id"`
 	DestConfigID	string	`json:"-" bson:"dest-config-id"`
+	ResourceConfigID	string	`json:"-" bson:"resource-config-id"`
 	GoodsConfigID	string  `json:"-" bson:"goods-config-id"`
 
 	DestConfig		*DestConfig	`json:"-"`
 	GoodsConfig 	*GoodsConfig `json:"-"`
+	ResourceConfig	*ResourceConfig	`json:"-"`
 
 	HospitalName 	string `json:"hospital-name" bson:"hospital-name"`
 	ProductName		string `json:"product-name" bson:"product-name"`
@@ -50,6 +52,10 @@ func (u HospitalSalesReport) GetReferences() []jsonapi.Reference {
 			Type: "goodsConfigs",
 			Name: "goodsConfig",
 		},
+		{
+			Type: "resourceConfigs",
+			Name: "resourceConfig",
+		},
 	}
 }
 
@@ -72,6 +78,14 @@ func (u HospitalSalesReport) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
+	if u.ResourceConfigID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   u.ResourceConfigID,
+			Type: "resourceConfigs",
+			Name: "resourceConfig",
+		})
+	}
+
 	return result
 }
 
@@ -87,6 +101,10 @@ func (u HospitalSalesReport) GetReferencedStructs() []jsonapi.MarshalIdentifier 
 		result = append(result, u.GoodsConfig)
 	}
 
+	if u.ResourceConfigID != "" && u.ResourceConfig != nil {
+		result = append(result, u.ResourceConfig)
+	}
+
 	return result
 }
 
@@ -97,6 +115,10 @@ func (u *HospitalSalesReport) SetToOneReferenceID(name, ID string) error {
 	}
 	if name == "goodsConfig" {
 		u.GoodsConfigID = ID
+		return nil
+	}
+	if name == "resourceConfig" {
+		u.ResourceConfigID = ID
 		return nil
 	}
 

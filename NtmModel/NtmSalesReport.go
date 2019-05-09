@@ -8,9 +8,9 @@ import (
 
 // SalesReport Info
 type SalesReport struct {
-	ID         		string        `json:"-"`
-	Id_        		bson.ObjectId `json:"-" bson:"_id"`
-	ScenarioID	string `json:"-" bson:"scenario-id"`
+	ID         						string        `json:"-"`
+	Id_        						bson.ObjectId `json:"-" bson:"_id"`
+	ScenarioID						string `json:"-" bson:"scenario-id"`
 	HospitalSalesReportIDs			[]string	`json:"-" bson:"hospital-sales-report-ids"`
 	RepresentativeSalesReportIDs	[]string  	`json:"-" bson:"representative-sales-report-ids"`
 	ProductSalesReportIDs			[]string	`json:"-" bson:"product-sales-report-ids"`
@@ -18,7 +18,7 @@ type SalesReport struct {
 	HospitalSalesReport 		[]*HospitalSalesReport			`json:"-"`
 	RepresentativeSalesReport	[]*RepresentativeSalesReport	`json:"-"`
 	ProductSalesReport			[]*ProductSalesReport			`json:"-"`
-	Scenario	*Scenario `json:"-"`
+	Scenario					*Scenario `json:"-"`
 
 	Time 						float64 `json:"time" bson:"time"`
 }

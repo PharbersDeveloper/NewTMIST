@@ -19,6 +19,7 @@ type NtmResourceConfigResource struct {
 	NtmRepresentativeinputStorage	*NtmDataStorage.NtmRepresentativeinputStorage
 	NtmBusinessinputStorage			*NtmDataStorage.NtmBusinessinputStorage
 	NtmRepresentativeSalesReportStorage	*NtmDataStorage.NtmRepresentativeSalesReportStorage
+	NtmHospitalSalesReportStorage		*NtmDataStorage.NtmHospitalSalesReportStorage
 }
 
 func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorage.BmStorage) *NtmResourceConfigResource {
@@ -29,6 +30,7 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 	var ris *NtmDataStorage.NtmRepresentativeinputStorage
 	var bis *NtmDataStorage.NtmBusinessinputStorage
 	var rsr *NtmDataStorage.NtmRepresentativeSalesReportStorage
+	var hsrs *NtmDataStorage.NtmHospitalSalesReportStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -46,6 +48,8 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 			bis = arg.(*NtmDataStorage.NtmBusinessinputStorage)
 		} else if tp.Name() == "NtmRepresentativeSalesReportStorage" {
 			rsr = arg.(*NtmDataStorage.NtmRepresentativeSalesReportStorage)
+		} else if tp.Name() == "NtmHospitalSalesReportStorage" {
+			hsrs = arg.(*NtmDataStorage.NtmHospitalSalesReportStorage)
 		}
 	}
 	return &NtmResourceConfigResource{
@@ -56,6 +60,7 @@ func (s NtmResourceConfigResource) NewResourceConfigResource(args []BmDataStorag
 		NtmRepresentativeinputStorage: ris,
 		NtmBusinessinputStorage: bis,
 		NtmRepresentativeSalesReportStorage: rsr,
+		NtmHospitalSalesReportStorage: hsrs,
 	}
 }
 
@@ -65,6 +70,7 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 	representativeinputsID, tok := r.QueryParams["representativeinputsID"]
 	businessinputsID, bok := r.QueryParams["businessinputsID"]
 	representativeSalesReportsID, rsrok := r.QueryParams["representativeSalesReportsID"]
+	hospitalSalesReportsID, hsrok := r.QueryParams["hospitalSalesReportsID"]
 
 	if tcok {
 		modelRootID := teamConfigsID[0]
@@ -126,6 +132,23 @@ func (s NtmResourceConfigResource) FindAll(r api2go.Request) (api2go.Responder, 
 		}
 
 		return &Response{Res: result}, nil
+	}
+
+	if hsrok {
+		modelRootID := hospitalSalesReportsID[0]
+		modelRoot, err := s.NtmHospitalSalesReportStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		result, err := s.NtmResourceConfigStorage.GetOne(modelRoot.ResourceConfigID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		return &Response{Res: result}, nil
+
 	}
 
 	models := s.NtmResourceConfigStorage.GetAll(r, -1, -1)

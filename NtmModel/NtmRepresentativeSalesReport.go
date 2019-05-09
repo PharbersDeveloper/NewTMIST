@@ -13,7 +13,7 @@ type RepresentativeSalesReport struct {
 	ResourceConfigID	string	`json:"-" bson:"resource-config-id"`
 	GoodsConfigID	string  `json:"-" bson:"goods-config-id"`
 
-	ResourceConfig		*DestConfig	`json:"-"`
+	ResourceConfig		*ResourceConfig	`json:"-"`
 	GoodsConfig 		*GoodsConfig `json:"-"`
 
 	RepresentativeName string `json:"representative-name" bson:"representative-name"`
