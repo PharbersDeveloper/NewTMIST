@@ -90,6 +90,8 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 	resource := fmt.Sprint(h.Args[0], "/", h.Args[1], "/",proposalId, "/", accountId)
 	mergeURL := strings.Join([]string{scheme, resource}, "")
 
+	fmt.Println(mergeURL)
+
 	// 转发
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", mergeURL, nil)
@@ -109,6 +111,8 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 
 	rCalcResultBody := map[string]string{}
 	json.Unmarshal(body, &rCalcResultBody)
+
+	fmt.Println(rCalcResultBody)
 
 	resultBody, sok := rCalcResultBody["status"]
 
