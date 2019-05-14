@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type NtmCallRHandler struct {
@@ -64,6 +65,8 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 	enc := json.NewEncoder(w)
 	json.Unmarshal(res, &params)
 
+	tc := time.After(time.Second * 2)
+
 	proposalId, pok := params["proposal-id"]
 	accountId, aok := params["account-id"]
 
@@ -115,14 +118,18 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 
 	resultBody, sok := rCalcResultBody["status"]
 
+
+
 	if sok && resultBody == "Success" {
 		result["status"] = "Success"
 		result["msg"] = "计算成功"
+		<-tc
 		enc.Encode(result)
 	} else {
 		//result["status"] = "Error"
 		//result["msg"] = "计算失败"
 		//enc.Encode(result)
+		<-tc
 		panic("计算失败")
 	}
 	return 0
