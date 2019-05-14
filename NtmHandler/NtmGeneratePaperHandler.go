@@ -2,7 +2,6 @@ package NtmHandler
 
 import (
 	"Ntm/NtmDataStorage"
-	"Ntm/NtmMiddleware"
 	"Ntm/NtmModel"
 	"fmt"
 	"github.com/alfredyang1986/BmServiceDef/BmDaemons"
@@ -64,16 +63,15 @@ func (h NtmGeneratePaperHandler) GeneratePaper(w http.ResponseWriter, r *http.Re
 	mdb := []BmDaemons.BmDaemon{h.db}
 	w.Header().Add("Content-Type", "application/json")
 
-	// TODO @Alex 这块还要重新调试
-	_, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
-	if err != nil {
-		panic(fmt.Sprintf(err.Error()))
-	}
+	//_, err := NtmMiddleware.NtmCheckToken.CheckTokenFormFunction(w, r)
+	//if err != nil {
+	//	panic(fmt.Sprintf(err.Error()))
+	//}
 
 	proposalId := r.FormValue("proposal-id")
 	accountID := r.FormValue("account-id")
 
-	if len(proposalId) == 0 && proposalId != "undefined" || len(accountID) == 0 && accountID != "undefined" {
+	if len(proposalId) == 0 || proposalId == "undefined" || len(accountID) == 0 || accountID == "undefined" {
 		panic("生成Paper的参数不完整")
 		return 1
 	}

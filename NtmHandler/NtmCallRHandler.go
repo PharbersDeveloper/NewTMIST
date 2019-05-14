@@ -99,6 +99,7 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 		req.Header.Add(k, v[0])
 	}
 	response, err := client.Do(req)
+
 	if err != nil {
 		return 1
 	}
@@ -111,8 +112,6 @@ func (h NtmCallRHandler) CallRCalculate(w http.ResponseWriter, r *http.Request, 
 
 	rCalcResultBody := map[string]string{}
 	json.Unmarshal(body, &rCalcResultBody)
-
-	fmt.Println(rCalcResultBody)
 
 	resultBody, sok := rCalcResultBody["status"]
 

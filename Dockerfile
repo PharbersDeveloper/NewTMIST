@@ -18,6 +18,8 @@ RUN git clone https://github.com/go-yaml/yaml $GOPATH/src/gopkg.in/yaml.v2 && \
     git clone -b Alex-0301 https://github.com/PharbersDeveloper/NtmServiceDeploy.git  $GOPATH/src/github.com/PharbersDeveloper/NtmServiceDeploy && \
     git clone -b Alex-0301 https://github.com/PharbersDeveloper/NtmPods.git $GOPATH/src/github.com/PharbersDeveloper/NtmPods
 
+#ADD  src/   $GOPATH/src/
+
 # 设置工程配置文件的环境变量
 ENV NTM_HOME $GOPATH/src/github.com/PharbersDeveloper/NtmServiceDeploy/deploy-config
 ENV GO111MODULE on
