@@ -1,6 +1,10 @@
 package NtmModel
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"errors"
+	"github.com/manyminds/api2go/jsonapi"
+	"gopkg.in/mgo.v2/bson"
+)
 
 // Proposal Info
 type Proposal struct {
@@ -9,9 +13,10 @@ type Proposal struct {
 	Name       string        `json:"name" bson:"name"`
 	Describe   string        `json:"describe" bson:"describe"`
 	TotalPhase int           `json:"total-phase" bson:"total-phase"`
-	InputIDs   []string      `json:"input-ids" bson:"input-ids"`
-	SalesReportIDs  []string  `json:"sales-report-ids" bson:"sales-report-ids"`
-	PersonnelAssessmentIDs  []string  `json:"personnel-assessment-ids" bson:"personnel-assessment-ids"`
+	InputIDs   []string      `json:"-" bson:"input-ids"`
+	SalesReportIDs  []string  `json:"-" bson:"sales-report-ids"`
+	SalesReports 		[]*SalesReport `json:"-"`
+	PersonnelAssessmentIDs  []string  `json:"-" bson:"personnel-assessment-ids"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface
@@ -23,6 +28,56 @@ func (c Proposal) GetID() string {
 func (c *Proposal) SetID(id string) error {
 	c.ID = id
 	return nil
+}
+
+func (c Proposal) GetReferences() []jsonapi.Reference {
+	return []jsonapi.Reference{
+		{
+			Type: "salesReports",
+			Name: "salesReports",
+		},
+	}
+}
+
+func (c Proposal) GetReferencedIDs() []jsonapi.ReferenceID {
+	result := []jsonapi.ReferenceID{}
+
+	for _, kID := range c.SalesReportIDs {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   kID,
+			Type: "salesReports",
+			Name: "salesReports",
+		})
+	}
+
+	return result
+}
+
+func (c Proposal) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+	result := []jsonapi.MarshalIdentifier{}
+
+	for key := range c.SalesReports {
+		result = append(result, c.SalesReports[key])
+	}
+	return result
+}
+
+func (c *Proposal) SetToManyReferenceIDs(name string, IDs []string) error {
+	if name == "salesReports" {
+		c.SalesReportIDs = IDs
+		return nil
+	}
+	return errors.New("There is no to-many relationship with the name " + name)
+}
+
+func (c *Proposal) AddToManyIDs(name string, IDs []string) error {
+
+	if name == "salesReports" {
+		c.SalesReportIDs = append(c.SalesReportIDs, IDs...)
+		return nil
+	}
+
+	return errors.New("There is no to-many relationship with the name " + name)
 }
 
 func (u *Proposal) GetConditionsBsonM(parameters map[string][]string) bson.M {

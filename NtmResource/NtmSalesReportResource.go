@@ -19,6 +19,7 @@ type NtmSalesReportResource struct {
 	NtmPaperStorage						*NtmDataStorage.NtmPaperStorage
 	NtmSalesConfigStorage				*NtmDataStorage.NtmSalesConfigStorage
 	NtmScenarioStorage					*NtmDataStorage.NtmScenarioStorage
+	NtmProposalStorage					*NtmDataStorage.NtmProposalStorage
 }
 
 func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmStorage) *NtmSalesReportResource {
@@ -29,6 +30,7 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 	var ps	*NtmDataStorage.NtmPaperStorage
 	var sc	*NtmDataStorage.NtmSalesConfigStorage
 	var ss	*NtmDataStorage.NtmScenarioStorage
+	var pss *NtmDataStorage.NtmProposalStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -46,6 +48,8 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 			sc = arg.(*NtmDataStorage.NtmSalesConfigStorage)
 		} else if tp.Name() == "NtmScenarioStorage" {
 			ss =arg.(*NtmDataStorage.NtmScenarioStorage)
+		} else if tp.Name() == "NtmProposalStorage" {
+			pss =arg.(*NtmDataStorage.NtmProposalStorage)
 		}
 	}
 	return &NtmSalesReportResource{
@@ -56,12 +60,14 @@ func (c NtmSalesReportResource) NewSalesReportResource(args []BmDataStorage.BmSt
 		NtmPaperStorage: ps,
 		NtmSalesConfigStorage: sc,
 		NtmScenarioStorage: ss,
+		NtmProposalStorage: pss,
 	}
 }
 
 // FindAll SalesConfigs
 func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	papersID, dcok := r.QueryParams["papersID"]
+	proposalsID, pok := r.QueryParams["proposalsID"]
 
 	var result []NtmModel.SalesReport
 
@@ -69,6 +75,20 @@ func (c NtmSalesReportResource) FindAll(r api2go.Request) (api2go.Responder, err
 	if dcok {
 		modelRootID := papersID[0]
 		modelRoot, err := c.NtmPaperStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		r.QueryParams["ids"] = modelRoot.SalesReportIDs
+
+		result := c.NtmSalesReportStorage.GetAll(r, -1,-1)
+
+		return &Response{Res: result}, nil
+	}
+
+	if pok {
+		modelRootID := proposalsID[0]
+		modelRoot, err := c.NtmProposalStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
 		}

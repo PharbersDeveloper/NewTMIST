@@ -27,7 +27,7 @@ type Paper struct {
 	SalesReports 		[]*SalesReport `json:"-"`
 
 	PersonnelAssessmentIDs		[]string					`json:"-" bson:"personnel-assessment-ids"`
-	PersonnelAssessment 		[]*PersonnelAssessment		`json:"-"`
+	PersonnelAssessments 		[]*PersonnelAssessment		`json:"-"`
 }
 
 func (c Paper) GetID() string {
@@ -92,6 +92,15 @@ func (c Paper) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	for key := range c.Paperinputs {
 		result = append(result, c.Paperinputs[key])
 	}
+
+	for key := range c.SalesReports {
+		result = append(result, c.SalesReports[key])
+	}
+
+	for key := range c.PersonnelAssessments {
+		result = append(result, c.PersonnelAssessments[key])
+	}
+
 	return result
 }
 

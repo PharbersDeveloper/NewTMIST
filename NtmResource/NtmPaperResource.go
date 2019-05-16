@@ -130,10 +130,10 @@ func (s NtmPaperResource) FindOne(ID string, r api2go.Request) (api2go.Responder
 	salesReportModels := s.NtmSalesReportStorage.GetAll(r, -1,-1)
 	model.SalesReports = salesReportModels
 
-	model.PersonnelAssessment = []*NtmModel.PersonnelAssessment{}
+	model.PersonnelAssessments = []*NtmModel.PersonnelAssessment{}
 	r.QueryParams["ids"] = model.PersonnelAssessmentIDs
 	personnelAssessmentModels := s.NtmPersonnelAssessmentStorage.GetAll(r, -1,-1)
-	model.PersonnelAssessment = personnelAssessmentModels
+	model.PersonnelAssessments = personnelAssessmentModels
 
 	return &Response{Res: model}, nil
 }
