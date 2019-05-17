@@ -6,26 +6,25 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type Level struct {
+type Title struct {
 	ID               string        `json:"-"`
 	Id_              bson.ObjectId `json:"-" bson:"_id"`
-	Level            string        `json:"level" bson:"level"`
+	Value            string        `json:"value" bson:"value"`
 	Describe         string        `json:"describe" bson:"describe"`
-	Code             int        `json:"code" bson:"code"`
 	ImagesID 		 string 	   `json:"-" bson:"image-id"`
 	Img      		 *Image 	   `json:"-"`
 }
 
-func (c Level) GetID() string {
+func (c Title) GetID() string {
 	return c.ID
 }
 
-func (c Level) SetID(id string) error {
+func (c Title) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (c Level) GetReferences() []jsonapi.Reference {
+func (c Title) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "images",
@@ -34,7 +33,7 @@ func (c Level) GetReferences() []jsonapi.Reference {
 	}
 }
 
-func (c Level) GetReferencedIDs() []jsonapi.ReferenceID {
+func (c Title) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 
 	if c.ImagesID != "" {
@@ -48,7 +47,7 @@ func (c Level) GetReferencedIDs() []jsonapi.ReferenceID {
 	return result
 }
 
-func (c *Level) SetToOneReferenceID(name, ID string) error {
+func (c *Title) SetToOneReferenceID(name, ID string) error {
 	if name == "image" {
 		c.ImagesID = ID
 		return nil
@@ -57,7 +56,7 @@ func (c *Level) SetToOneReferenceID(name, ID string) error {
 	return errors.New("There is no to-one relationship with the name " + name)
 }
 
-func (c Level) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (c Title) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	if c.ImagesID != "" && c.Img != nil {
@@ -68,7 +67,7 @@ func (c Level) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 
 
 
-func (c *Level) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (c *Title) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {

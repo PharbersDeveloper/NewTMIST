@@ -18,6 +18,7 @@ type NtmLevelConfigResource struct {
 	NtmResourceAssignsResultStorage		*NtmDataStorage.NtmResourceAssignsResultStorage
 	NtmManageTimeResultStorage			*NtmDataStorage.NtmManageTimeResultStorage
 	NtmManageTeamResultStorage			*NtmDataStorage.NtmManageTeamResultStorage
+	NtmGeneralPerformanceResultStorage	*NtmDataStorage.NtmGeneralPerformanceResultStorage
 }
 
 func (c NtmLevelConfigResource) NewLevelConfigResource(args []BmDataStorage.BmStorage) *NtmLevelConfigResource {
@@ -27,6 +28,7 @@ func (c NtmLevelConfigResource) NewLevelConfigResource(args []BmDataStorage.BmSt
 	var rar *NtmDataStorage.NtmResourceAssignsResultStorage
 	var mtr *NtmDataStorage.NtmManageTimeResultStorage
 	var mtrs *NtmDataStorage.NtmManageTeamResultStorage
+	var gpr *NtmDataStorage.NtmGeneralPerformanceResultStorage
 
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
@@ -42,6 +44,8 @@ func (c NtmLevelConfigResource) NewLevelConfigResource(args []BmDataStorage.BmSt
 			mtr = arg.(*NtmDataStorage.NtmManageTimeResultStorage)
 		} else if tp.Name() == "NtmManageTeamResultStorage" {
 			mtrs = arg.(*NtmDataStorage.NtmManageTeamResultStorage)
+		} else if tp.Name() == "NtmGeneralPerformanceResultStorage" {
+			gpr = arg.(*NtmDataStorage.NtmGeneralPerformanceResultStorage)
 		}
 	}
 	return &NtmLevelConfigResource{
@@ -51,6 +55,7 @@ func (c NtmLevelConfigResource) NewLevelConfigResource(args []BmDataStorage.BmSt
 		NtmResourceAssignsResultStorage: rar,
 		NtmManageTimeResultStorage: mtr,
 		NtmManageTeamResultStorage: mtrs,
+		NtmGeneralPerformanceResultStorage: gpr,
 	}
 }
 
@@ -62,6 +67,7 @@ func (c NtmLevelConfigResource) FindAll(r api2go.Request) (api2go.Responder, err
 	resourceAssignsResultsID, rarOk := r.QueryParams["resourceAssignsResultsID"]
 	manageTimeResultsID, mtrOk := r.QueryParams["manageTimeResultsID"]
 	manageTeamResultsID, mtrsOk := r.QueryParams["manageTeamResultsID"]
+	generalPerformanceResultsID, gprOk := r.QueryParams["generalPerformanceResultsID"]
 
 	if rdrOk {
 		modelRootID := regionalDivisionResultsID[0]
@@ -126,6 +132,21 @@ func (c NtmLevelConfigResource) FindAll(r api2go.Request) (api2go.Responder, err
 	if mtrsOk {
 		modelRootID := manageTeamResultsID[0]
 		modelRoot, err := c.NtmManageTeamResultStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, nil
+		}
+
+		model, err:= c.NtmLevelConfigStorage.GetOne(modelRoot.LevelConfigID)
+
+		if err != nil {
+			return &Response{}, nil
+		}
+		return &Response{Res: model}, nil
+	}
+
+	if gprOk {
+		modelRootID := generalPerformanceResultsID[0]
+		modelRoot, err := c.NtmGeneralPerformanceResultStorage.GetOne(modelRootID)
 		if err != nil {
 			return &Response{}, nil
 		}

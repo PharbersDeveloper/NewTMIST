@@ -6,7 +6,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type RegionalDivisionResult struct {
+type GeneralPerformanceResult struct {
 	ID               string        `json:"-"`
 	Id_              bson.ObjectId `json:"-" bson:"_id"`
 
@@ -17,16 +17,16 @@ type RegionalDivisionResult struct {
 	AssessmentReportDescribes		[]*AssessmentReportDescribe		`json:"-"`
 }
 
-func (c RegionalDivisionResult) GetID() string {
+func (c GeneralPerformanceResult) GetID() string {
 	return c.ID
 }
 
-func (c RegionalDivisionResult) SetID(id string) error {
+func (c GeneralPerformanceResult) SetID(id string) error {
 	c.ID = id
 	return nil
 }
 
-func (c RegionalDivisionResult) GetReferences() []jsonapi.Reference {
+func (c GeneralPerformanceResult) GetReferences() []jsonapi.Reference {
 	return []jsonapi.Reference{
 		{
 			Type: "levelConfigs",
@@ -39,7 +39,7 @@ func (c RegionalDivisionResult) GetReferences() []jsonapi.Reference {
 	}
 }
 
-func (c RegionalDivisionResult) GetReferencedIDs() []jsonapi.ReferenceID {
+func (c GeneralPerformanceResult) GetReferencedIDs() []jsonapi.ReferenceID {
 	result := []jsonapi.ReferenceID{}
 
 	if c.LevelConfigID != "" {
@@ -61,7 +61,7 @@ func (c RegionalDivisionResult) GetReferencedIDs() []jsonapi.ReferenceID {
 	return result
 }
 
-func (u *RegionalDivisionResult) SetToOneReferenceID(name, ID string) error {
+func (u *GeneralPerformanceResult) SetToOneReferenceID(name, ID string) error {
 	if name == "levelConfig" {
 		u.LevelConfigID = ID
 		return nil
@@ -70,7 +70,7 @@ func (u *RegionalDivisionResult) SetToOneReferenceID(name, ID string) error {
 	return errors.New("There is no to-one relationship with the name " + name)
 }
 
-func (c RegionalDivisionResult) GetReferencedStructs() []jsonapi.MarshalIdentifier {
+func (c GeneralPerformanceResult) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	result := []jsonapi.MarshalIdentifier{}
 
 	if c.LevelConfigID != "" && c.LevelConfig != nil {
@@ -84,7 +84,7 @@ func (c RegionalDivisionResult) GetReferencedStructs() []jsonapi.MarshalIdentifi
 	return result
 }
 
-func (c *RegionalDivisionResult) SetToManyReferenceIDs(name string, IDs []string) error {
+func (c *GeneralPerformanceResult) SetToManyReferenceIDs(name string, IDs []string) error {
 	if name == "assessmentReportDescribes" {
 		c.AssessmentReportDescribeIDs = IDs
 		return nil
@@ -92,7 +92,7 @@ func (c *RegionalDivisionResult) SetToManyReferenceIDs(name string, IDs []string
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *RegionalDivisionResult) AddToManyIDs(name string, IDs []string) error {
+func (c *GeneralPerformanceResult) AddToManyIDs(name string, IDs []string) error {
 	if name == "assessmentReportDescribes" {
 		c.AssessmentReportDescribeIDs = append(c.AssessmentReportDescribeIDs, IDs...)
 		return nil
@@ -101,7 +101,7 @@ func (c *RegionalDivisionResult) AddToManyIDs(name string, IDs []string) error {
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
-func (c *RegionalDivisionResult) GetConditionsBsonM(parameters map[string][]string) bson.M {
+func (c *GeneralPerformanceResult) GetConditionsBsonM(parameters map[string][]string) bson.M {
 	rst := make(map[string]interface{})
 	for k, v := range parameters {
 		switch k {

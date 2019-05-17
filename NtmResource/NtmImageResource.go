@@ -17,6 +17,8 @@ type NtmImageResource struct {
 	NtmHospitalStorage       *NtmDataStorage.NtmHospitalStorage
 	NtmRegionStorage         *NtmDataStorage.NtmRegionStorage
 	NtmRepresentativeStorage *NtmDataStorage.NtmRepresentativeStorage
+	NtmLevelStorage	 		 *NtmDataStorage.NtmLevelStorage
+	NtmTitleStorage			 *NtmDataStorage.NtmTitleStorage
 }
 
 func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) *NtmImageResource {
@@ -25,6 +27,9 @@ func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) *NtmI
 	var hs *NtmDataStorage.NtmHospitalStorage
 	var rs *NtmDataStorage.NtmRegionStorage
 	var rt *NtmDataStorage.NtmRepresentativeStorage
+	var ls *NtmDataStorage.NtmLevelStorage
+	var ts *NtmDataStorage.NtmTitleStorage
+
 	for _, arg := range args {
 		tp := reflect.ValueOf(arg).Elem().Type()
 		if tp.Name() == "NtmImageStorage" {
@@ -37,6 +42,10 @@ func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) *NtmI
 			rs = arg.(*NtmDataStorage.NtmRegionStorage)
 		} else if tp.Name() == "NtmRepresentativeStorage" {
 			rt = arg.(*NtmDataStorage.NtmRepresentativeStorage)
+		} else if tp.Name() == "NtmLevelStorage" {
+			ls = arg.(*NtmDataStorage.NtmLevelStorage)
+		} else if tp.Name() == "NtmTitleStorage" {
+			ts = arg.(*NtmDataStorage.NtmTitleStorage)
 		}
 	}
 	return &NtmImageResource{
@@ -45,6 +54,8 @@ func (c NtmImageResource) NewImageResource(args []BmDataStorage.BmStorage) *NtmI
 		NtmHospitalStorage:       hs,
 		NtmRegionStorage:         rs,
 		NtmRepresentativeStorage: rt,
+		NtmLevelStorage: 		  ls,
+		NtmTitleStorage:      	  ts,
 	}
 }
 
@@ -54,6 +65,8 @@ func (c NtmImageResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 	hospitalsID, hsok := r.QueryParams["hospitalsID"]
 	regionsID, rsok := r.QueryParams["regionsID"]
 	representativeID, rtok := r.QueryParams["representativesID"]
+	levelsID, lok := r.QueryParams["levelsID"]
+	titlesID, tok := r.QueryParams["titlesID"]
 
 	if pok {
 		modelRootID := productsID[0]
@@ -83,6 +96,32 @@ func (c NtmImageResource) FindAll(r api2go.Request) (api2go.Responder, error) {
 			return &Response{}, err
 		}
 		r.QueryParams["ids"] = modelRoot.ImagesIDs
+	} else if lok {
+		modelRootID := levelsID[0]
+		modelRoot, err := c.NtmLevelStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := c.NtmImageStorage.GetOne(modelRoot.ImagesID)
+
+		if err != nil {
+			return &Response{}, err
+		}
+
+		return  &Response{Res: model}, nil
+	} else if tok {
+		modelRootID := titlesID[0]
+		modelRoot, err := c.NtmTitleStorage.GetOne(modelRootID)
+		if err != nil {
+			return &Response{}, err
+		}
+		model, err := c.NtmImageStorage.GetOne(modelRoot.ImagesID)
+
+		if err != nil {
+			return &Response{}, err
+		}
+
+		return  &Response{Res: model}, nil
 	}
 
 	var result []NtmModel.Image

@@ -9,10 +9,12 @@ import (
 type LevelConfig struct {
 	ID               string        `json:"-"`
 	Id_              bson.ObjectId `json:"-" bson:"_id"`
-	Content	         string        `json:"content" bson:"content"`
+	Text	         string        `json:"text" bson:"text"`
 	Code             int        `json:"code" bson:"code"`
 	LevelID          string        `json:"level-id" bson:"level-id"`
 	Level 			*Level			`json:"-"`
+	TitleID			string	`json:"-" bson:"title-id"`
+	Title			*Title	`json:"-"`
 }
 
 func (c LevelConfig) GetID() string {
@@ -30,6 +32,10 @@ func (c LevelConfig) GetReferences() []jsonapi.Reference {
 			Type: "levels",
 			Name: "level",
 		},
+		{
+			Type: "titles",
+			Name: "title",
+		},
 	}
 }
 
@@ -44,12 +50,25 @@ func (c LevelConfig) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
+	if c.TitleID != "" {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   c.TitleID,
+			Type: "titles",
+			Name: "title",
+		})
+	}
+
 	return result
 }
 
 func (u *LevelConfig) SetToOneReferenceID(name, ID string) error {
 	if name == "level" {
 		u.LevelID = ID
+		return nil
+	}
+
+	if name == "title" {
+		u.TitleID = ID
 		return nil
 	}
 
@@ -62,6 +81,11 @@ func (c LevelConfig) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 	if c.LevelID != "" && c.Level != nil {
 		result = append(result, c.Level)
 	}
+
+	if c.TitleID != "" && c.Title != nil {
+		result = append(result, c.Title)
+	}
+
 	return result
 }
 

@@ -55,6 +55,8 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmManageTimeResult":			NtmModel.ManageTimeResult{},
 	"NtmManageTeamResult":			NtmModel.ManageTeamResult{},
 	"NtmAssessmentReport":			NtmModel.AssessmentReport{},
+	"NtmTitle":						NtmModel.Title{},
+	"NtmGeneralPerformanceResult":	NtmModel.GeneralPerformanceResult{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -101,6 +103,8 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmManageTimeResultStorage":			NtmDataStorage.NtmManageTimeResultStorage{},
 	"NtmManageTeamResultStorage":			NtmDataStorage.NtmManageTeamResultStorage{},
 	"NtmAssessmentReportStorage":			NtmDataStorage.NtmAssessmentReportStorage{},
+	"NtmTitleStorage":						NtmDataStorage.NtmTitleStorage{},
+	"NtmGeneralPerformanceResultStorage":	NtmDataStorage.NtmGeneralPerformanceResultStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -149,6 +153,8 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmManageTimeResultResource":			NtmResource.NtmManageTimeResultResource{},
 	"NtmManageTeamResultResource":			NtmResource.NtmManageTeamResultResource{},
 	"NtmAssessmentReportResource":			NtmResource.NtmAssessmentReportResource{},
+	"NtmTitleResource":						NtmResource.NtmTitleResource{},
+	"NtmGeneralPerformanceResultResource":	NtmResource.NtmGeneralPerformanceResultResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{

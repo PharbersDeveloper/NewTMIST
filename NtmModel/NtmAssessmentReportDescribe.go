@@ -7,7 +7,7 @@ import (
 type AssessmentReportDescribe struct {
 	ID               string        `json:"-"`
 	Id_              bson.ObjectId `json:"-" bson:"_id"`
-	Content	         string        `json:"content" bson:"content"`
+	Text	         string        `json:"text" bson:"text"`
 	Code             int           `json:"code" bson:"code"`
 }
 

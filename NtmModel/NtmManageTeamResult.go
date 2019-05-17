@@ -34,7 +34,7 @@ func (c ManageTeamResult) GetReferences() []jsonapi.Reference {
 		},
 		{
 			Type: "assessmentReportDescribes",
-			Name: "assessmentReportDescribe",
+			Name: "assessmentReportDescribes",
 		},
 	}
 }
@@ -53,8 +53,8 @@ func (c ManageTeamResult) GetReferencedIDs() []jsonapi.ReferenceID {
 	for _, kID := range c.AssessmentReportDescribeIDs {
 		result = append(result, jsonapi.ReferenceID{
 			ID:   kID,
-			Type: "AssessmentReportDescribes",
-			Name: "AssessmentReportDescribe",
+			Type: "assessmentReportDescribes",
+			Name: "assessmentReportDescribes",
 		})
 	}
 
@@ -85,7 +85,7 @@ func (c ManageTeamResult) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 }
 
 func (c *ManageTeamResult) SetToManyReferenceIDs(name string, IDs []string) error {
-	if name == "AssessmentReportDescribes" {
+	if name == "assessmentReportDescribes" {
 		c.AssessmentReportDescribeIDs = IDs
 		return nil
 	}
@@ -93,7 +93,7 @@ func (c *ManageTeamResult) SetToManyReferenceIDs(name string, IDs []string) erro
 }
 
 func (c *ManageTeamResult) AddToManyIDs(name string, IDs []string) error {
-	if name == "AssessmentReportDescribes" {
+	if name == "assessmentReportDescribes" {
 		c.AssessmentReportDescribeIDs = append(c.AssessmentReportDescribeIDs, IDs...)
 		return nil
 	}

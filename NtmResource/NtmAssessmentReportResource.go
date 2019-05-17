@@ -18,6 +18,7 @@ type NtmAssessmentReportResource struct {
 	NtmResourceAssignsResultStorage		*NtmDataStorage.NtmResourceAssignsResultStorage
 	NtmManageTimeResultStorage			*NtmDataStorage.NtmManageTimeResultStorage
 	NtmManageTeamResultStorage			*NtmDataStorage.NtmManageTeamResultStorage
+	NtmGeneralPerformanceResultStorage	*NtmDataStorage.NtmGeneralPerformanceResultStorage
 	NtmPaperStorage 					*NtmDataStorage.NtmPaperStorage
 
 }
@@ -29,6 +30,7 @@ func (c NtmAssessmentReportResource) NewAssessmentReportResource(args []BmDataSt
 	var rar *NtmDataStorage.NtmResourceAssignsResultStorage
 	var mtr *NtmDataStorage.NtmManageTimeResultStorage
 	var mtrs *NtmDataStorage.NtmManageTeamResultStorage
+	var gpr *NtmDataStorage.NtmGeneralPerformanceResultStorage
 	var p *NtmDataStorage.NtmPaperStorage
 
 	for _, arg := range args {
@@ -47,6 +49,8 @@ func (c NtmAssessmentReportResource) NewAssessmentReportResource(args []BmDataSt
 			mtrs = arg.(*NtmDataStorage.NtmManageTeamResultStorage)
 		} else if tp.Name() == "NtmPaperStorage" {
 			p = arg.(*NtmDataStorage.NtmPaperStorage)
+		} else if tp.Name() == "NtmGeneralPerformanceResultStorage" {
+			gpr = arg.(*NtmDataStorage.NtmGeneralPerformanceResultStorage)
 		}
 	}
 	return &NtmAssessmentReportResource{
@@ -57,6 +61,7 @@ func (c NtmAssessmentReportResource) NewAssessmentReportResource(args []BmDataSt
 		NtmManageTimeResultStorage: mtr,
 		NtmManageTeamResultStorage: mtrs,
 		NtmPaperStorage: p,
+		NtmGeneralPerformanceResultStorage: gpr,
 	}
 }
 
