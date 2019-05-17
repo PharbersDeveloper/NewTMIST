@@ -28,6 +28,9 @@ type Paper struct {
 
 	PersonnelAssessmentIDs		[]string					`json:"-" bson:"personnel-assessment-ids"`
 	PersonnelAssessments 		[]*PersonnelAssessment		`json:"-"`
+
+	AssessmentReportIDs		[]string	`json:"-" bson:"assessment-report-ids"`
+	AssessmentReports		[]*AssessmentReport	`json:"-"`
 }
 
 func (c Paper) GetID() string {
@@ -52,6 +55,10 @@ func (c Paper) GetReferences() []jsonapi.Reference {
 		{
 			Type: "personnelAssessments",
 			Name: "personnelAssessments",
+		},
+		{
+			Type: "assessmentReports",
+			Name: "assessmentReports",
 		},
 	}
 }
@@ -83,6 +90,14 @@ func (c Paper) GetReferencedIDs() []jsonapi.ReferenceID {
 		})
 	}
 
+	for _, kID := range  c.AssessmentReportIDs {
+		result = append(result, jsonapi.ReferenceID{
+			ID:   kID,
+			Type: "assessmentReports",
+			Name: "assessmentReports",
+		})
+	}
+
 	return result
 }
 
@@ -99,6 +114,10 @@ func (c Paper) GetReferencedStructs() []jsonapi.MarshalIdentifier {
 
 	for key := range c.PersonnelAssessments {
 		result = append(result, c.PersonnelAssessments[key])
+	}
+
+	for key := range c.AssessmentReports {
+		result = append(result, c.AssessmentReports[key])
 	}
 
 	return result
@@ -119,6 +138,12 @@ func (c *Paper) SetToManyReferenceIDs(name string, IDs []string) error {
 		c. PersonnelAssessmentIDs= IDs
 		return nil
 	}
+
+	if name == "assessmentReports" {
+		c. AssessmentReportIDs= IDs
+		return nil
+	}
+
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 
@@ -138,40 +163,11 @@ func (c *Paper) AddToManyIDs(name string, IDs []string) error {
 		return nil
 	}
 
-	return errors.New("There is no to-many relationship with the name " + name)
-}
-
-func (c *Paper) DeleteToManyIDs(name string, IDs []string) error {
-	if name == "paperinputs" {
-		for _, ID := range IDs {
-			for pos, oldID := range c.InputIDs {
-				if ID == oldID {
-					c.InputIDs = append(c.InputIDs[:pos], c.InputIDs[pos+1:]...)
-				}
-			}
-		}
+	if name == "assessmentReports" {
+		c.AssessmentReportIDs = append(c.AssessmentReportIDs, IDs...)
+		return nil
 	}
 
-	if name == "salesReports" {
-		for _, ID := range IDs {
-			for pos, oldID := range c.SalesReportIDs {
-				if ID == oldID {
-					c.SalesReportIDs = append(c.SalesReportIDs[:pos], c.SalesReportIDs[pos+1:]...)
-				}
-			}
-		}
-	}
-
-
-	if name == "personnelAssessments" {
-		for _, ID := range IDs {
-			for pos, oldID := range c.PersonnelAssessmentIDs {
-				if ID == oldID {
-					c.PersonnelAssessmentIDs = append(c.PersonnelAssessmentIDs[:pos], c.PersonnelAssessmentIDs[pos+1:]...)
-				}
-			}
-		}
-	}
 	return errors.New("There is no to-many relationship with the name " + name)
 }
 

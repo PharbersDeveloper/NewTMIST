@@ -45,6 +45,16 @@ var NTM_MODEL_FACTORY = map[string]interface{}{
 	"NtmActionKpi":				NtmModel.ActionKpi{},
 	"NtmPersonnelAssessment":	NtmModel.PersonnelAssessment{},
 	"NtmRepresentativeAbility":	NtmModel.RepresentativeAbility{},
+
+	"NtmLevel":						NtmModel.Level{},
+	"NtmLevelConfig":				NtmModel.LevelConfig{},
+	"NtmAssessmentReportDescribe":	NtmModel.AssessmentReportDescribe{},
+	"NtmRegionalDivisionResult":	NtmModel.RegionalDivisionResult{},
+	"NtmTargetAssignsResult":		NtmModel.TargetAssignsResult{},
+	"NtmResourceAssignsResult":		NtmModel.ResourceAssignsResult{},
+	"NtmManageTimeResult":			NtmModel.ManageTimeResult{},
+	"NtmManageTeamResult":			NtmModel.ManageTeamResult{},
+	"NtmAssessmentReport":			NtmModel.AssessmentReport{},
 }
 
 var NTM_STORAGE_FACTORY = map[string]interface{}{
@@ -81,6 +91,16 @@ var NTM_STORAGE_FACTORY = map[string]interface{}{
 	"NtmActionKpiStorage":			  NtmDataStorage.NtmActionKpiStorage{},
 	"NtmPersonnelAssessmentStorage":  NtmDataStorage.NtmPersonnelAssessmentStorage{},
 	"NtmRepresentativeAbilityStorage":  NtmDataStorage.NtmRepresentativeAbilityStorage{},
+
+	"NtmLevelStorage":						NtmDataStorage.NtmLevelStorage{},
+	"NtmLevelConfigStorage":				NtmDataStorage.NtmLevelConfigStorage{},
+	"NtmAssessmentReportDescribeStorage":	NtmDataStorage.NtmAssessmentReportDescribeStorage{},
+	"NtmRegionalDivisionResultStorage":		NtmDataStorage.NtmRegionalDivisionResultStorage{},
+	"NtmTargetAssignsResultStorage":		NtmDataStorage.NtmTargetAssignsResultStorage{},
+	"NtmResourceAssignsResultStorage":		NtmDataStorage.NtmResourceAssignsResultStorage{},
+	"NtmManageTimeResultStorage":			NtmDataStorage.NtmManageTimeResultStorage{},
+	"NtmManageTeamResultStorage":			NtmDataStorage.NtmManageTeamResultStorage{},
+	"NtmAssessmentReportStorage":			NtmDataStorage.NtmAssessmentReportStorage{},
 }
 
 var NTM_RESOURCE_FACTORY = map[string]interface{}{
@@ -117,6 +137,18 @@ var NTM_RESOURCE_FACTORY = map[string]interface{}{
 	"NtmActionKpiResource":		   	   NtmResource.NtmActionKpiResource{},
 	"NtmPersonnelAssessmentResource":  NtmResource.NtmPersonnelAssessmentResource{},
 	"NtmRepresentativeAbilityResource":  NtmResource.NtmRepresentativeAbilityResource{},
+
+
+
+	"NtmLevelResource":						NtmResource.NtmLevelResource{},
+	"NtmLevelConfigResource":				NtmResource.NtmLevelConfigResource{},
+	"NtmAssessmentReportDescribeResource":	NtmResource.NtmAssessmentReportDescribeResource{},
+	"NtmRegionalDivisionResultResource":	NtmResource.NtmRegionalDivisionResultResource{},
+	"NtmTargetAssignsResultResource":		NtmResource.NtmTargetAssignsResultResource{},
+	"NtmResourceAssignsResultResource":		NtmResource.NtmResourceAssignsResultResource{},
+	"NtmManageTimeResultResource":			NtmResource.NtmManageTimeResultResource{},
+	"NtmManageTeamResultResource":			NtmResource.NtmManageTeamResultResource{},
+	"NtmAssessmentReportResource":			NtmResource.NtmAssessmentReportResource{},
 }
 
 var NTM_FUNCTION_FACTORY = map[string]interface{}{
