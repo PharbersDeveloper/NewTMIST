@@ -4,11 +4,15 @@ FROM golang:1.12.4-alpine
 #作者
 MAINTAINER Pharbers "pqian@pharbers.com"
 
-#LABEL
-LABEL NtmPods.version="1.0.5" maintainer="Alex"
+# 设置工程配置文件的环境变量
+ENV NTM_HOME $GOPATH/src/github.com/PharbersDeveloper/NtmServiceDeploy/deploy-config
+ENV GO111MODULE on
 
 # 安装git
 RUN apk add --no-cache git gcc musl-dev
+
+# 以LABEL行的变动(version的变动)来划分(变动以上)使用cache和(变动以下)不使用cache
+LABEL NtmPods.version="1.0.6" maintainer="Alex"
 
 # 下载依赖
 RUN git clone https://github.com/go-yaml/yaml $GOPATH/src/gopkg.in/yaml.v2 && \
@@ -17,12 +21,6 @@ RUN git clone https://github.com/go-yaml/yaml $GOPATH/src/gopkg.in/yaml.v2 && \
     cd $GOPATH/src/gopkg.in/mgo.v2 && git checkout -b v2 && \
     git clone -b Alex-0301 https://github.com/PharbersDeveloper/NtmServiceDeploy.git  $GOPATH/src/github.com/PharbersDeveloper/NtmServiceDeploy && \
     git clone -b Alex-0301 https://github.com/PharbersDeveloper/NtmPods.git $GOPATH/src/github.com/PharbersDeveloper/NtmPods
-
-#ADD  src/   $GOPATH/src/
-
-# 设置工程配置文件的环境变量
-ENV NTM_HOME $GOPATH/src/github.com/PharbersDeveloper/NtmServiceDeploy/deploy-config
-ENV GO111MODULE on
 
 # 构建可执行文件
 RUN cd $GOPATH/src/github.com/PharbersDeveloper/NtmPods && \

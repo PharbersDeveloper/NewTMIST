@@ -4,8 +4,10 @@ github.com/PharbersDeveloper/NtmPods v0.0.0-20190426102357-9bc90bea8823 h1:UzhsR
 github.com/PharbersDeveloper/NtmPods v0.0.0-20190426102357-9bc90bea8823/go.mod h1:IPKFN0d52vWSyo2CUbdJV4KXqkxJQ1btdbLDd2aZa9c=
 github.com/alfredyang1986/BmServiceDef v0.0.0-20190410064517-b341f9e1e85e h1:hCkIQu6qk9yt9VmfVBNfNfu8Dwqz3xSOXWFGE1eKOVs=
 github.com/alfredyang1986/BmServiceDef v0.0.0-20190410064517-b341f9e1e85e/go.mod h1:DRdP4QjxmPafViX524Uj1V2zlox75w8xTusMEJMf16E=
+github.com/alfredyang1986/BmServiceDef v0.0.1/go.mod h1:DRdP4QjxmPafViX524Uj1V2zlox75w8xTusMEJMf16E=
 github.com/alfredyang1986/blackmirror v0.0.0-20190305121812-d8d7643fb552 h1:S4AdpMiXF1A7J62jpVrjFqR5ojguDx3SJvZfdvIdbV8=
 github.com/alfredyang1986/blackmirror v0.0.0-20190305121812-d8d7643fb552/go.mod h1:NpL3ZW9nRZgX+wC12NCLeZeXWerNH+Htb0ZDR27iAco=
+github.com/alfredyang1986/blackmirror v0.0.3/go.mod h1:NpL3ZW9nRZgX+wC12NCLeZeXWerNH+Htb0ZDR27iAco=
 github.com/gedex/inflector v0.0.0-20170307190818-16278e9db813 h1:Uc+IZ7gYqAf/rSGFplbWBSHaGolEQlNLgMgSE3ccnIQ=
 github.com/gedex/inflector v0.0.0-20170307190818-16278e9db813/go.mod h1:P+oSoE9yhSRvsmYyZsshflcR6ePWYLql6UU1amW13IM=
 github.com/go-redis/redis v6.15.2+incompatible h1:9SpNVG76gr6InJGxoZ6IuuxaCOQwDAhzyXg+Bs+0Sb4=
