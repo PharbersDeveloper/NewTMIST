@@ -15,12 +15,14 @@ type SalesReport struct {
 	RepresentativeSalesReportIDs	[]string  	`json:"-" bson:"representative-sales-report-ids"`
 	ProductSalesReportIDs			[]string	`json:"-" bson:"product-sales-report-ids"`
 
+	PaperInputID					string		`json:"-" bson:"paper-input-id"`
+
 	HospitalSalesReport 		[]*HospitalSalesReport			`json:"-"`
 	RepresentativeSalesReport	[]*RepresentativeSalesReport	`json:"-"`
 	ProductSalesReport			[]*ProductSalesReport			`json:"-"`
 	Scenario					*Scenario `json:"-"`
 
-	Time 						float64 `json:"time" bson:"time"`
+	Time 						int64 `json:"time" bson:"time"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

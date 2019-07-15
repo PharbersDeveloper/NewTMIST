@@ -10,13 +10,13 @@ type RepresentativeAbility struct {
 	ID  string        `json:"-"`
 	Id_ bson.ObjectId `json:"-" bson:"_id"`
 
-	ProductKnowledge          float64 `json:"product-knowledge" bson:"product-knowledge"`
-	SalesAbility              float64 `json:"sales-ability" bson:"sales-ability"`
-	RegionalManagementAbility float64 `json:"regional-management-ability" bson:"regional-management-ability"`
-	JobEnthusiasm             float64 `json:"job-enthusiasm" bson:"job-enthusiasm"`
-	BehaviorValidity          float64 `json:"behavior-validity" bson:"behavior-validity"`
+	ProductKnowledge          float64 `json:"product-knowledge" bson:"product-knowledge" mapstructure:"product-knowledge"`
+	SalesAbility              float64 `json:"sales-ability" bson:"sales-ability" mapstructure:"sales-ability"`
+	RegionalManagementAbility float64 `json:"regional-management-ability" bson:"regional-management-ability" mapstructure:"regional-management-ability"`
+	JobEnthusiasm             float64 `json:"job-enthusiasm" bson:"job-enthusiasm" mapstructure:"job-enthusiasm"`
+	BehaviorValidity          float64 `json:"behavior-validity" bson:"behavior-validity" mapstructure:"behavior-validity"`
 
-	RepresentativeID 	string          `json:"-" bson:"representative-id"`
+	RepresentativeID 	string          `json:"-" bson:"representative-id" mapstructure:"representative-id"`
 	Representative   	*Representative `json:"-"`
 }
 

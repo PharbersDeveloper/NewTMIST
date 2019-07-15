@@ -1,6 +1,7 @@
 package NtmFactory
 
 import (
+	"Ntm/NtmDaemons/NtmXmpp"
 	"Ntm/NtmDataStorage"
 	"Ntm/NtmHandler"
 	"Ntm/NtmMiddleware"
@@ -169,6 +170,7 @@ var NTM_MIDDLEWARE_FACTORY = map[string]interface{}{
 var NTM_DAEMON_FACTORY = map[string]interface{}{
 	"BmMongodbDaemon": BmMongodb.BmMongodb{},
 	"BmRedisDaemon":   BmRedis.BmRedis{},
+	"NtmXmppDaemon":   NtmXmpp.NtmXmpp{},
 }
 
 func (t NtmTable) GetModelByName(name string) interface{} {

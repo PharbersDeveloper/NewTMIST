@@ -8,23 +8,20 @@ import (
 
 // RepresentativeSalesReport Info
 type RepresentativeSalesReport struct {
-	ID         		string        `json:"-"`
-	Id_        		bson.ObjectId `json:"-" bson:"_id"`
-	ResourceConfigID	string	`json:"-" bson:"resource-config-id"`
-	GoodsConfigID	string  `json:"-" bson:"goods-config-id"`
+	ID         			string        	`json:"-"`
+	Id_        			bson.ObjectId 	`json:"-" bson:"_id"`
+	ResourceConfigID	string			`json:"-" bson:"resource-config-id" mapstructure:"resource-config-id"`
+	GoodsConfigID		string  		`json:"-" bson:"goods-config-id" mapstructure:"goods-config-id"`
 
 	ResourceConfig		*ResourceConfig	`json:"-"`
-	GoodsConfig 		*GoodsConfig `json:"-"`
+	GoodsConfig 		*GoodsConfig 	`json:"-"`
 
-	RepresentativeName string `json:"representative-name" bson:"representative-name"`
-	ProductName		string `json:"product-name" bson:"product-name"`
-
-	Potential		float64	`json:"potential" bson:"potential"`
-	Sales			float64 `json:"sales" bson:"sales"`
-	SalesQuota 		float64	`json:"sales-quota" bson:"sales-quota"`
-	Share 			float64 `json:"share" bson:"share"`
-	QuotaAchievement float64 `json:"quota-achievement" bson:"quota-achievement"`
-	SalesGrowth		float64	`json:"sales-growth" bson:"sales-growth"`
+	Potential			float64	`json:"potential" bson:"potential" mapstructure:"potential"`
+	Sales				float64 `json:"sales" bson:"sales" mapstructure:"sales"`
+	SalesQuota 			float64	`json:"sales-quota" bson:"sales-quota" mapstructure:"sales-quota"`
+	Share 				float64 `json:"share" bson:"share" mapstructure:"share"`
+	QuotaAchievement 	float64 `json:"quota-achievement" bson:"quota-achievement" mapstructure:"quota-achievement"`
+	SalesGrowth			float64	`json:"sales-growth" bson:"sales-growth" mapstructure:"sales-growth"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

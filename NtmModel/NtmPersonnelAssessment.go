@@ -9,7 +9,7 @@ import (
 type PersonnelAssessment struct {
 	ID         string        `json:"-"`
 	Id_        bson.ObjectId `json:"-" bson:"_id"`
-	Time		float64	`json:"time" bson:"time"`
+	Time		int64	`json:"time" bson:"time"`
 
 	ScenarioID	string	`json:"-" bson:"scenario-id"`
 	Scenario	*Scenario `json:"-"`
@@ -19,6 +19,8 @@ type PersonnelAssessment struct {
 
 	ActionKpiIDs		[]string			`json:"-" bson:"action-kpi-ids"`
 	ActionKpi 			[]*ActionKpi		`json:"-"`
+
+	PaperInputID	string	`json:"-" bson:"paper-input-id"`
 }
 
 func (c PersonnelAssessment) GetID() string {

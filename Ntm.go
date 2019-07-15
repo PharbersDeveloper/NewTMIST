@@ -14,6 +14,11 @@ import (
 )
 
 func main() {
+
+	// 本地调试使用，部署时注释
+	os.Setenv("BM_KAFKA_CONF_HOME", fmt.Sprint(os.Getenv("BM_KAFKA_CONF_HOME"), "NtmServiceDeploy/dev-config/resource/kafkaconfig.json"))
+	os.Setenv("BM_XMPP_CONF_HOME", fmt.Sprint(os.Getenv("BM_XMPP_CONF_HOME"), "NtmServiceDeploy/dev-config/resource/xmppconfig.json"))
+
 	version := "v0"
 	prodEnv := "NTM_HOME"
 	fmt.Println("NTM pods archi begins, version =", version)
@@ -37,6 +42,4 @@ func main() {
 	handler := api.Handler().(*httprouter.Router)
 	pod.RegisterPanicHandler(handler)
 	http.ListenAndServe(":"+bmRouter.Port, handler)
-
-	fmt.Println("NTM pods archi ends, version =", version)
 }

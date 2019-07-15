@@ -7,15 +7,15 @@ import (
 )
 
 type ActionKpi struct {
-	ID						string        `json:"-"`
-	Id_						bson.ObjectId `json:"-" bson:"_id"`
-	TargetNumber			float64	`json:"target-number" bson:"target-number"`
-	TargetCoverage			float64	`json:"target-coverage" bson:"target-coverage"`
-	HighLevelFrequency		float64	`json:"high-level-frequency" bson:"high-level-frequency"`
-	MiddleLevelFrequency	float64	`json:"middle-level-frequency" bson:"middle-level-frequency"`
-	LowLevelFrequency		float64	`json:"low-level-frequency" bson:"low-level-frequency"`
-	RepresentativeID 	string          `json:"-" bson:"representative-id"`
-	Representative   	*Representative `json:"-"`
+	ID						string        	`json:"-"`
+	Id_						bson.ObjectId 	`json:"-" bson:"_id"`
+	TargetNumber			float64			`json:"target-number" bson:"target-number" mapstructure:"target-number"`
+	TargetCoverage			float64			`json:"target-coverage" bson:"target-coverage" mapstructure:"target-coverage"`
+	HighLevelFrequency		float64			`json:"high-level-frequency" bson:"high-level-frequency" mapstructure:"high-level-frequency"`
+	MiddleLevelFrequency	float64			`json:"middle-level-frequency" bson:"middle-level-frequency" mapstructure:"middle-level-frequency"`
+	LowLevelFrequency		float64			`json:"low-level-frequency" bson:"low-level-frequency" mapstructure:"low-level-frequency"`
+	RepresentativeID 		string          `json:"-" bson:"representative-id" mapstructure:"representative-id"`
+	Representative   		*Representative `json:"-"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interface

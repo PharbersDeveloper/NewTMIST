@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/manyminds/api2go/jsonapi"
 	"gopkg.in/mgo.v2/bson"
+	"strconv"
 )
 
 type LevelConfig struct {
@@ -101,6 +102,12 @@ func (c *LevelConfig) GetConditionsBsonM(parameters map[string][]string) bson.M 
 			}
 			r["$in"] = ids
 			rst["_id"] = r
+		case "code":
+			num, _ := strconv.Atoi(v[0])
+			rst[k] = num
+		case "level-id":
+			rst[k] = v[0]
+
 		}
 	}
 	return rst

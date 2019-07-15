@@ -8,19 +8,16 @@ import (
 
 // ProductSalesReport Info
 type ProductSalesReport struct {
-	ID         		string        `json:"-"`
-	Id_        		bson.ObjectId `json:"-" bson:"_id"`
-	GoodsConfigID	string  `json:"-" bson:"goods-config-id"`
+	ID         			string        	`json:"-"`
+	Id_        			bson.ObjectId 	`json:"-" bson:"_id"`
+	GoodsConfigID		string  		`json:"-" bson:"goods-config-id" mapstructure:"goods-config-id"`
+	GoodsConfig 		*GoodsConfig 	`json:"-"`
 
-	GoodsConfig 	*GoodsConfig `json:"-"`
-
-	ProductName		string `json:"product-name" bson:"product-name"`
-
-	Sales			float64 `json:"sales" bson:"sales"`
-	SalesQuota 		float64	`json:"sales-quota" bson:"sales-quota"`
-	Share 			float64 `json:"share" bson:"share"`
-	QuotaAchievement float64 `json:"quota-achievement" bson:"quota-achievement"`
-	SalesGrowth		float64	`json:"sales-growth" bson:"sales-growth"`
+	Sales				float64 `json:"sales" bson:"sales" mapstructure:"sales"`
+	SalesQuota 			float64	`json:"sales-quota" bson:"sales-quota" mapstructure:"sales-quota"`
+	Share 				float64 `json:"share" bson:"share" mapstructure:"share"`
+	QuotaAchievement 	float64 `json:"quota-achievement" bson:"quota-achievement" mapstructure:"quota-achievement"`
+	SalesGrowth			float64	`json:"sales-growth" bson:"sales-growth" mapstructure:"sales-growth"`
 }
 
 // GetID to satisfy jsonapi.MarshalIdentifier interfac

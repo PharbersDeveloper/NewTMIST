@@ -4,10 +4,16 @@ github.com/PharbersDeveloper/NtmPods v0.0.0-20190426102357-9bc90bea8823 h1:UzhsR
 github.com/PharbersDeveloper/NtmPods v0.0.0-20190426102357-9bc90bea8823/go.mod h1:IPKFN0d52vWSyo2CUbdJV4KXqkxJQ1btdbLDd2aZa9c=
 github.com/alfredyang1986/BmServiceDef v0.0.0-20190410064517-b341f9e1e85e h1:hCkIQu6qk9yt9VmfVBNfNfu8Dwqz3xSOXWFGE1eKOVs=
 github.com/alfredyang1986/BmServiceDef v0.0.0-20190410064517-b341f9e1e85e/go.mod h1:DRdP4QjxmPafViX524Uj1V2zlox75w8xTusMEJMf16E=
+github.com/alfredyang1986/BmServiceDef v0.0.1 h1:FSez9tpLdzuvywe7vlMIzNDxbLyHBKzL4qUTf5pO+qQ=
 github.com/alfredyang1986/BmServiceDef v0.0.1/go.mod h1:DRdP4QjxmPafViX524Uj1V2zlox75w8xTusMEJMf16E=
 github.com/alfredyang1986/blackmirror v0.0.0-20190305121812-d8d7643fb552 h1:S4AdpMiXF1A7J62jpVrjFqR5ojguDx3SJvZfdvIdbV8=
 github.com/alfredyang1986/blackmirror v0.0.0-20190305121812-d8d7643fb552/go.mod h1:NpL3ZW9nRZgX+wC12NCLeZeXWerNH+Htb0ZDR27iAco=
+github.com/alfredyang1986/blackmirror v0.0.3 h1:4Oyjju2phCLA7M1wbnHCK50xhjcogLDmy3wA72LRMys=
 github.com/alfredyang1986/blackmirror v0.0.3/go.mod h1:NpL3ZW9nRZgX+wC12NCLeZeXWerNH+Htb0ZDR27iAco=
+github.com/alfredyang1986/blackmirror v0.0.12 h1:loV14F57AT5esTnDfhorz+HYEX23NocbDTxVByBmHSY=
+github.com/alfredyang1986/blackmirror v0.0.12/go.mod h1:NpL3ZW9nRZgX+wC12NCLeZeXWerNH+Htb0ZDR27iAco=
+github.com/confluentinc/confluent-kafka-go v1.0.0 h1:y+G9NTXsvoelf1cRzjtLKOZsPqh71noS4+t+e+eINIk=
+github.com/confluentinc/confluent-kafka-go v1.0.0/go.mod h1:u2zNLny2xq+5rWeTQjFHbDzzNuba4P1vo31r9r4uAdg=
 github.com/gedex/inflector v0.0.0-20170307190818-16278e9db813 h1:Uc+IZ7gYqAf/rSGFplbWBSHaGolEQlNLgMgSE3ccnIQ=
 github.com/gedex/inflector v0.0.0-20170307190818-16278e9db813/go.mod h1:P+oSoE9yhSRvsmYyZsshflcR6ePWYLql6UU1amW13IM=
 github.com/go-redis/redis v6.15.2+incompatible h1:9SpNVG76gr6InJGxoZ6IuuxaCOQwDAhzyXg+Bs+0Sb4=
@@ -18,6 +24,10 @@ github.com/julienschmidt/httprouter v1.2.0 h1:TDTW5Yz1mjftljbcKqRcrYhd4XeOoI98t+
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/manyminds/api2go v0.0.0-20190324173508-d4f7fae65b4b h1:i3rsW0IuRO3amlrdHw6j4AgO9dcu/njPoI8BeC1Febs=
 github.com/manyminds/api2go v0.0.0-20190324173508-d4f7fae65b4b/go.mod h1:Z60vy0EZVSu0bOugCHdcN5ZxFMKSpjRgsnh0XKPFqqk=
+github.com/mattn/go-xmpp v0.0.0-20190124093244-6093f50721ed h1:A1hEQg5M0b3Wg06pm3q/B0wdZsPjVQ/a2IgauQ8wCZo=
+github.com/mattn/go-xmpp v0.0.0-20190124093244-6093f50721ed/go.mod h1:Cs5mF0OsrRRmhkyOod//ldNPOwJsrBvJ+1WRspv0xoc=
+github.com/mitchellh/mapstructure v1.1.2 h1:fmNYVwqnSfB9mZU6OS2O6GsXM+wcskZDuKQzvN1EDeE=
+github.com/mitchellh/mapstructure v1.1.2/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce h1:xcEWjVhvbDy+nHP67nPDDpbYrY+ILlfndk4bRioVHaU=
 gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce/go.mod h1:yeKp02qBN3iKW1OzL3MGk2IdtZzaj7SFntXj72NppTA=
