@@ -754,7 +754,6 @@ func subscriptionFunc(content interface{}) {
 					}
 				}
 				paper.InputState = state
-				// TODO: @Alex 时间有问题存在UTC转CST问题，因为服务器的都是UTC，Golang默认也是读UTC，等Bug改完后整体做转换
 				paper.EndTime = time.Now().UnixNano() / 1e6
 
 				err = paperStorage.Update(*paper)

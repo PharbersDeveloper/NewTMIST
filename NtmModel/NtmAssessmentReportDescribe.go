@@ -2,6 +2,7 @@ package NtmModel
 
 import (
 	"gopkg.in/mgo.v2/bson"
+	"strconv"
 )
 
 type AssessmentReportDescribe struct {
@@ -32,6 +33,9 @@ func (c *AssessmentReportDescribe) GetConditionsBsonM(parameters map[string][]st
 			}
 			r["$in"] = ids
 			rst["_id"] = r
+		case "code":
+			val, _ := strconv.ParseFloat(v[0], 64)
+			rst[k] = val
 		}
 	}
 	return rst
