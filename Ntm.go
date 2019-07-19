@@ -16,8 +16,8 @@ import (
 func main() {
 
 	// 本地调试使用，部署时注释
-	os.Setenv("BM_KAFKA_CONF_HOME", fmt.Sprint(os.Getenv("BM_KAFKA_CONF_HOME"), "NtmServiceDeploy/dev-config/resource/kafkaconfig.json"))
-	os.Setenv("BM_XMPP_CONF_HOME", fmt.Sprint(os.Getenv("BM_XMPP_CONF_HOME"), "NtmServiceDeploy/dev-config/resource/xmppconfig.json"))
+	//os.Setenv("BM_KAFKA_CONF_HOME", fmt.Sprint(os.Getenv("BM_KAFKA_CONF_HOME"), "NtmServiceDeploy/dev-config/resource/kafkaconfig.json"))
+	//os.Setenv("BM_XMPP_CONF_HOME", fmt.Sprint(os.Getenv("BM_XMPP_CONF_HOME"), "NtmServiceDeploy/dev-config/resource/xmppconfig.json"))
 
 	version := "v0"
 	prodEnv := "NTM_HOME"
